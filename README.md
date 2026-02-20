@@ -18,7 +18,6 @@ Spring Boot と PostgreSQL を用いた、シンプルな不具合管理Webア�
 //- CI：GitHub Actions（予定）
 //- Docker Compose（予定）
 
-
 ## ローカル起動手順
 ### 前提
 - Java 17
