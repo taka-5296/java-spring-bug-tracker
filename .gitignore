@@ -1,12 +1,17 @@
 #
-target/ #（Mavenビルド成果物）
+target/ 
+#（Mavenビルド成果物）
 
-.idea/ #（IntelliJ設定）
+.idea/ 
+*.iml 
+#（IntelliJ関連）
 
-*.iml #（IntelliJ関連）
+.classpath
+.project 
+.settings/ 
+#（Eclipse系）
 
-.classpath .project .settings/ #（Eclipse系が混ざる場合）
-
-.DS_Store #（Macが混ざる場合）
+.DS_Store 
+#（Macが混ざる場合）
 
 *.log
