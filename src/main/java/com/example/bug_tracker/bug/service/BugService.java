@@ -22,8 +22,13 @@ public class BugService {
 
     public Bug create(String title, String description, BugStatus status, BugPriority priority) {
         log.info("BugService#create called");
+
+        // ★追加：サーバ側デフォルト補完
+        BugStatus fixedStatus = (status != null) ? status : BugStatus.OPEN;
+        BugPriority fixedPriority = (priority != null) ? priority : BugPriority.LOW;
+
         long id = idGenerator.getAndIncrement();
-        Bug bug = new Bug(id, title, description, status, priority, Instant.now());
+        Bug bug = new Bug(id, title, description, fixedStatus, fixedPriority, Instant.now());
         store.add(bug);
         return bug;
     }

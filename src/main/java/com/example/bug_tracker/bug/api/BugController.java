@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/bugs")
 public class BugController {
@@ -23,14 +26,14 @@ public class BugController {
 
     // DTO（入力用）
     public record CreateBugRequest(
-            String title,
+            @NotBlank(message = "title must not be blank") String title,
             String description,
             BugStatus status,
             BugPriority priority) {
     }
 
     @PostMapping
-    public Bug create(@RequestBody CreateBugRequest req) {
+    public Bug create(@Valid @RequestBody CreateBugRequest req) {
         log.info("BugController#create called");
         return bugService.create(req.title(), req.description(), req.status(), req.priority());
     }
