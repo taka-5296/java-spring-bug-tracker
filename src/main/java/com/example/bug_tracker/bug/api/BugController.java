@@ -43,4 +43,10 @@ public class BugController {
         log.info("BugController#list called");
         return bugService.findAll();
     }
+
+    @GetMapping("/{id}")
+    public Bug getById(@PathVariable long id) {
+        log.info("BugController#getById called. id={}", id);
+        return bugService.findById(id);
+    }
 }

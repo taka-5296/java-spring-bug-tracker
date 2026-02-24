@@ -3,6 +3,8 @@ package com.example.bug_tracker.bug.service;
 import com.example.bug_tracker.bug.domain.Bug;
 import com.example.bug_tracker.bug.domain.BugPriority;
 import com.example.bug_tracker.bug.domain.BugStatus;
+import com.example.bug_tracker.bug.exception.BugNotFoundException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -36,5 +38,13 @@ public class BugService {
     public List<Bug> findAll() {
         log.info("BugService#findAll called");
         return Collections.unmodifiableList(store);
+    }
+
+    public Bug findById(long id) {
+        log.info("BugService#findById called. id={}", id);
+        return store.stream()
+                .filter(b -> b.getId() == id)
+                .findFirst()
+                .orElseThrow(() -> new BugNotFoundException(id));
     }
 }
