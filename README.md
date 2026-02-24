@@ -78,3 +78,5 @@ curl.exe "http://localhost:8080/api/bugs"
 - 2026-02-20: Git/GitHub初期化、.gitignore整備、PR→mergeを1回実施、README+Issues整備
 - 2026-02-21: Spring Boot雛形作成、GET /health（OK）追加、mvnwで起動手順をREADMEに追記
 - 2026-02-22: Bug作成・一覧の最小API（DBなしin-memory）を実装。POST/GET疎通を確認
+- 2026-02-23: 
+- 2026-02-24: 
