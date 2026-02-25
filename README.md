@@ -10,7 +10,7 @@
 ## 主要リンク
 - [ローカル起動手順](#ローカル起動手順)
 - [動作確認](#動作確認)
-- [運用ルール（Git/GitHub）](#運用ルール-gitgithub)
+- [運用ルール（Git/GitHub）](#運用ルールgitgithub)
 - [PRテンプレ](.github/PULL_REQUEST_TEMPLATE.md)
 - [Issueテンプレ](.github/ISSUE_TEMPLATE.md)
 
