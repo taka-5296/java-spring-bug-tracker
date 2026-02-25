@@ -1,7 +1,8 @@
 # Bug Tracker（不具合管理アプリ）
 
 ## 概要
-本システムは、Spring BootとPostgreSQLを用いた、シンプルな不具合管理Webアプリです。
+本システムは、Spring Bootで作るシンプルな不具合管理Webアプリです。
+※ 現時点はDB未接続（メモリ保存）。永続化はPostgreSQL導入後に対応します。
 
 ## まずやること（最短）
 1) 起動：.\mvnw.cmd spring-boot:run
@@ -15,7 +16,7 @@
 - [Issueテンプレ](.github/ISSUE_TEMPLATE.md)
 
 ## 主な機能
-###　現時点
+### 現時点
 - ヘルスチェック：`GET /health`（OKを返す）
 - Bug（チケット）の最小API（DBなし・メモリ保存）
   - 作成：`POST /api/bugs`
@@ -37,9 +38,12 @@
 - Java 17
 - Spring Boot（Web）
 - Maven Wrapper（mvnw）
+- DB（予定）
+  - 永続化：PostgreSQL
+  - 実装方式：JPA（ORM）で進める
+  - テーブル最小案：bugs（id, title, description, status, priority, createdAt, updatedAt）
 
 ### 予定
-- PostgreSQL（永続化）
 - Thymeleaf（画面表示）
 - テスト：JUnit（Service単体テスト）
 - CI：GitHub Actions
@@ -120,3 +124,8 @@ curl.exe -i "http://localhost:8080/api/bugs/{id}"
 - 2026-02-23: DTO+Validation導入（title必須）、例外ハンドリングで400のエラー形式統一（VALIDATION_ERROR / INVALID_JSON）、status/priority未指定はOPEN/LOWを自動補完
 - 2026-02-24: GET /api/bugs/{id} 追加、存在しないIDは404を統一形式で返却（NOT_FOUND）
 - 2026-02-25: /.github作成。PR&ISSUEテンプレ整理、READMEに[主要リンク]追加
+- 2026-02-26: Week1成果総括（API最小セット/Validation/例外統一/テンプレ整備）。Week2のIssueを起票。
+
+## 週次まとめ（Weekly Log）
+#### Week1 (02-20 ~ 02-26: 
+ - 到達点：/health、Bug最小API（作成/一覧/個別）、Validation（400統一）、不正JSON（400統一）、NotFound（404統一）、PR/issueテンプレ整備
