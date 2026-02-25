@@ -8,11 +8,11 @@
 2) 疎通確認：GET http://localhost:8080/health → "OK"が出力
 
 ## 主要リンク
-- ローカル起動手順：#ローカル起動手順
-- 動作確認：#動作確認
-- 運用ルール：#運用ルール（Git/GitHub）
-- PRテンプレ：.github/PULL_REQUEST_TEMPLATE.md
-- Issueテンプレ：.github/ISSUE_TEMPLATE.md
+- [ローカル起動手順](#ローカル起動手順)
+- [動作確認](#動作確認)
+- [運用ルール（Git/GitHub）](#運用ルール-gitgithub)
+- [PRテンプレ](.github/PULL_REQUEST_TEMPLATE.md)
+- [Issueテンプレ](.github/ISSUE_TEMPLATE.md)
 
 ## 主な機能
 ###　現時点
@@ -76,28 +76,26 @@
 #### API (Bug作成・一覧・個別)
 - 以下は PowerShellの例(Windows11想定 / curl使用)
 
-1) Bug作成（POST）
+##### Bug作成（POST）
 ```PowerShell
-curl.exe -i -X POST "http://localhost:8080/api/bugs" -H　"Content-Type: application/json" --data-raw "$body"
+curl.exe -i -X POST "http://localhost:8080/api/bugs" -H "Content-Type: application/json" --data-raw '{"title":"test bug","description":"created by curl"}'
 ```
-
-2) 期待結果
+- 期待結果
 `HTTP/1.1 200" //(または201)`と、作成されたBugのJSONがコマンドラインに返る。
 
-1) Bug一覧（GET）
+##### Bug一覧（GET）
 ```PowerShell
 curl.exe "http://localhost:8080/api/bugs"
 ```
-2) 期待結果
+- 期待結果
 `"HTTP/1.1 200"` と、過去に作成済みのBugがJSONで返る。
 
-1) Bug個別（GET：存在しないid）
+##### Bug個別（GET：存在しないid）
 ```PowerShell
 curl.exe -i "http://localhost:8080/api/bugs/{id}"
 ```
-2) 期待結果（GET）
+- 期待結果（GET）
 `"HTTP/1.1 200"`と、{id}で指定したBugのJSONが返る。
-
 ※ Postmanでも同等の確認が可能（コレクションで実施）
 
 ## 運用ルール（Git/GitHub）
@@ -121,4 +119,4 @@ curl.exe -i "http://localhost:8080/api/bugs/{id}"
 - 2026-02-22: Bug作成・一覧の最小API（DBなしin-memory）を実装。POST/GET疎通を確認
 - 2026-02-23: DTO+Validation導入（title必須）、例外ハンドリングで400のエラー形式統一（VALIDATION_ERROR / INVALID_JSON）、status/priority未指定はOPEN/LOWを自動補完
 - 2026-02-24: GET /api/bugs/{id} 追加、存在しないIDは404を統一形式で返却（NOT_FOUND）
-- 2026-02-25: /.github作成。PR&ISSUEテンプレ整理
+- 2026-02-25: /.github作成。PR&ISSUEテンプレ整理、READMEに[主要リンク]追加
