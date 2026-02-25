@@ -103,3 +103,4 @@ curl.exe -i "http://localhost:8080/api/bugs/{id}"
 - 2026-02-22: Bug作成・一覧の最小API（DBなしin-memory）を実装。POST/GET疎通を確認
 - 2026-02-23: DTO+Validation導入（title必須）、例外ハンドリングで400のエラー形式統一（VALIDATION_ERROR / INVALID_JSON）、status/priority未指定はOPEN/LOWを自動補完
 - 2026-02-24: GET /api/bugs/{id} 追加、存在しないIDは404を統一形式で返却（NOT_FOUND）
+- 2026-02-25: /.github作成。PR&ISSUEテンプレ整理
