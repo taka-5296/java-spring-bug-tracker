@@ -1,7 +1,18 @@
 # Bug Tracker（不具合管理アプリ）
 
 ## 概要
-Spring Boot と PostgreSQL を用いた、シンプルな不具合管理Webアプリです。
+本システムは、Spring BootとPostgreSQLを用いた、シンプルな不具合管理Webアプリです。
+
+## まずやること（最短）
+1) 起動：.\mvnw.cmd spring-boot:run
+2) 疎通確認：GET http://localhost:8080/health → "OK"が出力
+
+## 主要リンク
+- ローカル起動手順：#ローカル起動手順
+- 動作確認：#動作確認
+- 運用ルール（Git/GitHub）：#運用ルール（Git/GitHub）
+- PRテンプレ：.github/PULL_REQUEST_TEMPLATE.md
+- Issueテンプレ：.github/ISSUE_TEMPLATE.md
 
 ## 主な機能
 ###　現時点
