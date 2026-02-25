@@ -10,7 +10,7 @@
 ## 主要リンク
 - ローカル起動手順：#ローカル起動手順
 - 動作確認：#動作確認
-- 運用ルール（Git/GitHub）：#運用ルール（Git/GitHub）
+- 運用ルール：#運用ルール（Git/GitHub）
 - PRテンプレ：.github/PULL_REQUEST_TEMPLATE.md
 - Issueテンプレ：.github/ISSUE_TEMPLATE.md
 
@@ -77,19 +77,26 @@
 - 以下は PowerShellの例(Windows11想定 / curl使用)
 
 1) Bug作成（POST）
+```PowerShell
 curl.exe -i -X POST "http://localhost:8080/api/bugs" -H　"Content-Type: application/json" --data-raw "$body"
+```
+
 2) 期待結果
-"HTTP/1.1 200" (または201)と、作成されたBugのJSONがコマンドラインに返る。
+`HTTP/1.1 200" //(または201)`と、作成されたBugのJSONがコマンドラインに返る。
 
 1) Bug一覧（GET）
+```PowerShell
 curl.exe "http://localhost:8080/api/bugs"
+```
 2) 期待結果
-"HTTP/1.1 200" と、過去に作成済みのBugがJSONで返る。
+`"HTTP/1.1 200"` と、過去に作成済みのBugがJSONで返る。
 
 1) Bug個別（GET：存在しないid）
+```PowerShell
 curl.exe -i "http://localhost:8080/api/bugs/{id}"
-1) 期待結果（GET）
-"HTTP/1.1 200" と、{id}で指定したBugのJSONが返る。
+```
+2) 期待結果（GET）
+`"HTTP/1.1 200"`と、{id}で指定したBugのJSONが返る。
 
 ※ Postmanでも同等の確認が可能（コレクションで実施）
 
