@@ -39,7 +39,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST) // 不正なJSON
+    @ResponseStatus(HttpStatus.BAD_REQUEST) // 不正なJSON 400
     public ApiError handleNotReadable(HttpMessageNotReadableException ex) {
         return new ApiError(
                 "INVALID_JSON",

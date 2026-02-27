@@ -1,0 +1,5 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/bug_tracker
+    username: bug_user
+    password: bug_pass
