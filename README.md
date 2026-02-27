@@ -1,8 +1,7 @@
 # Bug Tracker（不具合管理アプリ）
 
 ## 概要
-本システムは、Spring Bootで作るシンプルな不具合管理Webアプリです。
-※ 現時点はDB未接続（メモリ保存）。永続化はPostgreSQL導入後に対応します。
+本システムは、Spring BootとPostgreSQLを用いたシンプルな不具合管理Webアプリです。
 
 ## まずやること（最短）
 1) 起動：.\mvnw.cmd spring-boot:run
@@ -18,7 +17,7 @@
 ## 主な機能
 ### 現時点
 - ヘルスチェック：`GET /health`（OKを返す）
-- Bug（チケット）の最小API（DBなし・メモリ保存）
+- Bug（チケット）の最小API（現在：DB永続化は作業中）
   - 作成：`POST /api/bugs`
   - 一覧：`GET /api/bugs`
   - 個別：`GET /api/bugs/{id}`
@@ -26,6 +25,7 @@
   - 不正JSON（400）：壊れたJSONまたは不正値（INVALID_JSON）
   - 存在しないID（404）：NOT_FOUND
   - status/priority未指定時は Service 側で OPEN/LOW をデフォルト補完
+- PostgreSQL接続完了（テーブル未作成／永続化は後程作成）
 
 ### 予定
 - 不具合（Bug）のCRUD：作成 / 一覧 / 詳細 / 更新 / 削除
@@ -54,12 +54,48 @@
 - Java 17
 - mvnw(Wrapper)
 
-### 起動方法（ローカル）
-1. 起動
-   - リポジトリ直下にて以下コマンドを実行
-   - `.\mvnw.cmd spring-boot:run`
-2. 停止
-   - `Ctrl + C`
+## ローカル起動手順（dev）
+
+### 前提
+- Java 17
+- Docker Desktop（PostgreSQLをDockerで動かす場合）
+
+### 1) PostgreSQL起動（Docker）
+```
+docker run --name bug-tracker-postgres `
+  -e POSTGRES_DB=bug_tracker `
+  -e POSTGRES_USER=bug_user `
+  -e POSTGRES_PASSWORD=bug_pass `
+  -p 5432:5432 `
+  -d postgres:16
+```
+
+### 2) DB疎通確認（任意）
+```
+docker exec -it bug-tracker-postgres psql -U bug_user -d bug_tracker
+```
+#### psql内で
+```
+SELECT 1;
+```
+```
+SELECT version();
+```
+```
+\q
+```
+
+### 3) アプリ起動（devプロファイル）
+```PowerShell
+.\mvnw.cmd spring-boot:run "-Dspring-boot.run.profiles=dev"
+```
+※ "-Dspring-boot.run.profiles=dev" は必ず "" で囲む（PowerShell対策）
+
+### 4) 停止
+- アプリ停止：Ctrl + C
+- DB停止（任意）：```
+- docker stop bug-tracker-postgres
+- ```
 
 ## API（暫定）
 - POST /api/bugs
@@ -114,17 +150,21 @@ curl.exe -i "http://localhost:8080/api/bugs/{id}"
     perf: パフォーマンス向上関連
     test: テスト関連
     chore: ビルド、補助ツール、ライブラリ関連
+    wip:~(no PR): 途中保存、PRなし 
 - README：毎日「今日の変更点」に1〜3行追記
 
 ## 今日の変更点（Daily Log）
 - （ここに毎日追記する）
+#### Week1
 - 2026-02-20: Git/GitHub初期化、.gitignore整備、PR→mergeを1回実施、README+Issues整備
 - 2026-02-21: Spring Boot雛形作成、GET /health（OK）追加、mvnwで起動手順をREADMEに追記
 - 2026-02-22: Bug作成・一覧の最小API（DBなしin-memory）を実装。POST/GET疎通を確認
 - 2026-02-23: DTO+Validation導入（title必須）、例外ハンドリングで400のエラー形式統一（VALIDATION_ERROR / INVALID_JSON）、status/priority未指定はOPEN/LOWを自動補完
 - 2026-02-24: GET /api/bugs/{id} 追加、存在しないIDは404を統一形式で返却（NOT_FOUND）
 - 2026-02-25: /.github作成。PR&ISSUEテンプレ整理、READMEに[主要リンク]追加
-- 2026-02-26: Week1成果総括（API最小セット/Validation/例外統一/テンプレ整備）。Week2のIssueを起票。
+- 2026-02-26: Week1成果総括（API最小セット/Validation/例外統一/テンプレ整備）。Week2のIssueを起票
+#### Week2
+- 2026-02-27: DockerでPostgreSQL起動、psql疎通(SELECT 1/version)、pomにJPA+PostgreSQL追加、dev起動でHikari接続。READMEに手順追記。
 
 ## 週次まとめ（Weekly Log）
 #### Week1 (02-20 ~ 02-26: 
