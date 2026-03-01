@@ -8,7 +8,7 @@
 ## bugs
 | 列(カラム) | 型 | 制約 | デフォルト | 備考 |
 |---|---|---|---|---|
-| id | BIGSERIAL | PK | auto | DB採番 |
+| id | IDENTITY | PK | auto | DB採番 |
 | title | VARCHAR(200) | NOT NULL |  | v0: title必須 |
 | description | TEXT | NULL |  | 任意 |
 | status | VARCHAR(30) | NOT NULL | 'OPEN' | enum相当（後でCHECK or enum型検討） |
