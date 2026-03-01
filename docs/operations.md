@@ -22,6 +22,16 @@
 - 方針：
   - 不具合調査は「ERRORログ」→「直前のINFOログ」の順で追う
 
+## bugsテーブル作成と確認（psql）
+### テーブル作成
+- `docker exec -it bug-tracker-postgres psql -U bug_user -d bug_tracker`
+- `\i docs/db/bugs.sql`
+
+### 確認
+- `\dt`
+- `SELECT id, title, status, priority, created_at, updated_at FROM bugs ORDER BY id ASC;`
+- `\q`
+
 ## データベース（PostgreSQL）の起動・停止
 ### 起動（Docker）
 - コマンド：

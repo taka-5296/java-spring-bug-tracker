@@ -116,6 +116,16 @@ SELECT version();
 #### API (Bug作成・一覧・個別)
 - 以下は PowerShellの例(Windows11想定 / curl使用)
 
+## bugsテーブル作成と確認（psql）
+### テーブル作成
+- `docker exec -it bug-tracker-postgres psql -U bug_user -d bug_tracker`
+- `\i docs/db/bugs.sql`
+
+### 確認
+- `\dt`
+- `SELECT id, title, status, priority, created_at, updated_at FROM bugs ORDER BY id ASC;`
+- `\q`
+
 ##### Bug作成（POST）
 ```PowerShell
 curl.exe -i -X POST "http://localhost:8080/api/bugs" -H "Content-Type: application/json" --data-raw '{"title":"test bug","description":"created by curl"}'
