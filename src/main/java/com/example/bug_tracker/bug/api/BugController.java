@@ -1,17 +1,19 @@
 package com.example.bug_tracker.bug.api;
 
-import com.example.bug_tracker.bug.domain.Bug;
 import com.example.bug_tracker.bug.domain.BugPriority;
 import com.example.bug_tracker.bug.domain.BugStatus;
+import com.example.bug_tracker.bug.dto.BugResponse;
+import com.example.bug_tracker.bug.entity.BugEntity;
 import com.example.bug_tracker.bug.service.BugService;
+
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/bugs")
@@ -33,20 +35,30 @@ public class BugController {
     }
 
     @PostMapping
-    public Bug create(@Valid @RequestBody CreateBugRequest req) {
+    public BugResponse create(@Valid @RequestBody CreateBugRequest req) {
         log.info("BugController#create called");
-        return bugService.create(req.title(), req.description(), req.status(), req.priority());
+        BugEntity saved = bugService.create(req.title(), req.description(), req.status(), req.priority());
+        return toResponse(saved);
     }
 
     @GetMapping
-    public List<Bug> list() {
+    public List<BugResponse> list() {
         log.info("BugController#list called");
-        return bugService.findAll();
+        return bugService.findAll().stream().map(this::toResponse).toList();
     }
 
     @GetMapping("/{id}")
-    public Bug getById(@PathVariable long id) {
+    public BugResponse getById(@PathVariable long id) {
         log.info("BugController#getById called. id={}", id);
-        return bugService.findById(id);
+        return toResponse(bugService.findById(id));
+    }
+
+    private BugResponse toResponse(BugEntity e) {
+        return new BugResponse(
+                e.getId(),
+                e.getTitle(),
+                e.getStatus(),
+                e.getPriority(),
+                e.getCreatedAt());
     }
 }
