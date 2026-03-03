@@ -29,6 +29,7 @@ Base URL: http://localhost:8080
 - status: string（例：OPEN / IN_PROGRESS / DONE）
 - priority: string（例：LOW / MEDIUM / HIGH）
 - createdAt: string（ISO-8601）
+- updatedAt: string (ISO-8601)
 
 #### CreateBugRequest（現状のリクエスト）
 - title: string（必須）
@@ -36,7 +37,13 @@ Base URL: http://localhost:8080
 - status: string（任意。未指定時はOPEN）
 - priority: string（任意。未指定時はLOW）
 
----
+#### UpdateBugRequest（現状のリクエスト）
+- title: string（必須）
+- description: string（任意）
+- status: string（任意。未指定時はOPEN）
+- priority: string（任意。未指定時はLOW）
+
+
 
 ## 2. 予定（Week2で追加する“最終形の枠”）
 ※この章は「CRUD完成（DB永続化）に合わせて実装する」枠。実装したら「現状」へ移す。
@@ -47,7 +54,7 @@ Base URL: http://localhost:8080
 | 作成 | POST | /api/bugs | CreateBugRequest | 201 + BugResponse | 400/500 |
 | 一覧取得 | GET | /api/bugs | - | 200 + BugListResponse | 500 |
 | 個別取得 | GET | /api/bugs/{id} | - | 200 + BugResponse | 404/500 |
-| 更新 | PUT | /api/bugs/{id} | UpdateBugRequest | 200 + BugResponse | 400/404/500 |
+| 更新 | PUT | /api/bugs/{id} | UpdateBugRequest | 200 + BugResponse | 400/404 |
 | 削除 | DELETE | /api/bugs/{id} | - | 204 (no body) | 404/500 |
 
 ### 2.2 データモデル（予定）
@@ -58,6 +65,7 @@ Base URL: http://localhost:8080
 - status: string（許容値：OPEN / IN_PROGRESS / DONE）
 - priority: string（許容値：LOW / MEDIUM / HIGH）
 - createdAt: string（ISO-8601）
+- updateAt: string (ISO-8601)
 
 #### CreateBugRequest（予定）
 - title: string（必須）

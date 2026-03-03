@@ -8,7 +8,9 @@ import java.time.OffsetDateTime;
 public record BugResponse(
                 Long id,
                 String title,
+                String description,
                 BugStatus status,
                 BugPriority priority,
-                OffsetDateTime createdAt) {
+                OffsetDateTime createdAt,
+                OffsetDateTime updatedAt) {
 }

@@ -1,13 +1,12 @@
 package com.example.bug_tracker.bug.api;
 
-import com.example.bug_tracker.bug.domain.BugPriority;
-import com.example.bug_tracker.bug.domain.BugStatus;
 import com.example.bug_tracker.bug.dto.BugResponse;
 import com.example.bug_tracker.bug.entity.BugEntity;
 import com.example.bug_tracker.bug.service.BugService;
+import com.example.bug_tracker.bug.dto.CreateBugRequest;
+import com.example.bug_tracker.bug.dto.UpdateBugRequest;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,14 +23,6 @@ public class BugController {
 
     public BugController(BugService bugService) {
         this.bugService = bugService;
-    }
-
-    // DTO（入力用）
-    public record CreateBugRequest(
-            @NotBlank(message = "title must not be blank") String title,
-            String description,
-            BugStatus status,
-            BugPriority priority) {
     }
 
     @PostMapping
@@ -53,12 +44,22 @@ public class BugController {
         return toResponse(bugService.findById(id));
     }
 
+    @PutMapping("/{id}")
+    public BugResponse update(@PathVariable long id, @Valid @RequestBody UpdateBugRequest req) {
+        log.info("BugController#update called. id={}", id);
+        BugEntity updated = bugService.updateById(id, req.title(), req.description(), req.status(), req.priority());
+        return toResponse(updated);
+    }
+
+    // 返却DTOの値取得
     private BugResponse toResponse(BugEntity e) {
         return new BugResponse(
                 e.getId(),
                 e.getTitle(),
+                e.getDescription(),
                 e.getStatus(),
                 e.getPriority(),
-                e.getCreatedAt());
+                e.getCreatedAt(),
+                e.getUpdatedAt());
     }
 }

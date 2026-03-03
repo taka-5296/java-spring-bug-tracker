@@ -1,13 +1,14 @@
 package com.example.bug_tracker.bug.entity;
 
-import com.example.bug_tracker.bug.domain.BugPriority;
 import com.example.bug_tracker.bug.domain.BugStatus;
+import com.example.bug_tracker.bug.domain.BugPriority;
+
 import jakarta.persistence.*;
 
 import java.time.OffsetDateTime;
 
 @Entity
-@Table(name = "bugs")
+@Table(name = "bugs") // bugsテーブルのEntity
 public class BugEntity {
 
     @Id
@@ -59,6 +60,7 @@ public class BugEntity {
         updatedAt = OffsetDateTime.now();
     }
 
+    // 以下getter
     public Long getId() {
         return id;
     }
@@ -85,5 +87,22 @@ public class BugEntity {
 
     public OffsetDateTime getUpdatedAt() {
         return updatedAt;
+    }
+
+    // 以下setter
+    public void setTitle(String title) {
+        this.title = title; // タイトルを更新
+    }
+
+    public void setDescription(String description) {
+        this.description = description; // 説明を更新
+    }
+
+    public void setStatus(BugStatus status) {
+        this.status = status; // ステータスを更新（型一致）
+    }
+
+    public void setPriority(BugPriority priority) {
+        this.priority = priority; // 優先度を更新（型一致）
     }
 }

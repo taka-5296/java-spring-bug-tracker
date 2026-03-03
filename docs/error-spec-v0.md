@@ -26,7 +26,5 @@
 {
   "code": "VALIDATION_ERROR",
   "message": "Validation failed",
-  "details": [
-    { "field": "title", "reason": "must not be blank" }
-  ]
+"details": ["title must not be blank"]
 }

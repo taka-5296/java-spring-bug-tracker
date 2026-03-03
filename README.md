@@ -1,13 +1,16 @@
 # Bug Tracker（不具合管理アプリ）
 
 ## 概要
+
 本システムは、Spring BootとPostgreSQLを用いたシンプルな不具合管理Webアプリです。
 
 ## まずやること（最短）
+
 1) 起動：.\mvnw.cmd spring-boot:run
 2) 疎通確認：GET http://localhost:8080/health → "OK"が出力
 
 ## 主要リンク
+
 - [ローカル起動手順](#ローカル起動手順)
 - [動作確認](#動作確認)
 - [運用ルール（Git/GitHub）](#運用ルールgitgithub)
@@ -15,26 +18,32 @@
 - [Issueテンプレ](.github/ISSUE_TEMPLATE.md)
 
 ## 主な機能
+
 ### 現時点
+
 - ヘルスチェック：`GET /health`（OKを返す）
 - Bug（チケット）の最小API（現在：DB永続化は作業中）
   - 作成：`POST /api/bugs`
   - 一覧：`GET /api/bugs`
   - 個別：`GET /api/bugs/{id}`
+  - 更新：`PUT /api/bugs/{id}`
   - 入力バリデーション（400）：title必須（VALIDATION_ERROR）
   - 不正JSON（400）：壊れたJSONまたは不正値（INVALID_JSON）
-  - 存在しないID（404）：NOT_FOUND
+  - 存在しないID（404）：NOT_FOUND（GET/PUTで共通）
   - status/priority未指定時は Service 側で OPEN/LOW をデフォルト補完
-- PostgreSQL接続完了（テーブル未作成／永続化は後程作成）
+- DB：PostgreSQL（Docker） + JPA（ORM）
 
 ### 予定
+
 - 不具合（Bug）のCRUD：作成 / 一覧 / 詳細 / 更新 / 削除
 - ステータス管理：Open / In Progress / Done
 - 認証・権限：USER / ADMIN
 - 永続化：PostgreSQL
 
 ## 技術スタック
+
 ### 現時点
+
 - Java 17
 - Spring Boot（Web）
 - Maven Wrapper（mvnw）
@@ -44,23 +53,28 @@
   - テーブル最小案：bugs（id, title, description, status, priority, createdAt, updatedAt）
 
 ### 予定
+
 - Thymeleaf（画面表示）
 - テスト：JUnit（Service単体テスト）
 - CI：GitHub Actions
 - Docker Compose
 
 ## ローカル起動手順
+
 ### 前提
+
 - Java 17
 - mvnw(Wrapper)
 
 ## ローカル起動手順（dev）
 
 ### 前提
+
 - Java 17
 - Docker Desktop（PostgreSQLをDockerで動かす場合）
 
 ### 1) PostgreSQL起動（Docker）
+
 ```
 docker run --name bug-tracker-postgres `
   -e POSTGRES_DB=bug_tracker `
@@ -71,38 +85,49 @@ docker run --name bug-tracker-postgres `
 ```
 
 ### 2) DB疎通確認（任意）
+
 ```
 docker exec -it bug-tracker-postgres psql -U bug_user -d bug_tracker
 ```
+
 #### psql内で
+
 ```
 SELECT 1;
 ```
+
 ```
 SELECT version();
 ```
+
 ```
 \q
 ```
 
 ### 3) アプリ起動（devプロファイル）
+
 ```PowerShell
 .\mvnw.cmd spring-boot:run "-Dspring-boot.run.profiles=dev"
 ```
+
 ※ "-Dspring-boot.run.profiles=dev" は必ず "" で囲む（PowerShell対策）
 
 ### 4) 停止
+
 - アプリ停止：Ctrl + C
 - DB停止（任意）：```
 - docker stop bug-tracker-postgres
 - ```
 
 ## API（暫定）
+
 - POST /api/bugs
 - GET /api/bugs
 - GET /api/bugs/{id}
+- PUT /api/bugs/{id}
 
 ## エラーレスポンス形式
+
 - 400: VALIDATION_ERROR / INVALID_JSON
 - 404: NOT_FOUND
 - 例のJSON（1つだけ）
@@ -110,45 +135,66 @@ SELECT version();
 ### 動作確認
 
 #### ヘルスチェック
+
 - ブラウザでアクセス：`http://localhost:8080/health`
 - 期待結果：`OK` が表示される
 
 #### API (Bug作成・一覧・個別)
+
 - 以下は PowerShellの例(Windows11想定 / curl使用)
 
 ## bugsテーブル作成と確認（psql）
+
 ### テーブル作成
+
 - `docker exec -it bug-tracker-postgres psql -U bug_user -d bug_tracker`
 - `\i docs/db/bugs.sql`
 
 ### 確認
+
 - `\dt`
 - `SELECT id, title, status, priority, created_at, updated_at FROM bugs ORDER BY id ASC;`
 - `\q`
 
 ##### Bug作成（POST）
+
 ```PowerShell
 curl.exe -i -X POST "http://localhost:8080/api/bugs" -H "Content-Type: application/json" --data-raw '{"title":"test bug","description":"created by curl"}'
 ```
+
 - 期待結果
 `HTTP/1.1 200" //(または201)`と、作成されたBugのJSONがコマンドラインに返る。
 
-##### Bug一覧（GET）
+##### Bug一覧取得（GET）
+
 ```PowerShell
 curl.exe "http://localhost:8080/api/bugs"
 ```
+
 - 期待結果
 `"HTTP/1.1 200"` と、過去に作成済みのBugがJSONで返る。
 
-##### Bug個別（GET：存在しないid）
+##### Bug個別取得（GET）
+
 ```PowerShell
 curl.exe -i "http://localhost:8080/api/bugs/{id}"
 ```
+
 - 期待結果（GET）
 `"HTTP/1.1 200"`と、{id}で指定したBugのJSONが返る。
 ※ Postmanでも同等の確認が可能（コレクションで実施）
 
+##### Bug更新（PUT）
+
+```PowerShell
+curl.exe -i -X PUT "http://localhost:8080/api/bugs/1" -H "Content-Type: application/json" --data-raw '{"title":"updated title","description":"updated by curl","status":"DONE","priority":"HIGH"}'
+```
+
+- 期待結果
+HTTP/1.1 200 と、更新後のBugのJSONが返る。
+
 ## 運用ルール（Git/GitHub）
+
 - ブランチ：main + feature/xxx
 - 原則：mainは直接触らない。featureで作業 → PR → merge
 - コミット粒度：意味のある単位。
@@ -164,8 +210,11 @@ curl.exe -i "http://localhost:8080/api/bugs/{id}"
 - README：毎日「今日の変更点」に1〜3行追記
 
 ## 今日の変更点（Daily Log）
+
 - （ここに毎日追記する）
+
 #### Week1
+
 - 2026-02-20: Git/GitHub初期化、.gitignore整備、PR→mergeを1回実施、README+Issues整備
 - 2026-02-21: Spring Boot雛形作成、GET /health（OK）追加、mvnwで起動手順をREADMEに追記
 - 2026-02-22: Bug作成・一覧の最小API（DBなしin-memory）を実装。POST/GET疎通を確認
@@ -173,9 +222,17 @@ curl.exe -i "http://localhost:8080/api/bugs/{id}"
 - 2026-02-24: GET /api/bugs/{id} 追加、存在しないIDは404を統一形式で返却（NOT_FOUND）
 - 2026-02-25: /.github作成。PR&ISSUEテンプレ整理、READMEに[主要リンク]追加
 - 2026-02-26: Week1成果総括（API最小セット/Validation/例外統一/テンプレ整備）。Week2のIssueを起票
+
 #### Week2
+
 - 2026-02-27: DockerでPostgreSQL起動、psql疎通(SELECT 1/version)、pomにJPA+PostgreSQL追加、dev起動でHikari接続。READMEに手順追記。
+- 2026-02-28: docs v0（要件定義/API/エラー）を追加。、API仕様を「現状/予定」に分離して契約を整理。
+- 2026-03-01: docs v0（ER図/スキーマ/設計判断ログ）を追加。bugs テーブルをDDLで作成→psqlでINSERT/SELECT確認＋再現用SQLを保存。
+- 2026-03-02: Bugの作成・一覧・詳細をDB永続化へ切替。Postman＋psqlで登録・取得を確認。
+- 2026-03-03: Bugの詳細取得（GET /api/bugs/{id}）と更新（PUT /api/bugs/{id}）を追加。404/500を統一形式（details対応）で返却。BugResponseにdescription/updatedAtを追加し、API契約とREADMEを整合。
 
 ## 週次まとめ（Weekly Log）
-#### Week1 (02-20 ~ 02-26: 
- - 到達点：/health、Bug最小API（作成/一覧/個別）、Validation（400統一）、不正JSON（400統一）、NotFound（404統一）、PR/issueテンプレ整備
+
+#### Week1 (02-20 ~ 02-26)
+
+- 到達点：/health、Bug最小API（作成/一覧/個別）、Validation（400統一）、不正JSON（400統一）、NotFound（404統一）、PR/issueテンプレ整備

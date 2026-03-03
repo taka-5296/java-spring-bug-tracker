@@ -47,4 +47,28 @@ public class BugService {
         return bugRepository.findById(id)
                 .orElseThrow(() -> new BugNotFoundException(id));
     }
+
+    @Transactional
+    public BugEntity updateById(long id, String title, String description, BugStatus status, BugPriority priority) {
+
+        log.info("BugService#updateById called. id={}", id); // 更新開始ログ
+
+        // 1) 既存を取得（無ければNotFound＝404へ）
+        BugEntity entity = bugRepository.findById(id) // Optional<BugEntity>で返る
+                .orElseThrow(() -> new BugNotFoundException(id)); // 「見つからない」をServiceで確定
+
+        // 2) null補完（Createと同じ方針で固定）
+        BugStatus fixedStatus = (status != null) ? status : BugStatus.OPEN; // nullならOPEN
+        BugPriority fixedPriority = (priority != null) ? priority : BugPriority.LOW; // nullならLOW
+
+        // 3) Entityへ反映（ここが“DBに保存される内容”）
+        entity.setTitle(title); // タイトル更新
+        entity.setDescription(description); // 説明更新（null許容ならそのまま）
+        entity.setStatus(fixedStatus); // ステータス更新
+        entity.setPriority(fixedPriority); // 優先度更新
+
+        // 4) 保存（JPAがUPDATEを発行）
+        return bugRepository.save(entity); // UPDATE（または同一Tx内ならdirty checkingでも可）
+    }
+
 }
