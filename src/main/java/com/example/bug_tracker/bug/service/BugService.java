@@ -50,10 +50,9 @@ public class BugService {
 
     @Transactional
     public BugEntity updateById(long id, String title, String description, BugStatus status, BugPriority priority) {
-
         log.info("BugService#updateById called. id={}", id); // 更新開始ログ
 
-        // 1) 既存を取得（無ければNotFound＝404へ）
+        // 1) 既存を取得（無ければNotFound＝404）
         BugEntity entity = bugRepository.findById(id) // Optional<BugEntity>で返る
                 .orElseThrow(() -> new BugNotFoundException(id)); // 「見つからない」をServiceで確定
 
@@ -68,7 +67,21 @@ public class BugService {
         entity.setPriority(fixedPriority); // 優先度更新
 
         // 4) 保存（JPAがUPDATEを発行）
-        return bugRepository.save(entity); // UPDATE（または同一Tx内ならdirty checkingでも可）
+        return bugRepository.save(entity);
     }
 
+    // 削除(DELETE)
+    @Transactional
+    public void deleteById(long id) {
+        log.info("BugService#deleteById called. id={}", id); // 削除開始ログ
+
+        // 1) 既存を取得(無ければNotFound=404)
+        BugEntity entity = bugRepository.findById(id)
+                .orElseThrow(() -> new BugNotFoundException(id));
+
+        // 2) 指定Bug削除(PAがDELTEを発行)
+        bugRepository.delete(entity);
+
+        log.info("BugService#deleteById succeeded. id={}", id); // 削除成功ログ
+    }
 }
