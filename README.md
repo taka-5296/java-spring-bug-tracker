@@ -21,24 +21,24 @@
 
 ### 現時点
 
+
 - ヘルスチェック：`GET /health`（OKを返す）
-- Bug（チケット）の最小API（現在：DB永続化は作業中）
+- Bug（チケット）のCRUD API（DB永続化）
   - 作成：`POST /api/bugs`
   - 一覧：`GET /api/bugs`
   - 個別：`GET /api/bugs/{id}`
   - 更新：`PUT /api/bugs/{id}`
+  - 削除：`DELETE /api/bugs/{id}`
   - 入力バリデーション（400）：title必須（VALIDATION_ERROR）
   - 不正JSON（400）：壊れたJSONまたは不正値（INVALID_JSON）
-  - 存在しないID（404）：NOT_FOUND（GET/PUTで共通）
+  - 存在しないID（404）：NOT_FOUND（GET/PUT/DELETEで共通）
   - status/priority未指定時は Service 側で OPEN/LOW をデフォルト補完
 - DB：PostgreSQL（Docker） + JPA（ORM）
 
 ### 予定
 
-- 不具合（Bug）のCRUD：作成 / 一覧 / 詳細 / 更新 / 削除
 - ステータス管理：Open / In Progress / Done
 - 認証・権限：USER / ADMIN
-- 永続化：PostgreSQL
 
 ## 技術スタック
 
@@ -47,9 +47,9 @@
 - Java 17
 - Spring Boot（Web）
 - Maven Wrapper（mvnw）
-- DB（予定）
+- DB
   - 永続化：PostgreSQL
-  - 実装方式：JPA（ORM）で進める
+  - 実装方式：JPA（ORM）
   - テーブル最小案：bugs（id, title, description, status, priority, createdAt, updatedAt）
 
 ### 予定
@@ -115,9 +115,7 @@ SELECT version();
 ### 4) 停止
 
 - アプリ停止：Ctrl + C
-- DB停止（任意）：```
-- docker stop bug-tracker-postgres
-- ```
+- DB停止（任意）：`docker stop bug-tracker-postgres`
 
 ## API（暫定）
 
@@ -125,11 +123,13 @@ SELECT version();
 - GET /api/bugs
 - GET /api/bugs/{id}
 - PUT /api/bugs/{id}
+- DELETE /api/bugs/{id}
 
 ## エラーレスポンス形式
 
 - 400: VALIDATION_ERROR / INVALID_JSON
 - 404: NOT_FOUND
+- 500: INTERNAL_ERROR
 - 例のJSON（1つだけ）
 
 ### 動作確認
@@ -182,7 +182,6 @@ curl.exe -i "http://localhost:8080/api/bugs/{id}"
 
 - 期待結果（GET）
 `"HTTP/1.1 200"`と、{id}で指定したBugのJSONが返る。
-※ Postmanでも同等の確認が可能（コレクションで実施）
 
 ##### Bug更新（PUT）
 
@@ -191,7 +190,26 @@ curl.exe -i -X PUT "http://localhost:8080/api/bugs/1" -H "Content-Type: applicat
 ```
 
 - 期待結果
-HTTP/1.1 200 と、更新後のBugのJSONが返る。
+`HTTP/1.1 200` と、更新後のBugのJSONが返る。
+
+##### Bug削除（DELETE）
+
+```PowerShell
+curl.exe -i -X DELETE "http://localhost:8080/api/bugs/{id}"
+```
+
+- 期待結果
+`HTTP/1.1 204`（No Content）が返る。
+
+##### 削除後の確認（GET → 404）
+
+```PowerShell
+curl.exe -i -X DELETE "http://localhost:8080/api/bugs/{id}"
+```
+
+- 期待結果
+`HTTP/1.1 404`
+`code=NOT_FOUND`のエラーJSONが返る
 
 ## 運用ルール（Git/GitHub）
 
@@ -230,6 +248,7 @@ HTTP/1.1 200 と、更新後のBugのJSONが返る。
 - 2026-03-01: docs v0（ER図/スキーマ/設計判断ログ）を追加。bugs テーブルをDDLで作成→psqlでINSERT/SELECT確認＋再現用SQLを保存。
 - 2026-03-02: Bugの作成・一覧・詳細をDB永続化へ切替。Postman＋psqlで登録・取得を確認。
 - 2026-03-03: Bugの詳細取得（GET /api/bugs/{id}）と更新（PUT /api/bugs/{id}）を追加。404/500を統一形式（details対応）で返却。BugResponseにdescription/updatedAtを追加し、API契約とREADMEを整合。
+- 2026-03-04: Bug削除（DELETE /api/bugs/{id}）を追加してCRUD完成。READMEにCRUD通し確認手順（DELETE/404確認）を追記。
 
 ## 週次まとめ（Weekly Log）
 
