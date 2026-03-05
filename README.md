@@ -84,27 +84,31 @@ docker run --name bug-tracker-postgres `
   -d postgres:16
 ```
 
-### 2) DB疎通確認（任意）
+### 2) コンテナ起動確認
 
+```PowerShell
+docker ps --filter "name=bug-tracker-postgres"
 ```
+
+- 期待結果
+"bug-tracker-postgres"の情報が表示され、STATUS が "Up ..." になっている。
+
+### 3) DB疎通確認（任意）
+
+```PowerShell
 docker exec -it bug-tracker-postgres psql -U bug_user -d bug_tracker
 ```
 
 #### psql内で
 
-```
-SELECT 1;
-```
+`SELECT 1;`
 
-```
-SELECT version();
-```
+`SELECT version();`
 
-```
-\q
-```
+`\q`
+※SELECTコマンドは`;`忘れに注意
 
-### 3) アプリ起動（devプロファイル）
+### 4) アプリ起動（devプロファイル）
 
 ```PowerShell
 .\mvnw.cmd spring-boot:run "-Dspring-boot.run.profiles=dev"
@@ -112,7 +116,7 @@ SELECT version();
 
 ※ "-Dspring-boot.run.profiles=dev" は必ず "" で囲む（PowerShell対策）
 
-### 4) 停止
+### 5) 停止
 
 - アプリ停止：Ctrl + C
 - DB停止（任意）：`docker stop bug-tracker-postgres`
@@ -147,14 +151,21 @@ SELECT version();
 
 ### テーブル作成
 
-- `docker exec -it bug-tracker-postgres psql -U bug_user -d bug_tracker`
-- `\i docs/db/bugs.sql`
+```PowerShell
+Get-Content .\docs\db\bugs.sql | docker exec -i bug-tracker-postgres psql -U bug_user -d bug_tracker`
+```
+
+- 期待結果
+CREATE TABLE 等が表示され、エラーが出ない。
+（※コマンド実行は/bug-tracker上で行う）
 
 ### 確認
 
-- `\dt`
-- `SELECT id, title, status, priority, created_at, updated_at FROM bugs ORDER BY id ASC;`
-- `\q`
+- psql内に入る
+`docker exec -it bug-tracker-postgres psql -U bug_user -d bug_tracker`
+- psql内で以下を実行
+- `\dt`　Name = bugs というテーブルが表で確認できる
+- `\q` psqlから抜ける
 
 ##### Bug作成（POST）
 
@@ -163,7 +174,7 @@ curl.exe -i -X POST "http://localhost:8080/api/bugs" -H "Content-Type: applicati
 ```
 
 - 期待結果
-`HTTP/1.1 200" //(または201)`と、作成されたBugのJSONがコマンドラインに返る。
+`HTTP/1.1 200`と、作成されたBugのJSONがコマンドラインに返る。
 
 ##### Bug一覧取得（GET）
 
@@ -180,14 +191,18 @@ curl.exe "http://localhost:8080/api/bugs"
 curl.exe -i "http://localhost:8080/api/bugs/{id}"
 ```
 
+※`{id}`にはPOSTのレスポンスのidを使用する。
+
 - 期待結果（GET）
 `"HTTP/1.1 200"`と、{id}で指定したBugのJSONが返る。
 
 ##### Bug更新（PUT）
 
 ```PowerShell
-curl.exe -i -X PUT "http://localhost:8080/api/bugs/1" -H "Content-Type: application/json" --data-raw '{"title":"updated title","description":"updated by curl","status":"DONE","priority":"HIGH"}'
+curl.exe -i -X PUT "http://localhost:8080/api/bugs/{id}" -H "Content-Type: application/json" --data-raw '{"title":"updated title","description":"updated by curl","status":"DONE","priority":"HIGH"}'
 ```
+
+※`{id}`にはPOSTのレスポンスのidを使用する。
 
 - 期待結果
 `HTTP/1.1 200` と、更新後のBugのJSONが返る。
@@ -197,6 +212,8 @@ curl.exe -i -X PUT "http://localhost:8080/api/bugs/1" -H "Content-Type: applicat
 ```PowerShell
 curl.exe -i -X DELETE "http://localhost:8080/api/bugs/{id}"
 ```
+
+※`{id}`にはPOSTのレスポンスのidを使用する。
 
 - 期待結果
 `HTTP/1.1 204`（No Content）が返る。
