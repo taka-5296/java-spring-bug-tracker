@@ -1,4 +1,4 @@
-# スキーマ(v0) -Bug Tracker
+# スキーマ(v0.1) -Bug Tracker
 
 ## 方針（v0）
 - 最小は bugs テーブルのみ作成
