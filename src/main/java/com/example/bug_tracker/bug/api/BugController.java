@@ -12,7 +12,9 @@ import org.springframework.http.ResponseEntity; //DELETE用
 import org.slf4j.Logger; // Log
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*; // アノテーション
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController // コントローラー宣言
@@ -26,12 +28,21 @@ public class BugController {
         this.bugService = bugService;
     }
 
-    // Bug新規登録(POST)
+    // Bug新規登録(POST) 成功で201 createdに固定
     @PostMapping
-    public BugResponse create(@Valid @RequestBody CreateBugRequest req) {
+    public ResponseEntity<BugResponse> create(@Valid @RequestBody CreateBugRequest req) {
         log.info("BugController#create called");
+
         BugEntity saved = bugService.create(req.title(), req.description(), req.status(), req.priority());
-        return toResponse(saved);
+        BugResponse body = toResponse(saved);
+
+        // Location: /api/bugs/{id}
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(saved.getId())
+                .toUri();
+
+        return ResponseEntity.created(location).body(body);
     }
 
     // Bug一覧取得(GET)
