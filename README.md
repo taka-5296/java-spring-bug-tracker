@@ -248,7 +248,7 @@ curl.exe -i -X DELETE "http://localhost:8080/api/bugs/{id}"
 
 - （ここに毎日追記する）
 
-#### Week1
+### Week1
 
 - 2026-02-20: Git/GitHub初期化、.gitignore整備、PR→mergeを1回実施、README+Issues整備
 - 2026-02-21: Spring Boot雛形作成、GET /health（OK）追加、mvnwで起動手順をREADMEに追記
@@ -258,7 +258,7 @@ curl.exe -i -X DELETE "http://localhost:8080/api/bugs/{id}"
 - 2026-02-25: /.github作成。PR&ISSUEテンプレ整理、READMEに[主要リンク]追加
 - 2026-02-26: Week1成果総括（API最小セット/Validation/例外統一/テンプレ整備）。Week2のIssueを起票
 
-#### Week2
+### Week2
 
 - 2026-02-27: DockerでPostgreSQL起動、psql疎通(SELECT 1/version)、pomにJPA+PostgreSQL追加、dev起動でHikari接続。READMEに手順追記。
 - 2026-02-28: docs v0（要件定義/API/エラー）を追加。、API仕様を「現状/予定」に分離して契約を整理。
@@ -266,9 +266,16 @@ curl.exe -i -X DELETE "http://localhost:8080/api/bugs/{id}"
 - 2026-03-02: Bugの作成・一覧・詳細をDB永続化へ切替。Postman＋psqlで登録・取得を確認。
 - 2026-03-03: Bugの詳細取得（GET /api/bugs/{id}）と更新（PUT /api/bugs/{id}）を追加。404/500を統一形式（details対応）で返却。BugResponseにdescription/updatedAtを追加し、API契約とREADMEを整合。
 - 2026-03-04: Bug削除（DELETE /api/bugs/{id}）を追加してCRUD完成。READMEにCRUD通し確認手順（DELETE/404確認）を追記。
+- 2026-03-05: READMEのDB初期化手順をPowerShell互換に固定（Get-Content|docker exec。400（VALIDATION_ERROR/INVALID_JSON）統一とPOST 201+Locationを実装。week2の実装内容docsに整合。
+
+### Week3
 
 ## 週次まとめ（Weekly Log）
 
-#### Week1 (02-20 ~ 02-26)
+### Week1 (02-20 ~ 02-26)
 
 - 到達点：/health、Bug最小API（作成/一覧/個別）、Validation（400統一）、不正JSON（400統一）、NotFound（404統一）、PR/issueテンプレ整備
+
+### Week2 (02-27 ~ 03-05)
+
+- 到達点：PostgreSQL（Docker）+ JPA永続化でBugのCRUD（作成/一覧/個別/更新/削除）を完成し、400/404/500のエラー形式を統一、POSTは201+Locationに固定。SSOT docsとREADMEの再現手順を整備。
