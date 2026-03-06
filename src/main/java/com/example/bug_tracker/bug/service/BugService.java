@@ -34,11 +34,23 @@ public class BugService {
         return bugRepository.save(entity);
     }
 
+    // status 指定は絞り込み、無ければ全件
     @Transactional(readOnly = true)
-    public List<BugEntity> findAll() {
-        log.info("BugService#findAll called");
-        // ソートは暫定：id昇順（必要なら後で変更）
-        return bugRepository.findAll();
+    public List<BugEntity> findAll(BugStatus status) {
+
+        if (status == null) {
+            // ログ-filterなし
+            log.info("BugService#findAll called. no status filter");
+
+            return bugRepository.findAll();
+        } else {
+            // ログ-filterあり
+            log.info("BugService#findAll called. no status filter");
+
+        }
+
+        // (status != null)でBugRepository固有メソッド呼び出し
+        return bugRepository.findByStatus(status);
     }
 
     @Transactional(readOnly = true)

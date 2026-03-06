@@ -26,6 +26,7 @@
 - Bug（チケット）のCRUD API（DB永続化）
   - 作成：`POST /api/bugs`
   - 一覧：`GET /api/bugs`
+    - `status` クエリパラメータ指定でステータス絞り込み可能（例：`GET /api/bugs?status=OPEN`）
   - 個別：`GET /api/bugs/{id}`
   - 更新：`PUT /api/bugs/{id}`
   - 削除：`DELETE /api/bugs/{id}`
@@ -125,6 +126,7 @@ docker exec -it bug-tracker-postgres psql -U bug_user -d bug_tracker
 
 - POST /api/bugs
 - GET /api/bugs
+  - 任意クエリ：`status`（`OPEN` / `IN_PROGRESS` / `DONE`）
 - GET /api/bugs/{id}
 - PUT /api/bugs/{id}
 - DELETE /api/bugs/{id}
@@ -167,16 +169,16 @@ CREATE TABLE 等が表示され、エラーが出ない。
 - `\dt`　Name = bugs というテーブルが表で確認できる
 - `\q` psqlから抜ける
 
-##### Bug作成（POST）
+#### Bug作成（POST）
 
 ```PowerShell
 curl.exe -i -X POST "http://localhost:8080/api/bugs" -H "Content-Type: application/json" --data-raw '{"title":"test bug","description":"created by curl"}'
 ```
 
 - 期待結果
-`HTTP/1.1 200`と、作成されたBugのJSONがコマンドラインに返る。
+`HTTP/1.1 201`と`Location`、および作成されたBugのJSONがコマンドラインに返る。
 
-##### Bug一覧取得（GET）
+#### Bug一覧取得（GET）
 
 ```PowerShell
 curl.exe "http://localhost:8080/api/bugs"
@@ -185,7 +187,16 @@ curl.exe "http://localhost:8080/api/bugs"
 - 期待結果
 `"HTTP/1.1 200"` と、過去に作成済みのBugがJSONで返る。
 
-##### Bug個別取得（GET）
+#### Bug一覧絞り込み取得（GET / status）
+
+```PowerShell
+curl.exe "http://localhost:8080/api/bugs?status=OPEN"
+```
+
+- 期待結果
+"HTTP/1.1 200" と、status が OPEN のBugのみがJSONで返る。
+
+#### Bug個別取得（GET）
 
 ```PowerShell
 curl.exe -i "http://localhost:8080/api/bugs/{id}"
@@ -196,7 +207,7 @@ curl.exe -i "http://localhost:8080/api/bugs/{id}"
 - 期待結果（GET）
 `"HTTP/1.1 200"`と、{id}で指定したBugのJSONが返る。
 
-##### Bug更新（PUT）
+#### Bug更新（PUT）
 
 ```PowerShell
 curl.exe -i -X PUT "http://localhost:8080/api/bugs/{id}" -H "Content-Type: application/json" --data-raw '{"title":"updated title","description":"updated by curl","status":"DONE","priority":"HIGH"}'
@@ -207,7 +218,7 @@ curl.exe -i -X PUT "http://localhost:8080/api/bugs/{id}" -H "Content-Type: appli
 - 期待結果
 `HTTP/1.1 200` と、更新後のBugのJSONが返る。
 
-##### Bug削除（DELETE）
+#### Bug削除（DELETE）
 
 ```PowerShell
 curl.exe -i -X DELETE "http://localhost:8080/api/bugs/{id}"
@@ -218,10 +229,10 @@ curl.exe -i -X DELETE "http://localhost:8080/api/bugs/{id}"
 - 期待結果
 `HTTP/1.1 204`（No Content）が返る。
 
-##### 削除後の確認（GET → 404）
+#### 削除後の確認（GET → 404）
 
 ```PowerShell
-curl.exe -i -X DELETE "http://localhost:8080/api/bugs/{id}"
+curl.exe -i -X GET "http://localhost:8080/api/bugs/{id}"
 ```
 
 - 期待結果
@@ -269,6 +280,8 @@ curl.exe -i -X DELETE "http://localhost:8080/api/bugs/{id}"
 - 2026-03-05: READMEのDB初期化手順をPowerShell互換に固定（Get-Content|docker exec。400（VALIDATION_ERROR/INVALID_JSON）統一とPOST 201+Locationを実装。week2の実装内容docsに整合。
 
 ### Week3
+
+- 2026-03-06: GETのBug一覧取得に statusクエリパラメータによる絞り込みを追加。（/api/bugs?status=OPEN|IN_PROGRESS|DONE）で取得可能。
 
 ## 週次まとめ（Weekly Log）
 
