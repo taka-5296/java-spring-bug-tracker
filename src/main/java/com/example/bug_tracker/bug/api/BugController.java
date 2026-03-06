@@ -1,5 +1,6 @@
 package com.example.bug_tracker.bug.api;
 
+import com.example.bug_tracker.bug.domain.BugStatus;
 import com.example.bug_tracker.bug.dto.BugResponse;
 import com.example.bug_tracker.bug.entity.BugEntity;
 import com.example.bug_tracker.bug.service.BugService;
@@ -45,11 +46,16 @@ public class BugController {
         return ResponseEntity.created(location).body(body);
     }
 
-    // Bug一覧取得(GET)
+    // Bug一覧取得(GET) + status絞り込み(任意)
     @GetMapping
-    public List<BugResponse> list() {
-        log.info("BugController#list called");
-        return bugService.findAll().stream().map(this::toResponse).toList();
+    public List<BugResponse> list(@RequestParam(required = false) BugStatus status) {
+        log.info("BugController#list called. status={}", status);
+
+        return bugService.findAll(status)
+                .stream()
+                .map(this::toResponse)
+                .toList();
+
     }
 
     // Bug個別取得(GET)

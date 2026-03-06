@@ -19,14 +19,14 @@ Base URL: `http://localhost:8080`
 | 操作 | メソッド | パス | リクエスト | 成功 | 失敗 |
 | --- | --- | --- | --- | --- | --- |
 | 作成 | POST | /api/bugs | CreateBugRequest | 201 + BugResponse | 400/500 |
-| 一覧取得 | GET | /api/bugs | - | 200 + BugResponse[] | 500 |
+| 一覧取得 | GET | /api/bugs | status (optional) | 200 + BugResponse[] | 500 |
 | 個別取得 | GET | /api/bugs/{id} | - | 200 + BugResponse | 404/500 |
 | 更新 | PUT | /api/bugs/{id} | UpdateBugRequest | 200 + BugResponse | 400/404 |
 | 削除 | DELETE | /api/bugs/{id} | - | 204 (no body) | 404/500 |
 
 > 注：現状は 500 を厳密に返す契約にはしていない
 
-### 1.2 データモデル（2026-03-05現在）
+### 1.2 データモデル（2026-03-06現在）
 
 #### Bug（現状のレスポンス）
 
@@ -51,3 +51,8 @@ Base URL: `http://localhost:8080`
 - description: string（任意）
 - status: string（任意。未指定時はOPEN）
 - priority: string（任意。未指定時はLOW）
+
+#### 一覧取得のクエリパラメータ
+
+- status: string（任意。`OPEN` / `IN_PROGRESS` / `DONE`）
+- 例: `GET /api/bugs?status=OPEN`
