@@ -6,6 +6,8 @@ import com.example.bug_tracker.bug.entity.BugEntity;
 import com.example.bug_tracker.bug.service.BugService;
 import com.example.bug_tracker.bug.dto.CreateBugRequest;
 import com.example.bug_tracker.bug.dto.UpdateBugRequest;
+import com.example.bug_tracker.bug.dto.BugPageResponse;
+import com.example.bug_tracker.bug.dto.PageMetaResponse;
 
 import jakarta.validation.Valid; // Validation
 import org.springframework.http.ResponseEntity; //DELETE用
@@ -17,6 +19,10 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 @RestController // コントローラー宣言
 @RequestMapping("/api/bugs")
@@ -48,13 +54,30 @@ public class BugController {
 
     // Bug一覧取得(GET) + status絞り込み(任意)
     @GetMapping
-    public List<BugResponse> list(@RequestParam(required = false) BugStatus status) {
-        log.info("BugController#list called. status={}", status);
+    public BugPageResponse list(
+            @RequestParam(required = false) BugStatus status,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
 
-        return bugService.findAll(status)
+        log.info("BugController#list called. status={}, page={}, size={}", status, page, size);
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<BugEntity> bugPage = bugService.findAll(status, pageable);
+
+        List<BugResponse> items = bugPage.getContent()
                 .stream()
                 .map(this::toResponse)
                 .toList();
+
+        PageMetaResponse meta = new PageMetaResponse(
+                bugPage.getNumber(),
+                bugPage.getSize(),
+                bugPage.getTotalElements(),
+                bugPage.getTotalPages(),
+                bugPage.hasNext(),
+                bugPage.hasPrevious());
+
+        return new BugPageResponse(items, meta);
 
     }
 

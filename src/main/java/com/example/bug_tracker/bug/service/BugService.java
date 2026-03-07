@@ -11,7 +11,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @Service
 public class BugService {
@@ -36,21 +37,20 @@ public class BugService {
 
     // status 指定は絞り込み、無ければ全件
     @Transactional(readOnly = true)
-    public List<BugEntity> findAll(BugStatus status) {
+    public Page<BugEntity> findAll(BugStatus status, Pageable pageable) {
 
         if (status == null) {
             // ログ-filterなし
             log.info("BugService#findAll called. no status filter");
-
-            return bugRepository.findAll();
-        } else {
-            // ログ-filterあり
-            log.info("BugService#findAll called. no status filter");
-
+            return bugRepository.findAll(pageable);
         }
 
+        // ログ-filterあり
+        log.info("BugService#findAll called. status={}, page={}, size={}", status, pageable.getPageNumber(),
+                pageable.getPageSize());
+
         // (status != null)でBugRepository固有メソッド呼び出し
-        return bugRepository.findByStatus(status);
+        return bugRepository.findByStatus(status, pageable);
     }
 
     @Transactional(readOnly = true)
@@ -72,9 +72,9 @@ public class BugService {
         BugStatus fixedStatus = (status != null) ? status : BugStatus.OPEN; // nullならOPEN
         BugPriority fixedPriority = (priority != null) ? priority : BugPriority.LOW; // nullならLOW
 
-        // 3) Entityへ反映（ここが“DBに保存される内容”）
+        // 3) Entityへ反映
         entity.setTitle(title); // タイトル更新
-        entity.setDescription(description); // 説明更新（null許容ならそのまま）
+        entity.setDescription(description); // 説明更新
         entity.setStatus(fixedStatus); // ステータス更新
         entity.setPriority(fixedPriority); // 優先度更新
 
