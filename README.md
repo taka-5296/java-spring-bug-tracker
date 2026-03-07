@@ -27,6 +27,8 @@
   - 作成：`POST /api/bugs`
   - 一覧：`GET /api/bugs`
     - `status` クエリパラメータ指定でステータス絞り込み可能（例：`GET /api/bugs?status=OPEN`）
+    - `page` / `size` クエリパラメータ指定でページング可能（例：`GET /api/bugs?page=0&size=10`）
+    - 一覧レスポンスは `items + meta` 形式で返却
   - 個別：`GET /api/bugs/{id}`
   - 更新：`PUT /api/bugs/{id}`
   - 削除：`DELETE /api/bugs/{id}`
@@ -127,6 +129,9 @@ docker exec -it bug-tracker-postgres psql -U bug_user -d bug_tracker
 - POST /api/bugs
 - GET /api/bugs
   - 任意クエリ：`status`（`OPEN` / `IN_PROGRESS` / `DONE`）
+  - 任意クエリ：`page`（0始まりのページ番号）
+  - 任意クエリ：`size`（1ページ件数）
+  - 成功レスポンス：`items + meta`
 - GET /api/bugs/{id}
 - PUT /api/bugs/{id}
 - DELETE /api/bugs/{id}
@@ -185,16 +190,34 @@ curl.exe "http://localhost:8080/api/bugs"
 ```
 
 - 期待結果
-`"HTTP/1.1 200"` と、過去に作成済みのBugがJSONで返る。
+`"HTTP/1.1 200"` と、items にBug一覧、meta にページ情報を含むJSONが返る。
 
-#### Bug一覧絞り込み取得（GET / status）
+##### Bug一覧絞り込み取得（GET / status）
 
 ```PowerShell
 curl.exe "http://localhost:8080/api/bugs?status=OPEN"
 ```
 
 - 期待結果
-"HTTP/1.1 200" と、status が OPEN のBugのみがJSONで返る。
+"HTTP/1.1 200" と、status が OPEN のBugのみが items に入り、meta にページ情報が返る。
+
+##### Bug一覧ページング取得（GET / page,size）
+
+```PowerShell
+curl.exe "http://localhost:8080/api/bugs?page=0&size=2"
+```
+
+- 期待結果
+1ページあたり2件で items が返り、meta.page=0, meta.size=2 になる。
+
+##### Bug一覧ページング取得（GET / page,size,status）
+
+```PowerShell
+curl.exe "http://localhost:8080/api/bugs?status=OPEN&page=0&size=2"
+```
+
+- 期待結果
+status 絞り込みとページングを併用した結果が items + meta 形式で返る。
 
 #### Bug個別取得（GET）
 
@@ -281,7 +304,8 @@ curl.exe -i -X GET "http://localhost:8080/api/bugs/{id}"
 
 ### Week3
 
-- 2026-03-06: GETのBug一覧取得に statusクエリパラメータによる絞り込みを追加。（/api/bugs?status=OPEN|IN_PROGRESS|DONE）で取得可能。
+- 2026-03-06: (GET /api/bugs)に statusクエリパラメータによる絞り込みを追加。（/api/bugs?status=OPEN|IN_PROGRESS|DONE）で取得可能。
+- 2026-03-07: (GET /api/bugs) にページング（page/size）を追加。一覧レスポンスを `items + meta` 形式へ変更し、status絞り込みとの併用を curl で確認。
 
 ## 週次まとめ（Weekly Log）
 

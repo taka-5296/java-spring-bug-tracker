@@ -19,7 +19,7 @@ Base URL: `http://localhost:8080`
 | 操作 | メソッド | パス | リクエスト | 成功 | 失敗 |
 | --- | --- | --- | --- | --- | --- |
 | 作成 | POST | /api/bugs | CreateBugRequest | 201 + BugResponse | 400/500 |
-| 一覧取得 | GET | /api/bugs | status (optional) | 200 + BugResponse[] | 500 |
+| 一覧取得 | GET | /api/bugs | status/page/size (optional) | 200 + BugResponse[] | 500 |
 | 個別取得 | GET | /api/bugs/{id} | - | 200 + BugResponse | 404/500 |
 | 更新 | PUT | /api/bugs/{id} | UpdateBugRequest | 200 + BugResponse | 400/404 |
 | 削除 | DELETE | /api/bugs/{id} | - | 204 (no body) | 404/500 |
@@ -38,6 +38,20 @@ Base URL: `http://localhost:8080`
 - createdAt: string（ISO-8601）
 - updatedAt: string (ISO-8601)
 
+##### BugPageResponse（現状の一覧レスポンス）
+
+- items: Bug[]
+- meta: PageMetaResponse
+
+##### PageMetaResponse
+
+- page: number（現在ページ。0始まり）
+- size: number（1ページ件数）
+- totalElements: number（総件数）
+- totalPages: number（総ページ数）
+- hasNext: boolean
+- hasPrevious: boolean
+
 #### CreateBugRequest（現状のリクエスト）
 
 - title: string（必須）
@@ -55,4 +69,35 @@ Base URL: `http://localhost:8080`
 #### 一覧取得のクエリパラメータ
 
 - status: string（任意。`OPEN` / `IN_PROGRESS` / `DONE`）
-- 例: `GET /api/bugs?status=OPEN`
+- page: number（任意。未指定時は `0`）
+- size: number（任意。未指定時は `10`）
+
+- 例1: `GET /api/bugs`
+- 例2: `GET /api/bugs?status=OPEN`
+- 例3: `GET /api/bugs?page=0&size=2`
+- 例4: `GET /api/bugs?status=OPEN&page=0&size=2`
+
+#### 一覧取得レスポンス例
+
+```json
+{
+  "items": [
+    {
+      "id": 1,
+      "title": "test bug",
+      "description": "created by curl",
+      "status": "OPEN",
+      "priority": "LOW",
+      "createdAt": "2026-03-07T12:00:00Z",
+      "updatedAt": "2026-03-07T12:00:00Z"
+    }
+  ],
+  "meta": {
+    "page": 0,
+    "size": 10,
+    "totalElements": 4,
+    "totalPages": 1,
+    "hasNext": false,
+    "hasPrevious": false
+  }
+}

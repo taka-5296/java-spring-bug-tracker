@@ -52,7 +52,7 @@ public class BugController {
         return ResponseEntity.created(location).body(body);
     }
 
-    // Bug一覧取得(GET) + status絞り込み(任意)
+    // Bug一覧取得(GET) + status絞り込み(任意) + ページング(page&size)
     @GetMapping
     public BugPageResponse list(
             @RequestParam(required = false) BugStatus status,
