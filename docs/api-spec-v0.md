@@ -24,6 +24,9 @@ Base URL: `http://localhost:8080`
 | 更新 | PUT | /api/bugs/{id} | UpdateBugRequest | 200 + BugResponse | 400/404 |
 | 削除 | DELETE | /api/bugs/{id} | - | 204 (no body) | 404/500 |
 
+- `POST /api/bugs` 失敗例：title 空 → 400 / VALIDATION_ERROR
+- `PUT /api/bugs/{id}` 失敗例：status に不正enum → 400 / INVALID_JSON
+
 > 注：現状は 500 を厳密に返す契約にはしていない
 
 ### 1.2 データモデル（2026-03-06現在）
