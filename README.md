@@ -262,6 +262,41 @@ curl.exe -i -X GET "http://localhost:8080/api/bugs/{id}"
 `HTTP/1.1 404`
 `code=NOT_FOUND`のエラーJSONが返る
 
+#### Validation / エラー確認（400）
+
+##### 作成時のValidationエラー（POST）
+
+```PowerShell
+curl.exe -i -X POST "http://localhost:8080/api/bugs" -H "Content-Type: application/json" --data-raw '{"title":"","description":"created by curl"}'
+```
+
+- 期待結果
+`HTTP/1.1 400`
+`code=VALIDATION_ERROR` のエラーJSONが返る
+details に `title must not be blank` が含まれる
+
+##### 更新時のValidationエラー（PUT）
+
+```PowerShell
+curl.exe -i -X PUT "http://localhost:8080/api/bugs/{id}" -H "Content-Type: application/json" --data-raw '{"title":"","description":"updated by curl","status":"DONE","priority":"HIGH"}'
+```
+
+※`{id}`にはPOSTのレスポンスのidを使用する。
+
+- 期待結果
+`HTTP/1.1 400`
+`code=VALIDATION_ERROR` のエラーJSONが返る
+
+##### 不正JSON / enum不正（PUT）
+
+```PowerShell
+curl.exe -i -X PUT "http://localhost:8080/api/bugs/{id}" -H "Content-Type: application/json" --data-raw '{"title":"updated title","description":"updated by curl","status":"AAA","priority":"HIGH"}'
+```
+
+- 期待結果
+HTTP/1.1 400
+code=INVALID_JSON のエラーJSONが返る
+
 ## 運用ルール（Git/GitHub）
 
 - ブランチ：main + feature/xxx
@@ -306,7 +341,8 @@ curl.exe -i -X GET "http://localhost:8080/api/bugs/{id}"
 
 - 2026-03-06: (GET /api/bugs)に statusクエリパラメータによる絞り込みを追加。（/api/bugs?status=OPEN|IN_PROGRESS|DONE）で取得可能。
 - 2026-03-07: (GET /api/bugs) にページング（page/size）を追加。一覧レスポンスを `items + meta` 形式へ変更し、status絞り込みとの併用を curl で確認。
-
+- 2026-03-08: 作成/更新DTOのValidationおよび、400エラーのdetails整形を確認。
+ 
 ## 週次まとめ（Weekly Log）
 
 ### Week1 (02-20 ~ 02-26)

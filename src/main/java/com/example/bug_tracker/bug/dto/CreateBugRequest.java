@@ -4,10 +4,12 @@ import com.example.bug_tracker.bug.domain.BugPriority;
 import com.example.bug_tracker.bug.domain.BugStatus;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 // 入力用DTO
 public record CreateBugRequest(
                 @NotBlank(message = "title must not be blank") // titleは必須
+                @Size(max = 200) // VARCHAR(200)
                 String title,
                 String description,
                 BugStatus status,

@@ -18,7 +18,8 @@ import java.util.stream.Collectors;
 public class GlobalExceptionHandler {
         private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
-        // 存在しないID/Bug：404 +
+        // 404例外
+        // 存在しないID/Bug Not Found
         @ExceptionHandler(BugNotFoundException.class)
         public ResponseEntity<ErrorResponse> handleNotFound(BugNotFoundException ex) {
                 log.info("Bug not found. id={}", ex.getId());
@@ -30,7 +31,8 @@ public class GlobalExceptionHandler {
                                                 List.of(ex.getMessage())));
         }
 
-        // ① Validation失敗：400 + VALIDATION_ERROR
+        // 400系例外
+        // Validation失敗：400 + VALIDATION_ERROR
         @ExceptionHandler(MethodArgumentNotValidException.class)
         public ResponseEntity<ErrorResponse> handleNotValid(MethodArgumentNotValidException ex) {
 
@@ -49,7 +51,7 @@ public class GlobalExceptionHandler {
                                                 details));
         }
 
-        // ② JSON不正/enum不正など：400 + INVALID_JSON
+        // JSON不正/enum不正など：400 + INVALID_JSON
         @ExceptionHandler(HttpMessageNotReadableException.class) // 400例外
         public ResponseEntity<ErrorResponse> handleNotReadable(HttpMessageNotReadableException ex) {
 

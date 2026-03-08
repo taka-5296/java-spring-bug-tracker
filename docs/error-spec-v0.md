@@ -18,8 +18,6 @@
 - 入力不備（Validation）: code=VALIDATION_ERROR
 - JSON不正/enum不正など: code=INVALID_JSON
 
-※400の統一エラー（VALIDATION_ERROR/INVALID_JSON）は契約として定義済みだが、現時点の実装は404/500のみ。
-
 ### 404 Not Found
 
 - 対象リソースが存在しない: code=NOT_FOUND
@@ -36,5 +34,13 @@
   "code": "VALIDATION_ERROR",
   "message": "Validation failed",
   "details": ["title must not be blank"]
+}
+```
+
+```json
+{
+  "code": "INVALID_JSON",
+  "message": "リクエストJSONの形式が不正です",
+  "details": ["JSONの形式、またはenumの値を確認してください"]
 }
 ```
