@@ -16,14 +16,16 @@ import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+        // Logger定義：例外処理専用ログ
         private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
-        // 404例外
-        // 存在しないID/Bug Not Found
+        // 404例外： 存在しないID指定
         @ExceptionHandler(BugNotFoundException.class)
         public ResponseEntity<ErrorResponse> handleNotFound(BugNotFoundException ex) {
-                log.info("Bug not found. id={}", ex.getId());
+                // NotFoundログ
+                log.info("GlobalExceptionHandler#handleNotFound. id={}", ex.getId());
 
+                // 404 + 統一形式で返す
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                                 .body(new ErrorResponse(
                                                 "NOT_FOUND",
@@ -31,19 +33,19 @@ public class GlobalExceptionHandler {
                                                 List.of(ex.getMessage())));
         }
 
-        // 400系例外
-        // Validation失敗：400 + VALIDATION_ERROR
+        // 400例外：Validation失敗（クライアント入力起因の想定内エラー）
         @ExceptionHandler(MethodArgumentNotValidException.class)
         public ResponseEntity<ErrorResponse> handleNotValid(MethodArgumentNotValidException ex) {
 
-                // details：フィールド別エラーを「field message」形式で並べる
+                // details作成：DTO側のdefaultMessageのみ採用
                 List<String> details = ex.getBindingResult().getFieldErrors().stream()
                                 .map(fe -> fe.getDefaultMessage())
                                 .collect(Collectors.toList());
 
-                // INFO：クライアント入力起因の想定内エラー
-                log.info("Validation failed. details={}", details);
+                // Validation failedログ
+                log.info("GlobalExceptionHandler#handleNotValid. errorCount={}", details.size());
 
+                // 400 + 統一形式で返す
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                                 .body(new ErrorResponse(
                                                 "VALIDATION_ERROR",
@@ -51,14 +53,15 @@ public class GlobalExceptionHandler {
                                                 details));
         }
 
-        // JSON不正/enum不正など：400 + INVALID_JSON
+        // 400例外：JSON形式不正 / enum不正（クライアント起因の想定内エラー）
         @ExceptionHandler(HttpMessageNotReadableException.class) // 400例外
         public ResponseEntity<ErrorResponse> handleNotReadable(HttpMessageNotReadableException ex) {
 
-                // INFO：想定内（壊れたJSON/enum不正）
-                // ※内部例外の生メッセージは漏洩リスクがあるので、詳細は固定文言にする
-                log.info("Invalid JSON request body. cause={}", ex.getMostSpecificCause().getClass().getSimpleName());
+                // causeの型名だけ出し、内部メッセージ本文は出しすぎない
+                log.info("GlobalExceptionHandler#handleNotReadable. cause={}",
+                                ex.getMostSpecificCause().getClass().getSimpleName());
 
+                // 400 + 統一形式で返す
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                                 .body(new ErrorResponse(
                                                 "INVALID_JSON",
@@ -68,10 +71,14 @@ public class GlobalExceptionHandler {
                                 ));
         }
 
-        // 500例外
+        // 500例外（想定外障害）
         @ExceptionHandler(Exception.class)
         public ResponseEntity<ErrorResponse> handleInternal(Exception ex) {
-                log.error("Unexpected error", ex);
+
+                // ERROR：調査対象なのでstacktrace付きで残す（ログ）
+                log.error("GlobalExceptionHandler#handleInternal. unexpected error", ex);
+
+                // 500 + 統一形式で返す
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                                 .body(new ErrorResponse(
                                                 "INTERNAL_ERROR",

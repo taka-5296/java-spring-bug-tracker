@@ -48,7 +48,8 @@
 
 ## 5. 非機能要件（v0）
 
-- ログ：Controller/Service到達はINFO、例外はERROR（機微情報は出しすぎない）
-- 監視：GET /health で生存確認
-- 権限：v0では未実装（Week5でUSER/ADMIN）
-- データ保持：v0は物理削除（論理削除は将来検討）
+- ログ：
+  - Controller / Service の操作開始・主要結果は INFO で記録する
+  - 400（VALIDATION_ERROR / INVALID_JSON）および 404（NOT_FOUND）は想定内エラーとして INFO で記録する
+  - 500（INTERNAL_ERROR）のみ想定外障害として ERROR で記録し、スタックトレースを残す
+  - request body 全文、個人情報、巨大 payload、内部例外の生メッセージはログへ出しすぎない
