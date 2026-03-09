@@ -24,6 +24,7 @@ public class BugService {
         this.bugRepository = bugRepository;
     }
 
+    // Bug作成 (POST)
     @Transactional
     public BugEntity create(String title, String description, BugStatus status, BugPriority priority) {
         log.info("BugService#create called");
@@ -32,7 +33,12 @@ public class BugService {
         BugPriority fixedPriority = (priority != null) ? priority : BugPriority.LOW;
 
         BugEntity entity = new BugEntity(title, description, fixedStatus, fixedPriority);
-        return bugRepository.save(entity);
+        BugEntity result = bugRepository.save(entity);
+
+        // Bug作成成功ログ
+        log.info("BugService#create succeeded. saved id={}", result.getId());
+
+        return result;
     }
 
     // status 指定は絞り込み、無ければ全件
@@ -41,25 +47,47 @@ public class BugService {
 
         if (status == null) {
             // ログ-filterなし
-            log.info("BugService#findAll called. no status filter");
-            return bugRepository.findAll(pageable);
+            log.info("BugService#findAll called. no status filter, page={}, size={}",
+                    pageable.getPageNumber(), pageable.getPageSize());
+
+            // 一覧検索
+            Page<BugEntity> allResult = bugRepository.findAll(pageable);
+
+            // 一覧検索成功ログ
+            log.info("BugService#findAll returnedElements={}", allResult.getNumberOfElements());
+
+            return allResult;
         }
 
         // ログ-filterあり
         log.info("BugService#findAll called. status={}, page={}, size={}", status, pageable.getPageNumber(),
                 pageable.getPageSize());
 
-        // (status != null)でBugRepository固有メソッド呼び出し
-        return bugRepository.findByStatus(status, pageable);
+        // (status != null)で絞り込み検索(BugRepository固有メソッド呼び出し)
+        Page<BugEntity> filteredResult = bugRepository.findByStatus(status, pageable);
+
+        // 絞り込み検索成功ログ(件数)
+        log.info("BugService#findAll returnedElements={}", filteredResult.getNumberOfElements());
+
+        return filteredResult;
     }
 
     @Transactional(readOnly = true)
     public BugEntity findById(long id) {
         log.info("BugService#findById called. id={}", id);
-        return bugRepository.findById(id)
+
+        // id指定検索（無ければNotFound）
+        BugEntity result = bugRepository.findById(id)
                 .orElseThrow(() -> new BugNotFoundException(id));
+
+        // id指定検索成功ログ
+        log.info("BugService#findById succeeded. id={}", id);
+
+        return result;
+
     }
 
+    // 更新(PUT)
     @Transactional
     public BugEntity updateById(long id, String title, String description, BugStatus status, BugPriority priority) {
         log.info("BugService#updateById called. id={}", id); // 更新開始ログ
@@ -79,7 +107,12 @@ public class BugService {
         entity.setPriority(fixedPriority); // 優先度更新
 
         // 4) 保存（JPAがUPDATEを発行）
-        return bugRepository.save(entity);
+        BugEntity result = bugRepository.save(entity);
+
+        // 更新成功ログ
+        log.info("BugService#updateById succeeded. id={}", result.getId());
+
+        return result;
     }
 
     // 削除(DELETE)

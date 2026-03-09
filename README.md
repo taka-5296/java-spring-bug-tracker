@@ -136,27 +136,48 @@ docker exec -it bug-tracker-postgres psql -U bug_user -d bug_tracker
 - PUT /api/bugs/{id}
 - DELETE /api/bugs/{id}
 
-## エラーレスポンス形式
+## エラー形式
 
-- 400: VALIDATION_ERROR / INVALID_JSON
-- 404: NOT_FOUND
-- 500: INTERNAL_ERROR
-- 例のJSON（1つだけ）
+- 本APIのエラーレスポンスは、以下の統一形式で返す。
 
-### 動作確認
+```json
+{
+  "code": "VALIDATION_ERROR",
+  "message": "入力値が不正です",
+  "details": [
+    "titleは必須です"
+  ]
+}
+```
 
-#### ヘルスチェック
+### エラーコード
+
+VALIDATION_ERROR : DTO Validation 失敗（400）
+INVALID_JSON : JSON形式不正 / enum不正（400）
+NOT_FOUND : 指定idのBugが存在しない（404）
+INTERNAL_ERROR : 想定外エラー（500）
+
+### ロギングポリシー
+
+- Controller / Service の操作開始と主要結果を INFO で記録する
+- 400 / 404 は想定内エラーとして INFO で記録する
+- 500 は想定外エラーとして ERROR で記録し、スタックトレースを残す
+- request body 全文、個人情報、巨大ペイロード、内部例外の生メッセージはログへ出しすぎない
+
+## 動作確認
+
+### ヘルスチェック
 
 - ブラウザでアクセス：`http://localhost:8080/health`
 - 期待結果：`OK` が表示される
 
-#### API (Bug作成・一覧・個別)
+### API (Bug作成・一覧・個別)
 
 - 以下は PowerShellの例(Windows11想定 / curl使用)
 
-## bugsテーブル作成と確認（psql）
+### bugsテーブル作成と確認（psql）
 
-### テーブル作成
+#### テーブル作成
 
 ```PowerShell
 Get-Content .\docs\db\bugs.sql | docker exec -i bug-tracker-postgres psql -U bug_user -d bug_tracker`
@@ -166,7 +187,7 @@ Get-Content .\docs\db\bugs.sql | docker exec -i bug-tracker-postgres psql -U bug
 CREATE TABLE 等が表示され、エラーが出ない。
 （※コマンド実行は/bug-tracker上で行う）
 
-### 確認
+#### 確認
 
 - psql内に入る
 `docker exec -it bug-tracker-postgres psql -U bug_user -d bug_tracker`
@@ -174,7 +195,7 @@ CREATE TABLE 等が表示され、エラーが出ない。
 - `\dt`　Name = bugs というテーブルが表で確認できる
 - `\q` psqlから抜ける
 
-#### Bug作成（POST）
+### Bug作成（POST）
 
 ```PowerShell
 curl.exe -i -X POST "http://localhost:8080/api/bugs" -H "Content-Type: application/json" --data-raw '{"title":"test bug","description":"created by curl"}'
@@ -183,7 +204,7 @@ curl.exe -i -X POST "http://localhost:8080/api/bugs" -H "Content-Type: applicati
 - 期待結果
 `HTTP/1.1 201`と`Location`、および作成されたBugのJSONがコマンドラインに返る。
 
-#### Bug一覧取得（GET）
+### Bug一覧取得（GET）
 
 ```PowerShell
 curl.exe "http://localhost:8080/api/bugs"
@@ -192,7 +213,7 @@ curl.exe "http://localhost:8080/api/bugs"
 - 期待結果
 `"HTTP/1.1 200"` と、items にBug一覧、meta にページ情報を含むJSONが返る。
 
-##### Bug一覧絞り込み取得（GET / status）
+#### Bug一覧絞り込み取得（GET / status）
 
 ```PowerShell
 curl.exe "http://localhost:8080/api/bugs?status=OPEN"
@@ -201,7 +222,7 @@ curl.exe "http://localhost:8080/api/bugs?status=OPEN"
 - 期待結果
 "HTTP/1.1 200" と、status が OPEN のBugのみが items に入り、meta にページ情報が返る。
 
-##### Bug一覧ページング取得（GET / page,size）
+#### Bug一覧ページング取得（GET / page,size）
 
 ```PowerShell
 curl.exe "http://localhost:8080/api/bugs?page=0&size=2"
@@ -210,7 +231,7 @@ curl.exe "http://localhost:8080/api/bugs?page=0&size=2"
 - 期待結果
 1ページあたり2件で items が返り、meta.page=0, meta.size=2 になる。
 
-##### Bug一覧ページング取得（GET / page,size,status）
+#### Bug一覧ページング取得（GET / page,size,status）
 
 ```PowerShell
 curl.exe "http://localhost:8080/api/bugs?status=OPEN&page=0&size=2"
@@ -219,7 +240,7 @@ curl.exe "http://localhost:8080/api/bugs?status=OPEN&page=0&size=2"
 - 期待結果
 status 絞り込みとページングを併用した結果が items + meta 形式で返る。
 
-#### Bug個別取得（GET）
+### Bug個別取得（GET）
 
 ```PowerShell
 curl.exe -i "http://localhost:8080/api/bugs/{id}"
@@ -230,7 +251,7 @@ curl.exe -i "http://localhost:8080/api/bugs/{id}"
 - 期待結果（GET）
 `"HTTP/1.1 200"`と、{id}で指定したBugのJSONが返る。
 
-#### Bug更新（PUT）
+### Bug更新（PUT）
 
 ```PowerShell
 curl.exe -i -X PUT "http://localhost:8080/api/bugs/{id}" -H "Content-Type: application/json" --data-raw '{"title":"updated title","description":"updated by curl","status":"DONE","priority":"HIGH"}'
@@ -241,7 +262,7 @@ curl.exe -i -X PUT "http://localhost:8080/api/bugs/{id}" -H "Content-Type: appli
 - 期待結果
 `HTTP/1.1 200` と、更新後のBugのJSONが返る。
 
-#### Bug削除（DELETE）
+### Bug削除（DELETE）
 
 ```PowerShell
 curl.exe -i -X DELETE "http://localhost:8080/api/bugs/{id}"
@@ -262,9 +283,9 @@ curl.exe -i -X GET "http://localhost:8080/api/bugs/{id}"
 `HTTP/1.1 404`
 `code=NOT_FOUND`のエラーJSONが返る
 
-#### Validation / エラー確認（400）
+### Validation / エラー確認（400）
 
-##### 作成時のValidationエラー（POST）
+#### 作成時のValidationエラー（POST）
 
 ```PowerShell
 curl.exe -i -X POST "http://localhost:8080/api/bugs" -H "Content-Type: application/json" --data-raw '{"title":"","description":"created by curl"}'
@@ -275,7 +296,7 @@ curl.exe -i -X POST "http://localhost:8080/api/bugs" -H "Content-Type: applicati
 `code=VALIDATION_ERROR` のエラーJSONが返る
 details に `title must not be blank` が含まれる
 
-##### 更新時のValidationエラー（PUT）
+#### 更新時のValidationエラー（PUT）
 
 ```PowerShell
 curl.exe -i -X PUT "http://localhost:8080/api/bugs/{id}" -H "Content-Type: application/json" --data-raw '{"title":"","description":"updated by curl","status":"DONE","priority":"HIGH"}'
@@ -287,7 +308,7 @@ curl.exe -i -X PUT "http://localhost:8080/api/bugs/{id}" -H "Content-Type: appli
 `HTTP/1.1 400`
 `code=VALIDATION_ERROR` のエラーJSONが返る
 
-##### 不正JSON / enum不正（PUT）
+#### 不正JSON / enum不正（PUT）
 
 ```PowerShell
 curl.exe -i -X PUT "http://localhost:8080/api/bugs/{id}" -H "Content-Type: application/json" --data-raw '{"title":"updated title","description":"updated by curl","status":"AAA","priority":"HIGH"}'
@@ -342,7 +363,8 @@ code=INVALID_JSON のエラーJSONが返る
 - 2026-03-06: (GET /api/bugs)に statusクエリパラメータによる絞り込みを追加。（/api/bugs?status=OPEN|IN_PROGRESS|DONE）で取得可能。
 - 2026-03-07: (GET /api/bugs) にページング（page/size）を追加。一覧レスポンスを `items + meta` 形式へ変更し、status絞り込みとの併用を curl で確認。
 - 2026-03-08: 作成/更新DTOのValidationおよび、400エラーのdetails整形を確認。
- 
+- 2026-03-09: 例外ハンドリング整理（404/400/500）＋ログ粒度調整
+
 ## 週次まとめ（Weekly Log）
 
 ### Week1 (02-20 ~ 02-26)
