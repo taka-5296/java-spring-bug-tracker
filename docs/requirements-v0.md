@@ -27,6 +27,12 @@
 - Bug API（CRUD）
   - 作成：POST /api/bugs
   - 一覧：GET /api/bugs
+    - `status` による絞り込みができること（`OPEN` / `IN_PROGRESS` / `DONE`）
+    - `priority` による絞り込みができること（`LOW` / `MEDIUM` / `HIGH`）
+    - `keyword` による検索ができること（`title` または `description` の部分一致）
+    - 複数条件指定時は AND 条件で絞り込みできること
+    - `page` / `size` によるページングができること
+    - 一覧レスポンスは `items + meta` 形式で返ること
   - 個別：GET /api/bugs/{id}
   - 更新：PUT /api/bugs/{id}
   - 削除：DELETE /api/bugs/{id}

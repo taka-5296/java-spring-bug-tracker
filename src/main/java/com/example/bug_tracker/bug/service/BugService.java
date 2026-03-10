@@ -41,35 +41,79 @@ public class BugService {
         return result;
     }
 
-    // status 指定は絞り込み、無ければ全件
+    // status / priority / keyword で絞り込み or 全件取得 (GET)
     @Transactional(readOnly = true)
-    public Page<BugEntity> findAll(BugStatus status, Pageable pageable) {
+    public Page<BugEntity> findAll(
+            BugStatus status,
+            BugPriority priority,
+            String keyword,
+            Pageable pageable) {
 
-        if (status == null) {
+        // keyword を正規化する
+        String normalizedKeyword = (keyword == null || keyword.isBlank()) ? null : keyword.trim();
+
+        // 条件なし
+        if (status == null && priority == null) {
             // ログ-filterなし
-            log.info("BugService#findAll called. no status filter, page={}, size={}",
+            log.info("BugService#findAll called. no filter, page={}, size={}",
                     pageable.getPageNumber(), pageable.getPageSize());
 
             // 一覧検索
-            Page<BugEntity> allResult = bugRepository.findAll(pageable);
+            Page<BugEntity> result = bugRepository.findAll(pageable);
 
             // 一覧検索成功ログ
-            log.info("BugService#findAll returnedElements={}", allResult.getNumberOfElements());
+            log.info("BugService#findAll returnedElements={}", result.getNumberOfElements());
 
-            return allResult;
+            return result;
         }
 
-        // ログ-filterあり
-        log.info("BugService#findAll called. status={}, page={}, size={}", status, pageable.getPageNumber(),
+        // statusのみ
+        if (status != null && priority == null) {
+
+            // ログ-status filter
+            log.info("BugService#findAll called. status={},  page={}, size={}", status, pageable.getPageNumber(),
+                    pageable.getPageSize());
+
+            // statusで絞り込み検索
+            Page<BugEntity> result = bugRepository.findByStatus(status, pageable);
+
+            // status絞り込み検索成功ログ(件数)
+            log.info("BugService#findAll returnedElements={}", result.getNumberOfElements());
+
+            return result;
+
+        }
+
+        // priorityのみ
+        if (status == null) {
+
+            // ログ-priority filter
+            log.info("BugService#findAll called. priority={},  page={}, size={}", priority, pageable.getPageNumber(),
+                    pageable.getPageSize());
+
+            // priorityで絞込検索
+            Page<BugEntity> result = bugRepository.findByPriority(priority, pageable);
+
+            // priority絞り込み検索成功ログ(件数)
+            log.info("BugService#findAll returnedElements={}", result.getNumberOfElements());
+
+            return result;
+        }
+
+        // status & priority
+        // ログ-status & priority filter
+        log.info("BugService#findAll called. status={}, priority={},  page={}, size={}", status, priority,
+                pageable.getPageNumber(),
                 pageable.getPageSize());
 
-        // (status != null)で絞り込み検索(BugRepository固有メソッド呼び出し)
-        Page<BugEntity> filteredResult = bugRepository.findByStatus(status, pageable);
+        // (status != null && priority != null)で絞込検索
+        Page<BugEntity> result = bugRepository.findByStatusAndPriority(status, priority,
+                pageable);
 
-        // 絞り込み検索成功ログ(件数)
-        log.info("BugService#findAll returnedElements={}", filteredResult.getNumberOfElements());
+        // status & priority絞り込み検索成功ログ(件数)
+        log.info("BugService#findAll returnedElements={}", result.getNumberOfElements());
 
-        return filteredResult;
+        return result;
     }
 
     @Transactional(readOnly = true)
