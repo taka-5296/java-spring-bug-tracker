@@ -1,6 +1,7 @@
 package com.example.bug_tracker.bug.api;
 
 import com.example.bug_tracker.bug.domain.BugStatus;
+import com.example.bug_tracker.bug.domain.BugPriority;
 import com.example.bug_tracker.bug.dto.BugResponse;
 import com.example.bug_tracker.bug.entity.BugEntity;
 import com.example.bug_tracker.bug.service.BugService;
@@ -52,23 +53,29 @@ public class BugController {
         return ResponseEntity.created(location).body(body);
     }
 
-    // Bug一覧取得(GET) + status絞り込み(任意) + ページング(page&size)
+    // Bug一覧取得(GET) + status / priority絞り込み(任意) + ページング(page&size)
     @GetMapping
     public BugPageResponse list(
-            @RequestParam(required = false) BugStatus status,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(required = false) BugStatus status, // status任意
+            @RequestParam(required = false) BugPriority priority, // priority任意
+            @RequestParam(defaultValue = "0") int page, // pageを受ける
+            @RequestParam(defaultValue = "10") int size) { // sizeを受ける
 
-        log.info("BugController#list called. status={}, page={}, size={}", status, page, size);
+        // 受信条件ログ
+        log.info("BugController#list called. status={}, priority={}, page={}, size={}", status, priority, page, size);
 
+        // Pageable生成
         Pageable pageable = PageRequest.of(page, size);
-        Page<BugEntity> bugPage = bugService.findAll(status, pageable);
+        // Serviceへ受け渡し
+        Page<BugEntity> bugPage = bugService.findAll(status, priority, pageable);
 
+        // items化
         List<BugResponse> items = bugPage.getContent()
                 .stream()
                 .map(this::toResponse)
                 .toList();
 
+        // meta生成
         PageMetaResponse meta = new PageMetaResponse(
                 bugPage.getNumber(),
                 bugPage.getSize(),
@@ -77,6 +84,7 @@ public class BugController {
                 bugPage.hasNext(),
                 bugPage.hasPrevious());
 
+        // items + meta で返す
         return new BugPageResponse(items, meta);
 
     }

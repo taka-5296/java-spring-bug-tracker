@@ -27,8 +27,12 @@
   - 作成：`POST /api/bugs`
   - 一覧：`GET /api/bugs`
     - `status` クエリパラメータ指定でステータス絞り込み可能（例：`GET /api/bugs?status=OPEN`）
+    - `priority` クエリパラメータ指定で重要度絞り込み可能（例：`GET /api/bugs?priority=HIGH`）
+    - `keyword` クエリパラメータ指定で `title` または `description` の部分一致検索が可能（例：`GET /api/bugs?keyword=test`）
+    - 複数条件指定時は AND 条件で絞り込み可能（例：`GET /api/bugs?status=OPEN&priority=HIGH&keyword=test`）
     - `page` / `size` クエリパラメータ指定でページング可能（例：`GET /api/bugs?page=0&size=10`）
     - 一覧レスポンスは `items + meta` 形式で返却
+
   - 個別：`GET /api/bugs/{id}`
   - 更新：`PUT /api/bugs/{id}`
   - 削除：`DELETE /api/bugs/{id}`
@@ -129,8 +133,11 @@ docker exec -it bug-tracker-postgres psql -U bug_user -d bug_tracker
 - POST /api/bugs
 - GET /api/bugs
   - 任意クエリ：`status`（`OPEN` / `IN_PROGRESS` / `DONE`）
+  - 任意クエリ：`priority`（`LOW` / `MEDIUM` / `HIGH`）
+  - 任意クエリ：`keyword`（`title` または `description` の部分一致）
   - 任意クエリ：`page`（0始まりのページ番号）
   - 任意クエリ：`size`（1ページ件数）
+  - 複数条件指定時は AND 条件(&)で検索
   - 成功レスポンス：`items + meta`
 - GET /api/bugs/{id}
 - PUT /api/bugs/{id}
@@ -220,7 +227,25 @@ curl.exe "http://localhost:8080/api/bugs?status=OPEN"
 ```
 
 - 期待結果
-"HTTP/1.1 200" と、status が OPEN のBugのみが items に入り、meta にページ情報が返る。
+`HTTP/1.1 200` と、status が OPEN のBugのみが items に入り、meta にページ情報が返る。
+
+#### Bug一覧絞り込み取得（GET / priority）
+
+```PowerShell
+curl.exe "http://localhost:8080/api/bugs?priority=HIGH"
+```
+
+- 期待結果
+`HTTP/1.1 200` と、priority が HIGH のBugのみが items に入り、meta にページ情報が返る。
+
+#### Bug一覧絞り込み取得（GET / keyword）
+
+```PowerShell
+curl.exe "http://localhost:8080/api/bugs?keyword=test"
+```
+
+- 期待結果
+`HTTP/1.1 200` と、title または description に test を含むBugのみが items に入り、meta にページ情報が返る。
 
 #### Bug一覧ページング取得（GET / page,size）
 
@@ -231,14 +256,14 @@ curl.exe "http://localhost:8080/api/bugs?page=0&size=2"
 - 期待結果
 1ページあたり2件で items が返り、meta.page=0, meta.size=2 になる。
 
-#### Bug一覧ページング取得（GET / page,size,status）
+####　Bug一覧複合条件取得（GET / status,priority, keyword, page, size）
 
 ```PowerShell
-curl.exe "http://localhost:8080/api/bugs?status=OPEN&page=0&size=2"
+curl.exe "http://localhost:8080/api/bugs?status=OPEN&priority=HIGH&keyword=test&page=0&size=5"
 ```
 
-- 期待結果
-status 絞り込みとページングを併用した結果が items + meta 形式で返る。
+期待結果
+status / priority / keyword の複数条件を AND で組み合わせた結果itemsとpage / size のmetaが返る。
 
 ### Bug個別取得（GET）
 
@@ -364,6 +389,7 @@ code=INVALID_JSON のエラーJSONが返る
 - 2026-03-07: (GET /api/bugs) にページング（page/size）を追加。一覧レスポンスを `items + meta` 形式へ変更し、status絞り込みとの併用を curl で確認。
 - 2026-03-08: 作成/更新DTOのValidationおよび、400エラーのdetails整形を確認。
 - 2026-03-09: 例外ハンドリング整理（404/400/500）＋ログ粒度調整
+- 2026-03-10: (GET /api/bugs)にpriority絞り込みと、keyward検索および、それらの複合検索を追加。
 
 ## 週次まとめ（Weekly Log）
 

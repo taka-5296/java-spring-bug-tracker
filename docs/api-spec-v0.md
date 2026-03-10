@@ -19,7 +19,7 @@ Base URL: `http://localhost:8080`
 | 操作 | メソッド | パス | リクエスト | 成功 | 失敗 |
 | --- | --- | --- | --- | --- | --- |
 | 作成 | POST | /api/bugs | CreateBugRequest | 201 + BugResponse | 400/500 |
-| 一覧取得 | GET | /api/bugs | status/page/size (optional) | 200 + BugResponse[] | 500 |
+| 一覧取得 | GET | /api/bugs | status/priority/keyword/page/size (optional) | 200 + BugResponse[] | 500 |
 | 個別取得 | GET | /api/bugs/{id} | - | 200 + BugResponse | 404/500 |
 | 更新 | PUT | /api/bugs/{id} | UpdateBugRequest | 200 + BugResponse | 400/404 |
 | 削除 | DELETE | /api/bugs/{id} | - | 204 (no body) | 404/500 |
@@ -72,6 +72,8 @@ Base URL: `http://localhost:8080`
 #### 一覧取得のクエリパラメータ
 
 - status: string（任意。`OPEN` / `IN_PROGRESS` / `DONE`）
+- priority: string（任意。`LOW` / `MEDIUM` / `HIGH`）
+- keyword: string（任意。未指定時は`null`）
 - page: number（任意。未指定時は `0`）
 - size: number（任意。未指定時は `10`）
 
