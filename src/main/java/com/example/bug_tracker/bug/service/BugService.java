@@ -49,70 +49,20 @@ public class BugService {
             String keyword,
             Pageable pageable) {
 
-        // keyword を正規化する
+        // keyword未指定および空白はnull、指定時はトリミングして正規化する
         String normalizedKeyword = (keyword == null || keyword.isBlank()) ? null : keyword.trim();
 
-        // 条件なし
-        if (status == null && priority == null) {
-            // ログ-filterなし
-            log.info("BugService#findAll called. no filter, page={}, size={}",
-                    pageable.getPageNumber(), pageable.getPageSize());
+        // 受信条件のログ出力
+        log.info("BugService#findAll called. status={}, priority={}, keyword={}, page={}, size={}", status, priority,
+                normalizedKeyword, pageable.getPageNumber(), pageable.getPageSize());
 
-            // 一覧検索
-            Page<BugEntity> result = bugRepository.findAll(pageable);
+        // custom repositoryにDB検索を委譲
+        Page<BugEntity> result = bugRepository.search(status, priority, normalizedKeyword, pageable);
 
-            // 一覧検索成功ログ
-            log.info("BugService#findAll returnedElements={}", result.getNumberOfElements());
+        // 検索成功 + 検索件数出力ログ
+        log.info("BugService#findAll succeeded. returnedElements={}", result.getNumberOfElements());
 
-            return result;
-        }
-
-        // statusのみ
-        if (status != null && priority == null) {
-
-            // ログ-status filter
-            log.info("BugService#findAll called. status={},  page={}, size={}", status, pageable.getPageNumber(),
-                    pageable.getPageSize());
-
-            // statusで絞り込み検索
-            Page<BugEntity> result = bugRepository.findByStatus(status, pageable);
-
-            // status絞り込み検索成功ログ(件数)
-            log.info("BugService#findAll returnedElements={}", result.getNumberOfElements());
-
-            return result;
-
-        }
-
-        // priorityのみ
-        if (status == null) {
-
-            // ログ-priority filter
-            log.info("BugService#findAll called. priority={},  page={}, size={}", priority, pageable.getPageNumber(),
-                    pageable.getPageSize());
-
-            // priorityで絞込検索
-            Page<BugEntity> result = bugRepository.findByPriority(priority, pageable);
-
-            // priority絞り込み検索成功ログ(件数)
-            log.info("BugService#findAll returnedElements={}", result.getNumberOfElements());
-
-            return result;
-        }
-
-        // status & priority
-        // ログ-status & priority filter
-        log.info("BugService#findAll called. status={}, priority={},  page={}, size={}", status, priority,
-                pageable.getPageNumber(),
-                pageable.getPageSize());
-
-        // (status != null && priority != null)で絞込検索
-        Page<BugEntity> result = bugRepository.findByStatusAndPriority(status, priority,
-                pageable);
-
-        // status & priority絞り込み検索成功ログ(件数)
-        log.info("BugService#findAll returnedElements={}", result.getNumberOfElements());
-
+        // 結果返却
         return result;
     }
 
