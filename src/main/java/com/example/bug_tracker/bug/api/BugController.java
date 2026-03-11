@@ -58,16 +58,19 @@ public class BugController {
     public BugPageResponse list(
             @RequestParam(required = false) BugStatus status, // status任意
             @RequestParam(required = false) BugPriority priority, // priority任意
+            @RequestParam(required = false) String keyword, // keyword任意
             @RequestParam(defaultValue = "0") int page, // pageを受ける
             @RequestParam(defaultValue = "10") int size) { // sizeを受ける
 
         // 受信条件ログ
-        log.info("BugController#list called. status={}, priority={}, page={}, size={}", status, priority, page, size);
+        log.info("BugController#list called. status={}, priority={}, keyword={}, page={}, size={}",
+                status, priority, keyword, page, size);
 
         // Pageable生成
         Pageable pageable = PageRequest.of(page, size);
+
         // Serviceへ受け渡し
-        Page<BugEntity> bugPage = bugService.findAll(status, priority, pageable);
+        Page<BugEntity> bugPage = bugService.findAll(status, priority, keyword, pageable);
 
         // items化
         List<BugResponse> items = bugPage.getContent()

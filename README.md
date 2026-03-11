@@ -130,18 +130,33 @@ docker exec -it bug-tracker-postgres psql -U bug_user -d bug_tracker
 
 ## API（暫定）
 
-- POST /api/bugs
-- GET /api/bugs
-  - 任意クエリ：`status`（`OPEN` / `IN_PROGRESS` / `DONE`）
-  - 任意クエリ：`priority`（`LOW` / `MEDIUM` / `HIGH`）
-  - 任意クエリ：`keyword`（`title` または `description` の部分一致）
-  - 任意クエリ：`page`（0始まりのページ番号）
-  - 任意クエリ：`size`（1ページ件数）
-  - 複数条件指定時は AND 条件(&)で検索
-  - 成功レスポンス：`items + meta`
-- GET /api/bugs/{id}
-- PUT /api/bugs/{id}
-- DELETE /api/bugs/{id}
+### エンドポイント一覧
+
+- POST `/api/bugs`
+  - Bugを作成する
+- GET `/api/bugs`
+  - Bug一覧を取得する
+  - 任意クエリ：
+    - `status`（`OPEN` / `IN_PROGRESS` / `DONE`）
+    - `priority`（`LOW` / `MEDIUM` / `HIGH`）
+    - `keyword`（`title` または `description` の部分一致）
+    - `page`（0始まりのページ番号）
+    - `size`（1ページ件数）
+  - 複数条件指定時は AND 条件で検索
+  - 成功レスポンスは `items + meta`
+- GET `/api/bugs/{id}`
+  - Bugを1件取得する
+- PUT `/api/bugs/{id}`
+  - Bugを更新する
+- DELETE `/api/bugs/{id}`
+  - Bugを削除する
+
+### 検索・ページング例
+
+- `GET /api/bugs?keyword=test`
+- `GET /api/bugs?status=OPEN&priority=HIGH`
+- `GET /api/bugs?status=OPEN&priority=HIGH&keyword=test`
+- `GET /api/bugs?status=IN_PROGRESS&priority=LOW&keyword=test&page=0&size=5`
 
 ## エラー形式
 
@@ -163,6 +178,12 @@ VALIDATION_ERROR : DTO Validation 失敗（400）
 INVALID_JSON : JSON形式不正 / enum不正（400）
 NOT_FOUND : 指定idのBugが存在しない（404）
 INTERNAL_ERROR : 想定外エラー（500）
+
+### 既知制約（Limitations）
+
+- 一覧検索は `status` / `priority` / `keyword` のみ対応
+- `keyword` は `title` または `description` の部分一致検索
+- ソート条件の外部指定、複雑なOR条件、検索性能最適化は未対応
 
 ### ロギングポリシー
 
@@ -211,43 +232,53 @@ curl.exe -i -X POST "http://localhost:8080/api/bugs" -H "Content-Type: applicati
 - 期待結果
 `HTTP/1.1 201`と`Location`、および作成されたBugのJSONがコマンドラインに返る。
 
+
 ### Bug一覧取得（GET）
 
 ```PowerShell
 curl.exe "http://localhost:8080/api/bugs"
 ```
 
-- 期待結果
-`"HTTP/1.1 200"` と、items にBug一覧、meta にページ情報を含むJSONが返る。
+- 期待結果  
+`items` にBug一覧、`meta` にページ情報を含むJSONが返る。
 
-#### Bug一覧絞り込み取得（GET / status）
+#### ステータス絞り込み取得（GET / status）
 
 ```PowerShell
 curl.exe "http://localhost:8080/api/bugs?status=OPEN"
 ```
 
 - 期待結果
-`HTTP/1.1 200` と、status が OPEN のBugのみが items に入り、meta にページ情報が返る。
+status が`OPEN`のBugのみが items に入り、meta にページ情報が返る。
 
-#### Bug一覧絞り込み取得（GET / priority）
+#### 重要度絞り込み取得（GET / priority）
 
 ```PowerShell
 curl.exe "http://localhost:8080/api/bugs?priority=HIGH"
 ```
 
 - 期待結果
-`HTTP/1.1 200` と、priority が HIGH のBugのみが items に入り、meta にページ情報が返る。
+priority が`HIGH`のBugのみが items に入り、meta にページ情報が返る。
 
-#### Bug一覧絞り込み取得（GET / keyword）
+#### キーワード検索（GET / keyword）
 
-```PowerShell
+```powershell
 curl.exe "http://localhost:8080/api/bugs?keyword=test"
 ```
 
 - 期待結果
-`HTTP/1.1 200` と、title または description に test を含むBugのみが items に入り、meta にページ情報が返る。
+`title` または `description` に `test` を含むBugのみが返る。
 
-#### Bug一覧ページング取得（GET / page,size）
+#### 複合条件検索
+
+```powershell
+curl.exe "http://localhost:8080/api/bugs?status=OPEN&priority=HIGH&keyword=test"
+```
+
+- 期待結果  
+`status` / `priority` / `keyword` を AND 条件で組み合わせた結果が返る。
+
+#### ページング付きBug一覧取得（GET / page,size）
 
 ```PowerShell
 curl.exe "http://localhost:8080/api/bugs?page=0&size=2"
@@ -256,14 +287,14 @@ curl.exe "http://localhost:8080/api/bugs?page=0&size=2"
 - 期待結果
 1ページあたり2件で items が返り、meta.page=0, meta.size=2 になる。
 
-####　Bug一覧複合条件取得（GET / status,priority, keyword, page, size）
+#### ページング付き複合条件検索
 
-```PowerShell
-curl.exe "http://localhost:8080/api/bugs?status=OPEN&priority=HIGH&keyword=test&page=0&size=5"
+```powershell
+curl.exe "http://localhost:8080/api/bugs?status=IN_PROGRESS&priority=LOW&keyword=test&page=0&size=5"
 ```
 
-期待結果
-status / priority / keyword の複数条件を AND で組み合わせた結果itemsとpage / size のmetaが返る。
+- 期待結果  
+条件に一致する結果が返り、`meta.page=0`、`meta.size=5` になる。
 
 ### Bug個別取得（GET）
 
@@ -390,6 +421,7 @@ code=INVALID_JSON のエラーJSONが返る
 - 2026-03-08: 作成/更新DTOのValidationおよび、400エラーのdetails整形を確認。
 - 2026-03-09: 例外ハンドリング整理（404/400/500）＋ログ粒度調整
 - 2026-03-10: (GET /api/bugs)にpriority絞り込みと、keyward検索および、それらの複合検索を追加。
+- 2026-03-11: 絞り込み検索(status/priority/keyword/pageable)に動的クエリを採用し、custom repositoryを追加。README に検索例と既知制約を反映。
 
 ## 週次まとめ（Weekly Log）
 

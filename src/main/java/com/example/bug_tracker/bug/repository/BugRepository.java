@@ -10,7 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 // BugEntityをDB操作するRepository（CRUDの入口）
-public interface BugRepository extends JpaRepository<BugEntity, Long> {
+public interface BugRepository extends JpaRepository<BugEntity, Long>, BugRepositoryCustom {
     // JpaRepositoryがfindById/save等を提供する
 
     // status絞り込み + ページング
