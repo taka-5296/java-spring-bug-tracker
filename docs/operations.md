@@ -27,6 +27,12 @@
 - 方針：
   - 不具合調査は「ERRORログ」→「直前のINFOログ」の順で追う
 
+### ログ確認テンプレ（最低限）
+
+- 現時点でINFO は `called / succeeded` を残す（のちに`operation / targetId / result`などに統一予定）
+- 400 / 404 は INFO、500 は ERROR で確認する
+- 調査は `ERRORログ` → `直前のINFOログ` の順で追う
+
 ## bugsテーブル作成と確認（psql）
 
 ### テーブル作成
