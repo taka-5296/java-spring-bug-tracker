@@ -10,7 +10,7 @@ import org.springframework.data.domain.Pageable;
 // 動的検索専用の拡張repositoryインタフェース
 public interface BugRepositoryCustom {
 
-    // status / priority / keyword の複合検索用DTO
+    // status / priority / keyword の複合検索メソッド
     Page<BugEntity> search(
             BugStatus status,
             BugPriority priority,
