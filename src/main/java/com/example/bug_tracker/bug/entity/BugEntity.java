@@ -90,6 +90,11 @@ public class BugEntity {
     }
 
     // 以下setter
+
+    public void setId(Long id) {
+        this.id = id; // IDを設定（通常はDBが自動生成する）
+    }
+
     public void setTitle(String title) {
         this.title = title; // タイトルを更新
     }
