@@ -6,14 +6,15 @@
 
 ## まずやること（最短）
 
-1) 起動
+1. 起動
 
 ```PowerShell
 .\mvnw.cmd spring-boot:run "-Dspring-boot.run.profiles=dev"
 ```
+
 → 起動状態になる
 
-2) 疎通確認
+2.疎通確認
 
 ```PowerShell
 GET http://localhost:8080/health
@@ -35,7 +36,6 @@ GET http://localhost:8080/health
 ## 主な機能
 
 ### 現時点
-
 
 - ヘルスチェック：`GET /health`（OKを返す）
 - Bug（チケット）のCRUD API（DB永続化）
@@ -69,6 +69,10 @@ GET http://localhost:8080/health
 - Java 17
 - Spring Boot（Web）
 - Maven Wrapper（mvnw）
+- テスト
+  - JUnit 5
+  - Mockito
+  - Service単体テスト（作成の正常系を追加）
 - DB
   - 永続化：PostgreSQL
   - 実装方式：JPA（ORM）
@@ -77,7 +81,6 @@ GET http://localhost:8080/health
 ### 予定
 
 - Thymeleaf（画面表示）
-- テスト：JUnit（Service単体テスト）
 - CI：GitHub Actions
 - Docker Compose
 
@@ -208,6 +211,17 @@ docker exec -it bug-tracker-postgres psql -U bug_user -d bug_tracker
 - 400 / 404 は想定内エラーとして INFO で記録する
 - 500 は想定外エラーとして ERROR で記録し、スタックトレースを残す
 - request body 全文、個人情報、巨大ペイロード、内部例外の生メッセージはログへ出しすぎない
+
+## テスト実行
+
+### 単体テスト実行
+
+```PowerShell
+.\mvnw.cmd test
+```
+
+- 期待結果
+BUILD SUCCESS が表示される。
 
 ## 動作確認
 
@@ -492,7 +506,9 @@ curl.exe -i -X PUT "http://localhost:8080/api/bugs/5" -H "Content-Type: applicat
 - 2026-03-11: 絞り込み検索(status/priority/keyword/pageable)に動的クエリを採用し、custom repositoryを追加。README に検索例と既知制約を反映。
 - 2026-03-12: 検索/ページング/Validation/例外/ログの通し確認を完了し、README の再現手順を整備して Week3 の品質を固定。
 
-### Week3
+### Week4
+
+- 2026-03-13: JUnit 5 / Mockito による BugService の単体テスト基盤を追加。create正常系で、status/priority 未指定時の OPEN/LOW 自動補完をテスト。
 
 ## 週次まとめ（Weekly Log）
 
