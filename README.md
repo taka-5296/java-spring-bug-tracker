@@ -72,7 +72,9 @@ GET http://localhost:8080/health
 - テスト
   - JUnit 5
   - Mockito
-  - Service単体テスト（作成の正常系を追加）
+  - Service単体テスト
+    - create 正常系：status / priority 未指定時に OPEN / LOW をデフォルト補完
+    - NotFound 異常系：findById / updateById / deleteById でBugNotFoundException
 - DB
   - 永続化：PostgreSQL
   - 実装方式：JPA（ORM）
@@ -215,6 +217,9 @@ docker exec -it bug-tracker-postgres psql -U bug_user -d bug_tracker
 ## テスト実行
 
 ### 単体テスト実行
+
+- 現在は BugService の単体テストを追加済み  
+（create 正常系 / findById・updateById・deleteById の NotFound 異常系）
 
 ```PowerShell
 .\mvnw.cmd test
@@ -509,6 +514,7 @@ curl.exe -i -X PUT "http://localhost:8080/api/bugs/5" -H "Content-Type: applicat
 ### Week4
 
 - 2026-03-13: JUnit 5 / Mockito による BugService の単体テスト基盤を追加。create正常系で、status/priority 未指定時の OPEN/LOW 自動補完をテスト。
+- 2026-03-14: BugService の NotFound 異常系テストを追加。findById / updateById / deleteById で BugNotFoundException と後続未実行（save/delete未呼び出し）を確認。
 
 ## 週次まとめ（Weekly Log）
 
