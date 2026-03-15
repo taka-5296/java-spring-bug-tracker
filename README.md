@@ -214,12 +214,37 @@ docker exec -it bug-tracker-postgres psql -U bug_user -d bug_tracker
 - 500 は想定外エラーとして ERROR で記録し、スタックトレースを残す
 - request body 全文、個人情報、巨大ペイロード、内部例外の生メッセージはログへ出しすぎない
 
+## テスト方針
+
+### テストの型
+
+- AAA（Arrange / Act / Assert）で記述する
+  - Arrange: 入力値・モック・戻り値などの準備
+  - Act: 対象メソッドを実行
+  - Assert: 戻り値・呼び出し回数・引数の中身を検証
+
+### 命名規約
+
+- テストメソッド名は `(対象メソッド名) + should_...` 形式を基本とする
+- 何を保証するテストか、短い名前だけで分かるようにする
+- 例: `findById_should_throw_not_found`
+
+### 観点の分け方
+
+- 正常系: 期待した値が返る、保存処理が呼ばれる
+- 異常系: 例外が送出される、未存在データで失敗する
+
 ## テスト実行
 
 ### 単体テスト実行
 
-- 現在は BugService の単体テストを追加済み  
-（create 正常系 / findById・updateById・deleteById の NotFound 異常系）
+- 現在は BugService の単体テストを追加済み
+  - create 正常系：status / priority 未指定時の OPEN / LOW 自動補完
+  - findAll 正常系：keyword 正規化 + Repository.search への委譲
+  - findById 正常系：既存Bugを返す
+  - updateById 正常系：既存Bugの更新内容を保存する
+  - deleteById 正常系：既存Bugを削除する
+  - findById / updateById / deleteById の NotFound 異常系
 
 ```PowerShell
 .\mvnw.cmd test
@@ -306,7 +331,6 @@ curl.exe -i -X POST "http://localhost:8080/api/bugs" -H "Content-Type: applicati
 - メモ  
   後続の `GET / PUT / DELETE` では、ここで返った id を使用する。
 
-
 ### Bug一覧取得（GET）
 
 ```PowerShell
@@ -378,7 +402,6 @@ curl.exe "http://localhost:8080/api/bugs?status=IN_PROGRESS&priority=LOW&keyword
 ```PowerShell
 curl.exe -i "http://localhost:8080/api/bugs/4"
 ```
-
 
 - 期待結果（GET）  
 `"HTTP/1.1 200"` と、{id}で指定したBugのJSONが返る。
@@ -474,7 +497,7 @@ curl.exe -i -X PUT "http://localhost:8080/api/bugs/5" -H "Content-Type: applicat
     perf: パフォーマンス向上関連
     test: テスト関連
     chore: ビルド、補助ツール、ライブラリ関連
-    wip:~(no PR): 途中保存、PRなし 
+    wip:~(no PR): 途中保存、PRなし
 - README：毎日「今日の変更点」に1〜3行追記
 
 ## 今日の変更点（Daily Log）
@@ -515,6 +538,7 @@ curl.exe -i -X PUT "http://localhost:8080/api/bugs/5" -H "Content-Type: applicat
 
 - 2026-03-13: JUnit 5 / Mockito による BugService の単体テスト基盤を追加。create正常系で、status/priority 未指定時の OPEN/LOW 自動補完をテスト。
 - 2026-03-14: BugService の NotFound 異常系テストを追加。findById / updateById / deleteById で BugNotFoundException と後続未実行（save/delete未呼び出し）を確認。
+- 2026-03-15: BugService の findAll/findById/updateById/deleteById の正常系testを追加。
 
 ## 週次まとめ（Weekly Log）
 
