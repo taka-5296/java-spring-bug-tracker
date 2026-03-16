@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  bug-tracker-test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: bug_tracker
+          POSTGRES_USER: bug_user
+          POSTGRES_PASSWORD: bug_pass
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U bug_user -d bug_tracker"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      SPRING_PROFILES_ACTIVE: test
+
+    steps:
+      - name: Checkout Bug Tracker
+        uses: actions/checkout@v5
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+
+      - name: Grant execute permission to mvnw
+        run: chmod +x mvnw
+
+      - name: Run tests
+        run: ./mvnw test

@@ -14,7 +14,7 @@
 
 → 起動状態になる
 
-2.疎通確認
+2. 疎通確認
 
 ```PowerShell
 GET http://localhost:8080/health
@@ -75,6 +75,9 @@ GET http://localhost:8080/health
   - Service単体テスト
     - create 正常系：status / priority 未指定時に OPEN / LOW をデフォルト補完
     - NotFound 異常系：findById / updateById / deleteById でBugNotFoundException
+- CI
+  - GitHub Actions
+  - `push` / `pull_request` を契機に `mvn test` を自動実行
 - DB
   - 永続化：PostgreSQL
   - 実装方式：JPA（ORM）
@@ -83,15 +86,16 @@ GET http://localhost:8080/health
 ### 予定
 
 - Thymeleaf（画面表示）
-- CI：GitHub Actions
 - Docker Compose
+- DB を含む最小結合テスト
+- HTTP レベルの確認テスト
 
 ## ローカル起動手順
 
 ### 前提
 
 - Java 17
-- mvnw(Wrapper)
+- Maven Wrapper（mvnw）
 
 ## ローカル起動手順（dev）
 
@@ -148,7 +152,7 @@ docker exec -it bug-tracker-postgres psql -U bug_user -d bug_tracker
 
 - アプリ停止：Ctrl + C
 - DB一時停止（任意）：`docker stop bug-tracker-postgres`
-- DB　再起動（任意）：`docker start bug-tracker-postgres`
+- DB  再起動（任意）：`docker start bug-tracker-postgres`
 
 ## API（暫定）
 
@@ -246,12 +250,24 @@ docker exec -it bug-tracker-postgres psql -U bug_user -d bug_tracker
   - deleteById 正常系：既存Bugを削除する
   - findById / updateById / deleteById の NotFound 異常系
 
+### ローカル実行
+
 ```PowerShell
 .\mvnw.cmd test
 ```
 
 - 期待結果
 BUILD SUCCESS が表示される。
+
+### CI実行方針
+
+- GitHub Actions により、`push` および `pull_request` 時に自動でテストを実行する
+- Java / Maven 向けの一般的な構成として、`actions/checkout` によるソース取得と `actions/setup-java` による Java 17 環境の準備を行う
+- JDK 配布は `temurin` を採用
+- 現時点では、GitHub の Java + Maven 向け公式例に近い `checkout@v5 + setup-java@v5` を採用
+- CI では `./mvnw test` を実行する
+- PR では、ローカル実行結果に加えて CI 結果も確認証拠として扱う
+
 
 ## 動作確認
 
@@ -370,7 +386,7 @@ curl.exe "http://localhost:8080/api/bugs?keyword=keyword"
 #### 複合条件検索（GET / status, priority, keyword）
 
 ```powershell
-curl.exe "http://localhost:8080/api/bugs?status=OPEN&priority=HIGH&keyword=api""
+curl.exe "http://localhost:8080/api/bugs?status=OPEN&priority=HIGH&keyword=api"
 ```
 
 - 期待結果  
@@ -486,8 +502,18 @@ curl.exe -i -X PUT "http://localhost:8080/api/bugs/5" -H "Content-Type: applicat
 
 ## 運用ルール（Git/GitHub）
 
-- ブランチ：main + feature/xxx
-- 原則：mainは直接触らない。featureで作業 → PR → merge
+- ブランチ運用
+  - `main` + `feature/*`
+  - 原則として `main` へ直接 push しない
+  - `feature/*` で作業し、PR 経由で `main` へ merge する
+
+- CI 運用
+  - `push` / `pull_request` 時に GitHub Actions で自動テストを実行する
+  - PR には、少なくとも以下の確認証拠を記載する
+    - `.\mvnw.cmd test` の実行
+    - CI 結果
+    - 必要に応じて curl / DB 確認結果
+
 - コミット粒度：意味のある単位。
     feat: 新しい機能
     fix: バグの修正
@@ -500,56 +526,31 @@ curl.exe -i -X PUT "http://localhost:8080/api/bugs/5" -H "Content-Type: applicat
     wip:~(no PR): 途中保存、PRなし
 - README：毎日「今日の変更点」に1〜3行追記
 
-## 今日の変更点（Daily Log）
+## 開発ログ（要約）
 
-- （ここに毎日追記する）
+- 詳細な日次ログは `docs/logs/daily-log.md`（または管理用ログファイル）を参照
 
 ### Week1
 
-- 2026-02-20: Git/GitHub初期化、.gitignore整備、PR→mergeを1回実施、README+Issues整備
-- 2026-02-21: Spring Boot雛形作成、GET /health（OK）追加、mvnwで起動手順をREADMEに追記
-- 2026-02-22: Bug作成・一覧の最小API（DBなしin-memory）を実装。POST/GET疎通を確認
-- 2026-02-23: DTO+Validation導入（title必須）、例外ハンドリングで400のエラー形式統一（VALIDATION_ERROR / INVALID_JSON）、status/priority未指定はOPEN/LOWを自動補完
-- 2026-02-24: GET /api/bugs/{id} 追加、存在しないIDは404を統一形式で返却（NOT_FOUND）
-- 2026-02-25: /.github作成。PR&ISSUEテンプレ整理、READMEに[主要リンク]追加
-- 2026-02-26: Week1成果総括（API最小セット/Validation/例外統一/テンプレ整備）。Week2のIssueを起票
+- Spring Boot の初期セットアップを実施
+- `/health` と Bug 最小API（作成 / 一覧 / 個別）を追加
+- Validation / 統一エラー形式 / PR・Issue テンプレを整備
 
 ### Week2
 
-- 2026-02-27: DockerでPostgreSQL起動、psql疎通(SELECT 1/version)、pomにJPA+PostgreSQL追加、dev起動でHikari接続。READMEに手順追記。
-- 2026-02-28: docs v0（要件定義/API/エラー）を追加。、API仕様を「現状/予定」に分離して契約を整理。
-- 2026-03-01: docs v0（ER図/スキーマ/設計判断ログ）を追加。bugs テーブルをDDLで作成→psqlでINSERT/SELECT確認＋再現用SQLを保存。
-- 2026-03-02: Bugの作成・一覧・詳細をDB永続化へ切替。Postman＋psqlで登録・取得を確認。
-- 2026-03-03: Bugの詳細取得（GET /api/bugs/{id}）と更新（PUT /api/bugs/{id}）を追加。404/500を統一形式（details対応）で返却。BugResponseにdescription/updatedAtを追加し、API契約とREADMEを整合。
-- 2026-03-04: Bug削除（DELETE /api/bugs/{id}）を追加してCRUD完成。READMEにCRUD通し確認手順（DELETE/404確認）を追記。
-- 2026-03-05: READMEのDB初期化手順をPowerShell互換に固定（Get-Content|docker exec。400（VALIDATION_ERROR/INVALID_JSON）統一とPOST 201+Locationを実装。week2の実装内容docsに整合。
+- PostgreSQL + JPA による永続化へ移行
+- Bug の CRUD API を完成
+- API / エラー / ER / スキーマ / 運用 docs を整備
 
 ### Week3
 
-- 2026-03-06: (GET /api/bugs)に statusクエリパラメータによる絞り込みを追加。（/api/bugs?status=OPEN|IN_PROGRESS|DONE）で取得可能。
-- 2026-03-07: (GET /api/bugs) にページング（page/size）を追加。一覧レスポンスを `items + meta` 形式へ変更し、status絞り込みとの併用を curl で確認。
-- 2026-03-08: 作成/更新DTOのValidationおよび、400エラーのdetails整形を確認。
-- 2026-03-09: 例外ハンドリング整理（404/400/500）＋ログ粒度調整
-- 2026-03-10: (GET /api/bugs)にpriority絞り込みと、keyward検索および、それらの複合検索を追加。
-- 2026-03-11: 絞り込み検索(status/priority/keyword/pageable)に動的クエリを採用し、custom repositoryを追加。README に検索例と既知制約を反映。
-- 2026-03-12: 検索/ページング/Validation/例外/ログの通し確認を完了し、README の再現手順を整備して Week3 の品質を固定。
+- 一覧検索（status / priority / keyword）とページングを追加
+- Validation / 例外 / ログ方針を整理
+- README の再現手順を更新して動作確認導線を固定
 
 ### Week4
 
-- 2026-03-13: JUnit 5 / Mockito による BugService の単体テスト基盤を追加。create正常系で、status/priority 未指定時の OPEN/LOW 自動補完をテスト。
-- 2026-03-14: BugService の NotFound 異常系テストを追加。findById / updateById / deleteById で BugNotFoundException と後続未実行（save/delete未呼び出し）を確認。
-- 2026-03-15: BugService の findAll/findById/updateById/deleteById の正常系testを追加。
-
-## 週次まとめ（Weekly Log）
-
-### Week1 (02-20 ~ 02-26)
-
-- 到達点：/health、Bug最小API（作成/一覧/個別）、Validation（400統一）、不正JSON（400統一）、NotFound（404統一）、PR/issueテンプレ整備
-
-### Week2 (02-27 ~ 03-05)
-
-- 到達点：PostgreSQL（Docker）+ JPA永続化でBugのCRUD（作成/一覧/個別/更新/削除）を完成し、400/404/500のエラー形式を統一、POSTは201+Locationに固定。SSOT docsとREADMEの再現手順を整備。
-
-### Week3 (03-06 ~ 03-12)
-
-- 到達点：Bug一覧に検索（status/priority/keyword）とページング（page/size）を追加し、一覧レスポンスを items + meta に固定。Validation・統一エラー形式（400/404/500）・ログ方針を整理し、README の再現手順まで整備。
+- BugService の単体テストを追加
+- 正常系 / NotFound 異常系の主要観点を確認
+- GitHub Actions による CI を導入し、`push` / `pull_request` で `mvn test` を自動実行
+- `docs/test-design.md` を追加し、現時点のテスト方針を固定
