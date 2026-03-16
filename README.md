@@ -264,7 +264,7 @@ BUILD SUCCESS が表示される。
 - GitHub Actions により、`push` および `pull_request` 時に自動でテストを実行する
 - Java / Maven 向けの一般的な構成として、`actions/checkout` によるソース取得と `actions/setup-java` による Java 17 環境の準備を行う
 - JDK 配布は `temurin` を採用
-- 現時点では、GitHub の Java + Maven 向け公式例に近い `checkout@v5 + setup-java@v4` を採用
+- 現時点では、GitHub の Java + Maven 向け公式例に近い `checkout@v5 + setup-java@v5` を採用
 - CI では `./mvnw test` を実行する
 - PR では、ローカル実行結果に加えて CI 結果も確認証拠として扱う
 

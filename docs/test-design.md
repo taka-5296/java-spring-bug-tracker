@@ -104,7 +104,8 @@
 
 ### バージョン方針
 
-- 現時点では、GitHub の Java + Maven 向け公式チュートリアルに近い `checkout@v5 + setup-java@v4` を採用
+- 現時点では、GitHub の Java + Maven 向け公式チュートリアルに近い `checkout@v5 + setup-java@v5` を採用
+- `setup-java@v4`はNode.jaの延長サポートが2026年4月30日に終了するため、除外
 - action リポジトリ単体ではより新しい major version も存在するが、「公式例との整合」「安定した最小構成」を優先
 
 ## 今後の追記予定
