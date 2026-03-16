@@ -22,7 +22,7 @@ about: 半日〜1日で終わる作業を管理する
 
 - [ ] 動作確認できる状態になっている
 - [ ] 必要なテストを追加または更新している
-- [ ] README / docs / SSOT の更新要否を確認している
+- [ ] README / docs の更新要否を確認している
 - [ ] PRを作成できる状態になっている
 
 ## 影響範囲
@@ -49,7 +49,6 @@ about: 半日〜1日で終わる作業を管理する
 - [ ] コード
 - [ ] README
 - [ ] docs
-- [ ] SSOT
 - [ ] テスト
 - [ ] CI設定
 - [ ] Docker関連
@@ -69,5 +68,5 @@ about: 半日〜1日で終わる作業を管理する
 
 - 親Issue:
 - 関連PR:
-- 参考SSOT:
-  - 例：SSOT_requirements.md / SSOT_api-spec.md / SSOT_error-spec.md
+- 参考docs:
+  - 例：requirements-v0.md / api-spec-v0.md / error-spec-v0.md

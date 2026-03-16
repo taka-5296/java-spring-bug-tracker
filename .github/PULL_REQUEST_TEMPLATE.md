@@ -12,13 +12,12 @@
 - 変更点を3つまで箇条書きで記載する
 - 例：Service単体テスト追加 / docs/test-design.md 初版追加 / CI workflow追加
 
-## SSOT / Docs 更新
+## Docs 更新
 
-- [ ] SSOT更新あり
 - [ ] README / docs 更新あり
 - [ ] 仕様変更なし（コードのみ）
 - 更新対象：
-  - 例：SSOT_README.md / SSOT_error-spec.md / docs/operations.md / docs/test-design.md
+  - 例：README.md / requirements-v0.md / api-spec-v0.md / error-spec-v0.md など
 
 ## 動作確認 / 確認証拠
 
@@ -63,8 +62,8 @@
 
 - Issue:
 - PR:
-- 参考SSOT:
-  - 例：SSOT_requirements.md / SSOT_api-spec.md / SSOT_error-spec.md
+- 参考docs:
+  - 例：requirements-v0.md / api-spec-v0.md / error-spec-v0.md
 
 ## 補足
 
