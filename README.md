@@ -74,7 +74,18 @@ GET http://localhost:8080/health
   - Mockito
   - Service単体テスト
     - create 正常系：status / priority 未指定時に OPEN / LOW をデフォルト補完
-    - NotFound 異常系：findById / updateById / deleteById でBugNotFoundException
+    - findAll 正常系：keyword 正規化 + Repository.search への委譲
+    - findById 正常系：既存Bugを返す
+    - updateById 正常系：既存Bugの更新内容を保存する
+    - deleteById 正常系：既存Bugを削除する
+    - findById / updateById / deleteById の NotFound 異常系
+  - 結合テスト
+    - Service + Repository + DB を通す最小結合テスト
+    - create -> findById の最小フローで、保存・ID採番・再取得を確認
+  - HTTP確認テスト
+    - MockMvc による Controller テスト
+    - POST /api/bugs 成功時の 201 / Location / JSON フィールドを確認
+    - Validation 異常系の 400 / VALIDATION_ERROR / details を確認
 - CI
   - GitHub Actions
   - `push` / `pull_request` を契機に `mvn test` を自動実行
@@ -87,8 +98,8 @@ GET http://localhost:8080/health
 
 - Thymeleaf（画面表示）
 - Docker Compose
-- DB を含む最小結合テスト
-- HTTP レベルの確認テスト
+- 追加の結合テスト（update / delete など）
+- GET / PUT / DELETE を含む HTTP レベルの確認テスト拡張
 
 ## ローカル起動手順
 
@@ -240,15 +251,21 @@ docker exec -it bug-tracker-postgres psql -U bug_user -d bug_tracker
 
 ## テスト実行
 
-### 単体テスト実行
+### 現在の対象
 
-- 現在は BugService の単体テストを追加済み
+- Service 単体テスト
   - create 正常系：status / priority 未指定時の OPEN / LOW 自動補完
   - findAll 正常系：keyword 正規化 + Repository.search への委譲
   - findById 正常系：既存Bugを返す
   - updateById 正常系：既存Bugの更新内容を保存する
   - deleteById 正常系：既存Bugを削除する
   - findById / updateById / deleteById の NotFound 異常系
+- 結合テスト
+  - create -> findById の最小フローで、Service -> Repository -> DB の連携を確認する
+  - 保存後の ID 採番、再取得、主要項目一致を確認する
+- HTTP確認テスト
+  - MockMvc により、POST /api/bugs の成功系（201 / Location / JSON）を確認する
+  - Validation 異常系（400 / VALIDATION_ERROR / details）を確認する
 
 ### ローカル実行
 
@@ -554,3 +571,5 @@ curl.exe -i -X PUT "http://localhost:8080/api/bugs/5" -H "Content-Type: applicat
 - 正常系 / NotFound 異常系の主要観点を確認
 - GitHub Actions による CI を導入し、`push` / `pull_request` で `mvn test` を自動実行
 - `docs/test-design.md` を追加し、現時点のテスト方針を固定
+- Service + Repository + DB を通す最小結合テストを追加
+- MockMvc による Controller の HTTP 確認テストを追加
