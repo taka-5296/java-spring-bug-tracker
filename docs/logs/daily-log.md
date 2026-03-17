@@ -38,6 +38,7 @@
 - 2026-03-14: BugService の NotFound 異常系テストを追加。findById / updateById / deleteById で BugNotFoundException と後続未実行（save/delete未呼び出し）を確認。
 - 2026-03-15: BugService の findAll/findById/updateById/deleteById の正常系testを追加。
 - 2026-03-16: push / PR 時に行うCIの追加。docs/test-design.mdの作成。
+- 2026-03-17: BugServiceIntegrationTest と BugControllerTest を追加し、結合テストと MockMvc テストの最小構成を通した。
 
 ## 週次まとめ（Weekly Log）
 
