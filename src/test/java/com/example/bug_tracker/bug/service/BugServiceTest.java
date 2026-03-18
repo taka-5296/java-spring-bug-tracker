@@ -1,6 +1,7 @@
 package com.example.bug_tracker.bug.service;
 
 // static import 
+import static com.example.bug_tracker.bug.support.BugTestFixture.bugWithId;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -15,6 +16,7 @@ import java.util.Optional;
 // JUnit5の@Testを使う / MockitoとJUnit5を連携させる
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+
 // Mockitoのモック機能を使う
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
@@ -52,15 +54,14 @@ public class BugServiceTest {
         @Test
         void create_should_set_open_low_when_null() {
                 // Arrange: save() が呼ばれたときに返す「保存後の Entity」を準備する
-                BugEntity savedEntity = new BugEntity(
+                BugEntity savedEntity = bugWithId(
+                                1L,
                                 "login error",
                                 "created in test",
                                 BugStatus.OPEN,
                                 BugPriority.LOW);
-                savedEntity.setId(1L);
 
-                when(bugRepository.save(org.mockito.ArgumentMatchers.any(BugEntity.class)))
-                                .thenReturn(savedEntity);
+                when(bugRepository.save(any(BugEntity.class))).thenReturn(savedEntity);
 
                 // Act: status / priority を null で渡して create を実行する
                 BugEntity result = bugService.create(
@@ -94,13 +95,12 @@ public class BugServiceTest {
         void findAll_should_delegate_to_search_and_return_page() {
                 // Arrange
                 Pageable pageable = PageRequest.of(0, 10);
-
-                BugEntity bug1 = new BugEntity(
+                BugEntity bug1 = bugWithId(
+                                1L,
                                 "title1 keyword",
                                 "description1",
                                 BugStatus.OPEN,
                                 BugPriority.LOW);
-                bug1.setId(1L);
 
                 Page<BugEntity> expectedPage = new PageImpl<>(List.of(bug1), pageable, 1);
 
@@ -133,12 +133,12 @@ public class BugServiceTest {
         void findById_should_return_entity() {
                 // Arrange
                 Long bugId = 1L;
-                BugEntity existing = new BugEntity(
+                BugEntity existing = bugWithId(
+                                bugId,
                                 "found title",
                                 "found description",
                                 BugStatus.OPEN,
                                 BugPriority.LOW);
-                existing.setId(bugId);
 
                 when(bugRepository.findById(bugId)).thenReturn(Optional.of(existing));
 
@@ -178,20 +178,20 @@ public class BugServiceTest {
                 // Arrange
                 // 既存Bugを用意
                 Long bugId = 1L;
-                BugEntity existing = new BugEntity(
+                BugEntity existing = bugWithId(
+                                bugId,
                                 "old title",
                                 "old description",
                                 BugStatus.OPEN,
                                 BugPriority.LOW);
-                existing.setId(bugId);
 
                 // save()後に返るEntityを用意
-                BugEntity saved = new BugEntity(
+                BugEntity saved = bugWithId(
+                                bugId,
                                 "updated title",
                                 "updated description",
                                 BugStatus.DONE,
                                 BugPriority.HIGH);
-                saved.setId(bugId);
 
                 when(bugRepository.findById(bugId)).thenReturn(Optional.of(existing));
                 when(bugRepository.save(any(BugEntity.class))).thenReturn(saved);
@@ -260,12 +260,12 @@ public class BugServiceTest {
                 // Arrange
                 // 既存bugを用意
                 Long bugId = 1L;
-                BugEntity existing = new BugEntity(
-                                "delte target",
+                BugEntity existing = bugWithId(
+                                bugId,
+                                "delete target",
                                 "to be deleted",
                                 BugStatus.OPEN,
                                 BugPriority.LOW);
-                existing.setId(bugId);
 
                 when(bugRepository.findById(bugId)).thenReturn(Optional.of(existing));
 

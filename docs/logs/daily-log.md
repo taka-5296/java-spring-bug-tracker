@@ -39,6 +39,7 @@
 - 2026-03-15: BugService の findAll/findById/updateById/deleteById の正常系testを追加。
 - 2026-03-16: push / PR 時に行うCIの追加。docs/test-design.mdの作成。
 - 2026-03-17: BugServiceIntegrationTest と BugControllerTest を追加し、結合テストと MockMvc テストの最小構成を通した。
+- 2026-03-18: 各テストのテストデータ生成を Fixture へ整理し、重複を削減。docs/test-design.md に Fixture の置き方と Mockito を使う境界を追記。
 
 ## 週次まとめ（Weekly Log）
 

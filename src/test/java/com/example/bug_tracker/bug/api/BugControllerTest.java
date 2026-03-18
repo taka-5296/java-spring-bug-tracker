@@ -15,6 +15,9 @@ import com.example.bug_tracker.bug.entity.BugEntity;
 import com.example.bug_tracker.bug.service.BugService;
 import com.example.bug_tracker.common.api.GlobalExceptionHandler;
 
+// static import 
+import static com.example.bug_tracker.bug.support.BugTestFixture.bugWithId;
+import static com.example.bug_tracker.bug.support.BugTestFixture.createRequestJson;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -34,7 +37,10 @@ class BugControllerTest {
 
   @Test
   void create_should_return_201_and_response_body() throws Exception {
-    BugEntity saved = new BugEntity(
+
+    // Arrange
+    BugEntity saved = bugWithId(
+        1L,
         "controller test title",
         "controller test description",
         BugStatus.OPEN,
@@ -48,15 +54,13 @@ class BugControllerTest {
         BugPriority.MEDIUM))
         .thenReturn(saved);
 
-    String requestBody = """
-        {
-          "title": "controller test title",
-          "description": "controller test description",
-          "status": "OPEN",
-          "priority": "MEDIUM"
-        }
-        """;
+    String requestBody = createRequestJson(
+        "controller test title",
+        "controller test description",
+        BugStatus.OPEN,
+        BugPriority.MEDIUM);
 
+    // Act / Assert
     mockMvc.perform(post("/api/bugs")
         .contentType(MediaType.APPLICATION_JSON)
         .content(requestBody))
@@ -77,15 +81,15 @@ class BugControllerTest {
 
   @Test
   void create_should_return_400_when_title_is_blank() throws Exception {
-    String requestBody = """
-        {
-          "title": "",
-          "description": "invalid request",
-          "status": "OPEN",
-          "priority": "LOW"
-        }
-        """;
 
+    // Arrange
+    String requestBody = createRequestJson(
+        "",
+        "invalid request",
+        BugStatus.OPEN,
+        BugPriority.LOW);
+
+    // Act / Assert
     mockMvc.perform(post("/api/bugs")
         .contentType(MediaType.APPLICATION_JSON)
         .content(requestBody))
