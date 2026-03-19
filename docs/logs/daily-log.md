@@ -40,6 +40,7 @@
 - 2026-03-16: push / PR 時に行うCIの追加。docs/test-design.mdの作成。
 - 2026-03-17: BugServiceIntegrationTest と BugControllerTest を追加し、結合テストと MockMvc テストの最小構成を通した。
 - 2026-03-18: 各テストのテストデータ生成を Fixture へ整理し、重複を削減。docs/test-design.md に Fixture の置き方と Mockito を使う境界を追記。
+- 2026-03-19: operations.md を runbook 相当に整理し、README / PR・Issue テンプレ / daily-log を更新して Week4 のテスト・CI・運用手順を固定。
 
 ## 週次まとめ（Weekly Log）
 
@@ -54,3 +55,7 @@
 ### Week3 (03-06 ~ 03-12)
 
 - 到達点：Bug一覧に検索（status/priority/keyword）とページング（page/size）を追加し、一覧レスポンスを items + meta に固定。Validation・統一エラー形式（400/404/500）・ログ方針を整理し、README の再現手順まで整備。
+
+### Week4 (03-13 ~ 03-19)
+
+- 到達点：BugService の単体テスト、Service + Repository + DB の最小結合テスト、MockMvc による HTTP 確認テストを追加。GitHub Actions による CI を導入し、docs/test-design.md と operations.md を整備して、テスト実行・切り分け・報告の型を固定。
