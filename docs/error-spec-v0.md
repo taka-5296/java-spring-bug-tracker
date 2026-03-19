@@ -32,8 +32,8 @@
 ```json
 {
   "code": "VALIDATION_ERROR",
-  "message": "Validation failed",
-  "details": ["title must not be blank"]
+  "message": "入力値が不正です",
+  "details": ["titleは必須です"]
 }
 ```
 
@@ -42,5 +42,13 @@
   "code": "INVALID_JSON",
   "message": "リクエストJSONの形式が不正です",
   "details": ["JSONの形式、またはenumの値を確認してください"]
+}
+```
+
+```json
+{
+  "code": "NOT_FOUND",
+  "message": "指定したBugが見つかりません",
+  "details": []
 }
 ```
