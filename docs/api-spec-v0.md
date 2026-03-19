@@ -8,26 +8,23 @@ Base URL: `http://localhost:8080`
 - 認証：現在未実装（追加予定）
 - 形式：REST API（JSON）
 
----
+## 1. 現行API契約
 
-## 1. 現状（2026-03-05時点実装済みAPI契約）
+※この章は、現時点でこのリポジトリを起動して利用できる API 契約を記載する。
 
-※この章は「今このリポジトリを起動して叩ける」ものだけを記載する。
+### 1.1 エンドポイント一覧
 
-### 1.1 エンドポイント一覧（現状）
+| 操作     | メソッド | パス           | リクエスト                                   | 成功                  | 失敗        |
+| -------- | -------- | -------------- | -------------------------------------------- | --------------------- | ----------- |
+| 作成     | POST     | /api/bugs      | CreateBugRequest                             | 201 + BugResponse     | 400/500     |
+| 一覧取得 | GET      | /api/bugs      | status/priority/keyword/page/size (optional) | 200 + BugPageResponse | 500         |
+| 個別取得 | GET      | /api/bugs/{id} | -                                            | 200 + BugResponse     | 404/500     |
+| 更新     | PUT      | /api/bugs/{id} | UpdateBugRequest                             | 200 + BugResponse     | 400/404/500 |
+| 削除     | DELETE   | /api/bugs/{id} | -                                            | 204 (no body)         | 404/500     |
 
-| 操作 | メソッド | パス | リクエスト | 成功 | 失敗 |
-| --- | --- | --- | --- | --- | --- |
-| 作成 | POST | /api/bugs | CreateBugRequest | 201 + BugResponse | 400/500 |
-| 一覧取得 | GET | /api/bugs | status/priority/keyword/page/size (optional) | 200 + BugResponse[] | 500 |
-| 個別取得 | GET | /api/bugs/{id} | - | 200 + BugResponse | 404/500 |
-| 更新 | PUT | /api/bugs/{id} | UpdateBugRequest | 200 + BugResponse | 400/404 |
-| 削除 | DELETE | /api/bugs/{id} | - | 204 (no body) | 404/500 |
-
-- `POST /api/bugs` 失敗例：title 空 → 400 / VALIDATION_ERROR
-- `PUT /api/bugs/{id}` 失敗例：status に不正enum → 400 / INVALID_JSON
-
-> 注：現状は 500 を厳密に返す契約にはしていない
+- `POST /api/bugs` の失敗例：title 空 → 400 / VALIDATION_ERROR
+- `PUT /api/bugs/{id}` の失敗例：status に不正 enum → 400 / INVALID_JSON
+- `GET / PUT / DELETE /api/bugs/{id}` で対象が存在しない場合：404 / NOT_FOUND
 
 ### 1.2 データモデル（2026-03-06現在）
 

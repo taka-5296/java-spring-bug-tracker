@@ -27,6 +27,6 @@
 - 将来（v1+）：bugs.assignee_user_id -> users.id（担当者）
 - 将来（v1+）：bugs.reporter_user_id -> users.id（報告者）
 
-## メモ（説明用）
+## 注記
 
-- users は拡張余地
+- `users` は将来の認証・権限制御を見据えた拡張用の箱であり、現時点では未実装

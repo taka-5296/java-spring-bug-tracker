@@ -19,7 +19,7 @@
 - Windows PowerShell
 
 ```PowerShell
-    .\mvnw.cmd test
+.\mvnw.cmd test
 ```
 
 - 期待結果
@@ -89,24 +89,24 @@
 - 初回起動
 
 ```PowerShell
-    docker run --name bug-tracker-postgres `
-      -e POSTGRES_DB=bug_tracker `
-      -e POSTGRES_USER=bug_user `
-      -e POSTGRES_PASSWORD=bug_pass `
-      -p 5432:5432 `
-      -d postgres:16
+docker run --name bug-tracker-postgres `
+  -e POSTGRES_DB=bug_tracker `
+  -e POSTGRES_USER=bug_user `
+  -e POSTGRES_PASSWORD=bug_pass `
+  -p 5432:5432 `
+  -d postgres:16
 ```
 
 - 再起動
 
 ```PowerShell
-    docker start bug-tracker-postgres
+docker start bug-tracker-postgres
 ```
 
 - 停止
 
 ```PowerShell
-    docker stop bug-tracker-postgres
+docker stop bug-tracker-postgres
 ```
 
 ### コンテナ起動確認
@@ -114,7 +114,7 @@
 - 確認コマンド
 
 ```PowerShell
-    docker ps --filter "name=bug-tracker-postgres"
+docker ps --filter "name=bug-tracker-postgres"
 ```
 
 - 期待結果
@@ -125,13 +125,13 @@
 - 接続コマンド
 
 ```PowerShell
-    docker exec -it bug-tracker-postgres psql -U bug_user -d bug_tracker
+docker exec -it bug-tracker-postgres psql -U bug_user -d bug_tracker
 ```
 
 ### テーブル確認
 
 - psql 内で実行
-    `\dt`
+  - `\dt`
 
 - 期待結果
   - `bugs` テーブルが確認できる
@@ -139,15 +139,14 @@
 ### 終了
 
 - psql 内で実行
-
-    `\q`
+  - `\q`
 
 ### bugsテーブル作成
 
 - SQL 流し込み
 
 ```PowerShell
-    Get-Content .\docs\db\bugs.sql | docker exec -i bug-tracker-postgres psql -U bug_user -d bug_tracker
+Get-Content .\docs\db\bugs.sql | docker exec -i bug-tracker-postgres psql -U bug_user -d bug_tracker
 ```
 
 - 期待結果
