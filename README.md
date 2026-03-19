@@ -31,6 +31,7 @@ GET http://localhost:8080/health
 - [エラー仕様](docs/error-spec-v0.md)
 - [ER図 v0.1](docs/er-v0.md)
 - [運用手順](docs/operations.md)
+- [テスト設計](docs/test-design-v0.md)
 - [PRテンプレ](.github/PULL_REQUEST_TEMPLATE.md)
 
 ## 主な機能
@@ -517,6 +518,12 @@ curl.exe -i -X PUT "http://localhost:8080/api/bugs/5" -H "Content-Type: applicat
 - 期待結果  
 `HTTP/1.1 400` と `"code":"INVALID_JSON"` のエラーJSONが返る
 
+## docs/operations.md の位置づけ
+
+- `README.md` は、起動・疎通確認・APIの基本動作確認を行うための入口とする
+- `docs/operations.md` は、ローカルでのテスト実行、CI失敗時の切り分け、ログ確認、DB確認、相談・障害報告の型をまとめた運用手順書とする
+- 詳細な起動手順や CRUD の確認例は README を優先し、運用時の初動確認は `docs/operations.md` を参照する
+
 ## 運用ルール（Git/GitHub）
 
 - ブランチ運用
@@ -567,9 +574,6 @@ curl.exe -i -X PUT "http://localhost:8080/api/bugs/5" -H "Content-Type: applicat
 
 ### Week4
 
-- BugService の単体テストを追加
-- 正常系 / NotFound 異常系の主要観点を確認
-- GitHub Actions による CI を導入し、`push` / `pull_request` で `mvn test` を自動実行
-- `docs/test-design.md` を追加し、現時点のテスト方針を固定
-- Service + Repository + DB を通す最小結合テストを追加
-- MockMvc による Controller の HTTP 確認テストを追加
+- BugService の単体テストを追加し、正常系・NotFound 異常系の主要観点を固定
+- GitHub Actions による CI を導入し、`push` / `pull_request` 時の `mvn test` 自動実行を整備
+- 結合テスト・MockMvc テスト・test-design・operations を追加し、テスト実行と運用手順の型を固定
