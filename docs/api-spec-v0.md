@@ -5,7 +5,10 @@ Base URL: `http://localhost:8080`
 ## 0. 共通
 
 - Content-Type: application/json
-- 認証：現在未実装（追加予定）
+- 認証/認可（導入予定の固定方針）
+  - 未ログインで保護対象へアクセスした場合は 401
+  - 認証済みだが権限不足の場合は 403
+  - 削除操作は ADMIN ロールのみ許可予定
 - 形式：REST API（JSON）
 
 ## 1. 現行API契約

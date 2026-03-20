@@ -39,6 +39,15 @@ GET http://localhost:8080/health
 ### 現時点
 
 - ヘルスチェック：`GET /health`（OKを返す）
+
+- 認証・認可（Spring Security 最小導入）
+  - `/health` は未ログインでもアクセス可能
+  - `/api/bugs/**` はログインが必要
+  - 認証方式は Spring Security のデフォルトフォームログイン
+  - Day1 時点では in-memory ユーザーで動作確認する
+    - USER: `user / userpass`
+    - ADMIN: `admin / adminpass`
+
 - Bug（チケット）のCRUD API（DB永続化）
   - 作成：`POST /api/bugs`
   - 一覧：`GET /api/bugs`
@@ -56,12 +65,16 @@ GET http://localhost:8080/health
   - 不正JSON（400）：壊れたJSONまたは不正値（INVALID_JSON）
   - 存在しないID（404）：NOT_FOUND（GET/PUT/DELETEで共通）
   - status/priority未指定時は Service 側で OPEN/LOW をデフォルト補完
+
 - DB：PostgreSQL（Docker） + JPA（ORM）
 
 ### 予定
 
 - ステータス管理：Open / In Progress / Done
-- 認証・権限：USER / ADMIN
+- 認証・権限の拡張
+  - users テーブルによる永続化
+  - 削除操作の ADMIN 限定
+  - 401 / 403 の確認手順整備
 
 ## 技術スタック
 
@@ -69,6 +82,7 @@ GET http://localhost:8080/health
 
 - Java 17
 - Spring Boot（Web）
+- Spring Security（フォームログイン / 認証の土台）
 - Maven Wrapper（mvnw）
 - テスト
   - JUnit 5
@@ -293,6 +307,33 @@ BUILD SUCCESS が表示される。
 
 - ブラウザでアクセス：`http://localhost:8080/health`
 - 期待結果：`OK` が表示される
+
+### Security の最小確認
+
+#### 1) 公開エンドポイント確認
+
+- ブラウザでアクセス：`http://localhost:8080/health`
+- 期待結果：`OK` が表示される
+
+#### 2) 保護エンドポイント確認（未ログイン）
+
+```PowerShell
+curl.exe -i "http://localhost:8080/api/bugs"
+```
+
+- 期待結果  
+未ログインのため、そのまま Bug 一覧JSONは返らない  
+`Location: /login` を含むリダイレクト、またはログイン導線への遷移が確認できる
+
+#### 3) ログイン画面確認
+
+- ブラウザでアクセス：http://localhost:8080/api/bugs
+- 期待結果： Spring Security のログイン画面へ遷移する
+
+#### 4) 動作確認用の仮ユーザー
+
+- USER : `user / userpass`
+- ADMIN: `admin / adminpass`
 
 ### API (Bug作成・一覧・個別)
 
