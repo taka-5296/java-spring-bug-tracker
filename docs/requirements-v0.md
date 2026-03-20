@@ -43,6 +43,15 @@
   - 404：NOT_FOUND（/{id}指定のGET/PUT/DELETEで対象が存在しない場合）
 - status/priority 未指定時は OPEN/LOW をサーバ側で補完する
 
+#### 4.1.1 権限制御（追加予定の固定方針）
+
+- 認証（ログイン）を導入する
+- ロールは `ROLE_USER` / `ROLE_ADMIN` の2種とする
+- 未ログインで保護対象へアクセスした場合は 401 を返す
+- ログイン済みだが権限不足の場合は 403 を返す
+- Bug の削除は `ADMIN` のみ許可する
+- Day1 時点では Security の導入土台を優先し、ユーザー管理の永続化は別段階で行う
+
 ### 4.2 SHOULD
 
 - 並び順：createdAt の降順（DB永続化後に確定）
@@ -59,3 +68,7 @@
   - 400（VALIDATION_ERROR / INVALID_JSON）および 404（NOT_FOUND）は想定内エラーとして INFO で記録する
   - 500（INTERNAL_ERROR）のみ想定外障害として ERROR で記録し、スタックトレースを残す
   - request body 全文、個人情報、巨大 payload、内部例外の生メッセージはログへ出しすぎない
+
+## 6. 未実装
+
+- ステータス管理：Open / In Progress / Done
