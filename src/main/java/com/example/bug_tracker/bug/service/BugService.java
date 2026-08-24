@@ -66,6 +66,7 @@ public class BugService {
         return result;
     }
 
+    // 個別取得
     @Transactional(readOnly = true)
     public BugEntity findById(long id) {
         log.info("BugService#findById called. id={}", id);

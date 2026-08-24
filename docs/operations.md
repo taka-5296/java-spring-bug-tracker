@@ -1,94 +1,51 @@
-# 運用手順書（ローカル） - v0.2
+# Bug Tracker Runbook
 
-## 目的
+## 1. 目的
 
-- ローカル環境でのテスト実行、CI失敗時の初動、ログ確認、DB確認、相談・障害報告の型をまとめる
-- アプリ起動手順とAPIの詳細な動作確認は README を参照する
+ローカル環境での起動・テスト・DB確認と、テスト / CI失敗時の初動切り分けを定義する。
 
-## 参照先
+通常の機能説明とAPI契約はREADME / `api-spec.md` を参照する。
 
-- [起動手順・疎通確認・CRUD確認](../README.md)
-- [API契約](api-spec-v0.md)
-- [エラー契約](error-spec-v0.md)
-- [テスト設計](test-design-v0.md)
+## 2. 設定ファイル
 
-## テスト / CI
+```text
+src/main/resources/
+├─ application.properties
+└─ application-dev.properties
 
-### ローカルでテストを実行する
-
-- Windows PowerShell
-
-```PowerShell
-.\mvnw.cmd test
+src/test/resources/
+└─ application-test.properties
 ```
 
-- 期待結果
-  - `BUILD SUCCESS` が表示される
+ファイル名はSpring Bootの規約どおり `application-{profile}.properties` とする。
 
-### CIの実行概要
+### common
 
-- `push` / `pull_request` を契機に GitHub Actions が自動実行される
-- workflow 名: `bug-tracker-test`
-- 実行内容
-  - Java 17 をセットアップ
-  - PostgreSQL service を起動
-  - `SPRING_PROFILES_ACTIVE=test` で `./mvnw test` を実行
+`application.properties`
 
-### CI失敗時の切り分け（5項目）
+```properties
+spring.application.name=bug-tracker
+```
 
-#### 1. Java
+### dev
 
-- Java 17 前提になっているか
-- ローカルと CI の Java バージョン差がないか
+- DB: `bug_tracker`
+- `ddl-auto=validate`
+- schemaは `docs/db/bugs.sql` で管理
+- データを保持する
 
-#### 2. Maven
+### test
 
-- `.\mvnw.cmd test` がローカルで再現するか
-- 依存追加後に wrapper / pom.xml の不整合がないか
+- DB: `bug_tracker_test`
+- `ddl-auto=create-drop`
+- SQL初期化は行わない
+- 自動テスト専用
 
-#### 3. DB
+## 3. PostgreSQL
 
-- PostgreSQL 接続設定が test プロファイル前提で揃っているか
-- DB前提のテストがローカル起動中の dev DB に依存していないか
+### 初回コンテナ作成
 
-#### 4. 環境変数 / プロファイル
-
-- `SPRING_PROFILES_ACTIVE=test` 前提の設定漏れがないか
-- dev 用設定を test 側へ混ぜていないか
-
-#### 5. テスト不安定
-
-- テスト同士が順序依存になっていないか
-- 固定 ID / 共有状態 / 実行順依存がないか
-
-## ログ確認
-
-### 最低限の見方
-
-- INFO
-  - 正常系の処理、起動完了、主要処理の通過点を確認する
-- ERROR
-  - 例外発生時の原因メッセージとスタックトレースを確認する
-
-### 調査順
-
-- まず `ERROR` ログを確認する
-- 次に、直前の `INFO` ログを確認する
-- 400 / 404 は想定内エラーとして INFO 側を見る
-- 500 は想定外エラーとして ERROR 側を優先して見る
-
-### ログ確認メモ
-
-- 現時点では INFO に `called / succeeded` を残している
-- 後続で必要なら `operation / targetId / result` などへ統一する
-
-## DB確認
-
-### PostgreSQL コンテナの起動・停止
-
-- 初回起動
-
-```PowerShell
+```powershell
 docker run --name bug-tracker-postgres `
   -e POSTGRES_DB=bug_tracker `
   -e POSTGRES_USER=bug_user `
@@ -97,98 +54,143 @@ docker run --name bug-tracker-postgres `
   -d postgres:16
 ```
 
-- 再起動
+### 2回目以降
 
-```PowerShell
+```powershell
 docker start bug-tracker-postgres
 ```
 
-- 停止
+### 起動確認
 
-```PowerShell
-docker stop bug-tracker-postgres
-```
-
-### コンテナ起動確認
-
-- 確認コマンド
-
-```PowerShell
+```powershell
 docker ps --filter "name=bug-tracker-postgres"
 ```
 
-- 期待結果
-  - `bug-tracker-postgres` が表示され、STATUS が `Up ...` になっている
+## 4. dev schema
 
-### psql接続
+dev DBへschemaを適用する。
 
-- 接続コマンド
-
-```PowerShell
-docker exec -it bug-tracker-postgres psql -U bug_user -d bug_tracker
+```powershell
+Get-Content .\docs\db\bugs.sql |
+docker exec -i bug-tracker-postgres psql -U bug_user -d bug_tracker
 ```
 
-### テーブル確認
+`application-dev.properties` の `ddl-auto=validate` により、Entityと既存schemaの不整合を起動時に検出する。
 
-- psql 内で実行
-  - `\dt`
+## 5. test DB
 
-- 期待結果
-  - `bugs` テーブルが確認できる
+テストDBは初回のみ作成する。
 
-### 終了
-
-- psql 内で実行
-  - `\q`
-
-### bugsテーブル作成
-
-- SQL 流し込み
-
-```PowerShell
-Get-Content .\docs\db\bugs.sql | docker exec -i bug-tracker-postgres psql -U bug_user -d bug_tracker
+```powershell
+docker exec -it bug-tracker-postgres `
+  psql -U bug_user -d postgres `
+  -c "CREATE DATABASE bug_tracker_test OWNER bug_user;"
 ```
 
-- 期待結果
-  - `CREATE TABLE` 等が表示され、エラーが出ない
+存在確認：
 
-## トラブルシュート（最小）
+```powershell
+docker exec -it bug-tracker-postgres `
+  psql -U bug_user -d postgres `
+  -c "\l"
+```
 
-### アプリが起動しない
+`bug_tracker_test` 内のテーブルはHibernateの `create-drop` で作成・破棄する。
 
-- まず `.\mvnw.cmd test` が通るか確認する
-- 直近の ERROR ログを確認する
-- dev プロファイル指定と DB 起動状態を確認する
-- 詳細な起動手順は `README.md` を参照する
+## 6. ローカルテスト
 
-### DBに接続できない
+通常：
 
-- `docker ps` で PostgreSQL コンテナが起動しているか確認する
-- `docker logs bug-tracker-postgres` でエラー有無を確認する
-- 接続先 DB 名、ユーザー名、パスワードの差異を確認する
+```powershell
+.\mvnw.cmd test
+```
 
-### CIだけ落ちる
+設定、ApplicationContext、Security等を変更した直後：
 
-- ローカルで `.\mvnw.cmd test` を再実行する
-- Java / Maven / DB / test profile の差を順に確認する
-- `ci.yml` とローカル前提がずれていないか確認する
+```powershell
+.\mvnw.cmd clean test
+```
 
-## 相談文テンプレ
+ログ保存：
 
-- 目的:
-- 発生している事実:
-- 試したこと:
-- 仮説:
-- 困っている点:
-- 次に見る点:
+```powershell
+.\mvnw.cmd clean test 2>&1 |
+Tee-Object -FilePath .\mvn-test-log-current.txt
+```
 
-## 障害報告テンプレ
+## 7. テスト失敗時の調査順
+
+1. `Tests run / Failures / Errors` を確認
+2. 失敗したテストクラス・メソッドを確認
+3. 最初の例外メッセージを確認
+4. `Caused by:` を最も深い原因まで追う
+5. DB接続URL、active profile、ApplicationContext設定を確認
+6. 自分のpackage名やBean名を手掛かりに修正対象を絞る
+
+Spring内部のstack traceを最初から全行読む必要はない。
+
+## 8. DB接続失敗の切り分け
+
+確認順：
+
+```powershell
+docker ps --filter "name=bug-tracker-postgres"
+```
+
+```powershell
+docker logs bug-tracker-postgres
+```
+
+```powershell
+docker exec -it bug-tracker-postgres psql -U bug_user -d postgres -c "\l"
+```
+
+確認項目：
+
+- コンテナがUpか
+- DB名が一致しているか
+- `bug_tracker_test` が存在するか
+- username / password / portが一致しているか
+- test profileが有効か
+
+## 9. CI失敗時
+
+まずローカルで同じテストを再現する。
+
+```powershell
+.\mvnw.cmd clean test
+```
+
+次に以下を比較する。
+
+- Java 17
+- Maven Wrapper
+- PostgreSQL version
+- DB名
+- user/password
+- port
+- `SPRING_PROFILES_ACTIVE=test`
+- workflowのservice設定
+
+ローカルが失敗している状態でCIだけを先に修正しない。
+
+## 10. ログレベル
+
+- INFO: 正常な主要処理・想定内エラー
+- WARN: 継続可能だが注意すべき状態
+- ERROR: 想定外障害。stack traceを残す
+
+500レスポンスでは内部例外の詳細をクライアントへそのまま公開しない。
+
+## 11. 障害報告テンプレート
 
 - 発生事象:
 - 影響範囲:
-- 発生時刻:
-- 再現有無:
+- 再現手順:
+- 期待結果:
+- 実際の結果:
 - 直近変更:
-- 原因候補:
+- ログの根本例外:
+- 試したこと:
 - 暫定対応:
 - 次の確認:
