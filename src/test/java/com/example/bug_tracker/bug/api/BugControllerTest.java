@@ -29,73 +29,73 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import(GlobalExceptionHandler.class)
 class BugControllerTest {
 
-  @Autowired
-  private MockMvc mockMvc;
+    @Autowired
+    private MockMvc mockMvc;
 
-  @MockitoBean
-  private BugService bugService;
+    @MockitoBean
+    private BugService bugService;
 
-  @Test
-  void create_should_return_201_and_response_body() throws Exception {
+    @Test
+    void create_should_return_201_and_response_body() throws Exception {
 
-    // Arrange
-    BugEntity saved = bugWithId(
-        1L,
-        "controller test title",
-        "controller test description",
-        BugStatus.OPEN,
-        BugPriority.MEDIUM);
-    saved.setId(1L);
+        // Arrange
+        BugEntity saved = bugWithId(
+                1L,
+                "controller test title",
+                "controller test description",
+                BugStatus.OPEN,
+                BugPriority.MEDIUM);
+        saved.setId(1L);
 
-    when(bugService.create(
-        "controller test title",
-        "controller test description",
-        BugStatus.OPEN,
-        BugPriority.MEDIUM))
-        .thenReturn(saved);
+        when(bugService.create(
+                "controller test title",
+                "controller test description",
+                BugStatus.OPEN,
+                BugPriority.MEDIUM))
+                .thenReturn(saved);
 
-    String requestBody = createRequestJson(
-        "controller test title",
-        "controller test description",
-        BugStatus.OPEN,
-        BugPriority.MEDIUM);
+        String requestBody = createRequestJson(
+                "controller test title",
+                "controller test description",
+                BugStatus.OPEN,
+                BugPriority.MEDIUM);
 
-    // Act / Assert
-    mockMvc.perform(post("/api/bugs")
-        .contentType(MediaType.APPLICATION_JSON)
-        .content(requestBody))
-        .andExpect(status().isCreated())
-        .andExpect(header().string("Location", "http://localhost/api/bugs/1"))
-        .andExpect(jsonPath("$.id").value(1))
-        .andExpect(jsonPath("$.title").value("controller test title"))
-        .andExpect(jsonPath("$.description").value("controller test description"))
-        .andExpect(jsonPath("$.status").value("OPEN"))
-        .andExpect(jsonPath("$.priority").value("MEDIUM"));
+        // Act / Assert
+        mockMvc.perform(post("/api/bugs")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody))
+                .andExpect(status().isCreated())
+                .andExpect(header().string("Location", "http://localhost/api/bugs/1"))
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.title").value("controller test title"))
+                .andExpect(jsonPath("$.description").value("controller test description"))
+                .andExpect(jsonPath("$.status").value("OPEN"))
+                .andExpect(jsonPath("$.priority").value("MEDIUM"));
 
-    verify(bugService).create(
-        "controller test title",
-        "controller test description",
-        BugStatus.OPEN,
-        BugPriority.MEDIUM);
-  }
+        verify(bugService).create(
+                "controller test title",
+                "controller test description",
+                BugStatus.OPEN,
+                BugPriority.MEDIUM);
+    }
 
-  @Test
-  void create_should_return_400_when_title_is_blank() throws Exception {
+    @Test
+    void create_should_return_400_when_title_is_blank() throws Exception {
 
-    // Arrange
-    String requestBody = createRequestJson(
-        "",
-        "invalid request",
-        BugStatus.OPEN,
-        BugPriority.LOW);
+        // Arrange
+        String requestBody = createRequestJson(
+                "",
+                "invalid request",
+                BugStatus.OPEN,
+                BugPriority.LOW);
 
-    // Act / Assert
-    mockMvc.perform(post("/api/bugs")
-        .contentType(MediaType.APPLICATION_JSON)
-        .content(requestBody))
-        .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$.code").value("VALIDATION_ERROR"))
-        .andExpect(jsonPath("$.message").value("入力値が不正です"))
-        .andExpect(jsonPath("$.details").isArray());
-  }
+        // Act / Assert
+        mockMvc.perform(post("/api/bugs")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("VALIDATION_ERROR"))
+                .andExpect(jsonPath("$.message").value("入力値が不正です"))
+                .andExpect(jsonPath("$.details").isArray());
+    }
 }

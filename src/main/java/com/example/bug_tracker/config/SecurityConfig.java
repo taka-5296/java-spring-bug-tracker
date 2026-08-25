@@ -22,7 +22,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // // 今回はまず formLogin を使う
+                // // まず formLogin を使う
                 .formLogin(Customizer.withDefaults())
 
                 // // URLごとのアクセス制御

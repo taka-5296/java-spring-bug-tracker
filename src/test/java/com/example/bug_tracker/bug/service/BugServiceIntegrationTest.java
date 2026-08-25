@@ -32,7 +32,7 @@ public class BugServiceIntegrationTest {
 
     // Service + Repository + DB の結合テスト
     @Test
-    void create_then_findById_should_persist_and_load_bug_via_repository_and_db() {
+    void create_then_findById_should_reload_bug() {
 
         // Arrange テスト用Bugを準備
         String title = "integration test bug";
