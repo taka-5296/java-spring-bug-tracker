@@ -134,33 +134,22 @@ GitHub Actionsで、`push` / `pull_request` 時にMavenテストを自動実行�
 
 ローカルとCIで同じテストを実行し、変更による回帰を確認します。CIの具体的な設定は `.github/workflows/ci.yml` を参照してください。
 
-## Security
-
-Spring Securityは導入済みですが、認証・認可の最終契約は次の実装段階で確定します。
-
-予定している範囲：
-
-- `/health` は未認証でも利用可能
-- `/api/bugs/**` を認証対象とする
-- `ROLE_USER` / `ROLE_ADMIN` を使用する
-- Bug削除をADMIN限定とする
-
-未認証時に `401 Unauthorized` を返すか、form loginのログイン画面へリダイレクトするかは未決定です。確定前の挙動をREADME上の固定契約として扱いません。
-
 ## ドキュメント
 
-| ドキュメント                            | 内容                                |
-| --------------------------------------- | ----------------------------------- |
-| [requirements.md](docs/requirements.md) | 要件・スコープ                      |
-| [api-spec.md](docs/api-spec.md)         | API・エラー契約                     |
-| [data-model.md](docs/data-model.md)     | DBモデル・JPA対応・schema方針       |
-| [decisions.md](docs/decisions.md)       | 設計判断と理由                      |
-| [test-design.md](docs/test-design.md)   | テスト境界・保証観点                |
-| [operations.md](docs/operations.md)     | 起動・DB・テスト・CI障害時のRunbook |
+| ドキュメント                            | 内容                                 |
+| --------------------------------------- | ------------------------------------ |
+| [requirements.md](docs/requirements.md) | 要件・スコープ・Security要件         |
+| [api-spec.md](docs/api-spec.md)         | API・エラー・SecurityのHTTP契約      |
+| [data-model.md](docs/data-model.md)     | DBモデル・JPA対応・schema方針        |
+| [decisions.md](docs/decisions.md)       | 設計判断と理由（Security方針を含む） |
+| [test-design.md](docs/test-design.md)   | テスト境界・保証観点                 |
+| [operations.md](docs/operations.md)     | 起動・DB・テスト・CI障害時のRunbook  |
+
+Securityの詳細は、要件を `requirements.md`、HTTP上の挙動を `api-spec.md`、採用理由を `decisions.md` で管理します。
 
 ## 現在の主な制約
 
-- Securityの未認証時レスポンス契約は未確定
+- Spring Securityは導入済みだが、DELETEのADMIN限定、CSRF方針、Security関連テストは後続の実装・検証対象
 - HTTPからController / Service / Repository / PostgreSQLをすべて実物で通すE2E相当テストは未実装
 - GET / PUT / DELETEのController HTTP境界テストは今後必要性に応じて拡張する
 - 一覧検索は `status` / `priority` / `keyword` を対象とし、複雑な検索条件や高度な検索最適化は対象外

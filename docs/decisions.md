@@ -41,7 +41,7 @@ Security実装前はBug CRUDへ集中し、usersのDB永続化は後続とする
 
 400 / 404 / 500の主要エラーを `GlobalExceptionHandler` でHTTPレスポンスへ変換する。
 
-Security Filter由来の401 / 403についてはD-007の決定後に別途契約を確定する。
+Security Filter由来の認証・認可処理はSpring Security側で扱い、`GlobalExceptionHandler` と同一経路・同一形式で処理することは前提としない。
 
 ## D-005 レイヤ責務
 
@@ -76,17 +76,23 @@ DBは次のように分離する。
 
 ## D-007 Securityの未認証レスポンス
 
-**Status:** Open
+**Status:** Accepted
 
-G07開始前に次を確定する。
+認証方式は Spring Security の form login + Session を採用する。
 
-候補A:
-REST APIとして未認証は `401 Unauthorized`、権限不足は `403 Forbidden` を返す。
+- `/health` は未認証でも利用可能とする
+- `/api/bugs/**` は認証対象とする
+- ロールは `ROLE_USER` / `ROLE_ADMIN` とする
+- `ROLE_USER` はBugの作成・参照・更新を許可する
+- `ROLE_ADMIN` はBugの作成・参照・更新・削除を許可する
+- `DELETE /api/bugs/{id}` は `ROLE_ADMIN` のみに許可する
+- 未認証で保護対象へアクセスした場合は `302 Found` で `/login` へリダイレクトする
+- form loginの認証失敗時はログイン画面へ戻し、認証失敗を表示する
+- 認証済み `ROLE_USER` がADMIN限定操作を行った場合は `403 Forbidden` とする
 
-候補B:
-form loginを採用し、未認証時はログイン画面へリダイレクトする。
-
-README、requirements、API仕様で異なる前提を持たないよう、採用案決定後に関連文書を同一PRで更新する。
+理由：
+本アプリケーションは後続で最小Thymeleaf画面を持つ予定であり、ブラウザ利用時に未認証ユーザーをログイン画面へ誘導する単純な認証フローを採用するため。
+REST APIクライアントに対して401を返す方式よりもブラウザ向け挙動を優先することを、この段階の設計判断として明示する。
 
 ## D-008 docs構成を簡素化する
 

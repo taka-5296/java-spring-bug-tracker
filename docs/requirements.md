@@ -51,24 +51,20 @@ Bugを登録・検索・参照・更新・削除できる小規模な不具合�
 
 ## 3. Security
 
-Spring Securityは導入済みだが、最終的な認証・認可契約はG07で確定する。
-
-予定している要件：
+認証方式は Spring Security の form login + Session を採用する。
 
 - `/health` は未認証でも利用可能
 - `/api/bugs/**` は認証対象
 - ロールは `ROLE_USER` / `ROLE_ADMIN`
-- Bug削除はADMINのみ許可
+- `ROLE_USER`
+  - Bugの作成、一覧・個別参照、更新を許可する
+  - Bug削除は許可しない
+- `ROLE_ADMIN`
+  - Bugの作成、一覧・個別参照、更新、削除を許可する
+- `DELETE /api/bugs/{id}` は `ROLE_ADMIN` のみに許可する
+- 未認証で保護対象へアクセスした場合は `302 Found` でログイン画面 `/login` へリダイレクトする
+- form login の認証失敗時はログイン画面へ戻し、認証失敗であることを表示する
 - usersのDB永続化はSecurity実装の後続段階で行う
-
-### 未決定事項
-
-未認証でREST APIへアクセスした場合の契約は、次のどちらを採用するかG07で確定する。
-
-- APIとして `401 Unauthorized` を返す
-- form loginとしてログイン画面へリダイレクトする
-
-この判断が確定するまでは、401/302のどちらかを固定契約として扱わない。
 
 ## 4. 非機能要件
 

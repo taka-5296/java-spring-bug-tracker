@@ -6,18 +6,23 @@ Base URL: `http://localhost:8080`
 
 - API形式: REST / JSON
 - Request / Response: `application/json`
-- Securityの最終契約は後日、追加予定。未認証時の401またはlogin redirectについては未決定。
+- 認証方式は Spring Security の form login + Session を採用する
+- `/health` は未認証でも利用可能
+- `/api/bugs/**` は認証対象
+- 未認証で `/api/bugs/**` へアクセスした場合は `302 Found` で `/login` へリダイレクトする
+- `ROLE_USER` は作成・参照・更新を利用可能
+- `ROLE_ADMIN` は作成・参照・更新・削除を利用可能
 - アプリケーションレベルのエラーは本書の「エラーレスポンス」に従う
 
 ## 2. エンドポイント
 
-| 操作 | Method | Path             | 成功                    |
-| ---- | ------ | ---------------- | ----------------------- |
-| 作成 | POST   | `/api/bugs`      | 201 + `BugResponse`     |
-| 一覧 | GET    | `/api/bugs`      | 200 + `BugPageResponse` |
-| 個別 | GET    | `/api/bugs/{id}` | 200 + `BugResponse`     |
-| 更新 | PUT    | `/api/bugs/{id}` | 200 + `BugResponse`     |
-| 削除 | DELETE | `/api/bugs/{id}` | 204                     |
+| 操作 | Method | Path             | 必要権限     | 成功                    |
+| ---- | ------ | ---------------- | ------------ | ----------------------- |
+| 作成 | POST   | `/api/bugs`      | USER / ADMIN | 201 + `BugResponse`     |
+| 一覧 | GET    | `/api/bugs`      | USER / ADMIN | 200 + `BugPageResponse` |
+| 個別 | GET    | `/api/bugs/{id}` | USER / ADMIN | 200 + `BugResponse`     |
+| 更新 | PUT    | `/api/bugs/{id}` | USER / ADMIN | 200 + `BugResponse`     |
+| 削除 | DELETE | `/api/bugs/{id}` | ADMINのみ    | 204                     |
 
 ## 3. Request
 
@@ -122,7 +127,12 @@ GET /api/bugs?status=OPEN&priority=HIGH&keyword=login&page=0&size=10
 
 内部例外の詳細はレスポンスへ直接公開しない。
 
-### Security由来の401 / 403
+### Security由来のレスポンス
 
-Security Filterで発生する401 / 403のレスポンス形式はG07で確定する。
-現時点ではアプリケーション例外の `ErrorResponse` と同一形式であることを契約しない。
+| 状況                                                   | HTTP / 挙動                                  |
+| ------------------------------------------------------ | -------------------------------------------- |
+| 未認証で `/api/bugs/**` へアクセス                     | `302 Found` + `Location: /login`             |
+| 認証済み `ROLE_USER` が `DELETE /api/bugs/{id}` を実行 | `403 Forbidden`                              |
+| form loginで認証失敗                                   | ログイン画面へリダイレクトし、認証失敗を表示 |
+
+Security Filter由来の302 / 403は、アプリケーション例外の `ErrorResponse` と同一形式であることを契約しない。
