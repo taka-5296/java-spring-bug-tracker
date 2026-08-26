@@ -2,6 +2,7 @@ package com.example.bug_tracker.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.User;
@@ -18,29 +19,26 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class SecurityConfig {
 
-    // // URL単位の認可ルールを決める
+    // URL単位の認可ルールを決める
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                // // まず formLogin を使う
-                .formLogin(Customizer.withDefaults())
 
-                // // URLごとのアクセス制御
+        http.formLogin(Customizer.withDefaults())
+                // URLごとのアクセス制御
                 .authorizeHttpRequests(auth -> auth
-                        // // 起動確認用。READMEの導線を壊さないため公開
+                        // ("/health")公開
                         .requestMatchers("/health").permitAll()
-
-                        // // 今は最小で API 全体をログイン必須にする
-                        // // Day3 で DELETE のみ ADMIN 制限へ細分化しやすい形
-                        .requestMatchers("/api/bugs/**").authenticated()
-
-                        // // それ以外も一旦許可せず、ログイン前提に寄せる
+                        // DELETEは"ADMIN"のみ
+                        .requestMatchers(HttpMethod.DELETE, "/api/bugs/**").hasRole("ADMIN")
+                        // ("api/bugs/**") 以下は認証必須
+                        .requestMatchers("/api/bugs/**").hasAnyRole("USER", "ADMIN")
+                        // それ以外も一旦許可せず、ログイン前提に寄せる
                         .anyRequest().authenticated());
 
         return http.build();
     }
 
-    // // 今はDBユーザー未実装なので、仮のメモリ内ユーザーで進める
+    // 今はDBユーザー未実装なので、仮のメモリ内ユーザーで進める
     @Bean
     public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
         UserDetails user = User.withUsername("user")
@@ -56,7 +54,7 @@ public class SecurityConfig {
         return new InMemoryUserDetailsManager(user, admin);
     }
 
-    // // パスワードをハッシュ化する
+    // パスワードをハッシュ化する
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
