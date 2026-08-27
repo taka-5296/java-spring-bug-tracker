@@ -149,7 +149,7 @@ Securityの詳細は、要件を `requirements.md`、HTTP上の挙動を `api-sp
 
 ## 現在の主な制約
 
-- Spring Securityは導入済みだが、DELETEのADMIN限定、CSRF方針、Security関連テストは後続の実装・検証対象
+- Spring Securityは導入済み。Bug APIは認証必須で、DELETEはADMINのみ許可する。CSRF方針、Security関連自動テストは後続の実装・検証対象
 - HTTPからController / Service / Repository / PostgreSQLをすべて実物で通すE2E相当テストは未実装
 - GET / PUT / DELETEのController HTTP境界テストは今後必要性に応じて拡張する
 - 一覧検索は `status` / `priority` / `keyword` を対象とし、複雑な検索条件や高度な検索最適化は対象外
