@@ -122,3 +122,27 @@ REST APIクライアントに対して401を返す方式よりもブラウザ向
 
 理由：
 内容の重複と更新漏れを減らすため。
+
+## D-009 users認証情報をPostgreSQLへ永続化する
+
+**Status:** Accepted
+
+Securityの認証元として、`users` テーブルを使用する。
+
+最小項目は次とする。
+
+- id
+- username
+- password_hash
+- role
+- enabled
+
+usernameには一意制約を付ける。
+passwordはBCryptでhash化した値だけを保存し、平文passwordはDBへ保存しない。
+roleはDBでは `USER` / `ADMIN` として保持し、Spring Security上では `ROLE_USER` / `ROLE_ADMIN` として扱う。
+dev用の初期USER / ADMINは後続実装時にSQLで投入するが、SQLへ記載するpasswordもBCrypt済みhashのみとする。
+testではdev用seedへ依存せず、テスト側で必要なユーザーを用意する。
+現段階ではusersとbugsの関連付けは行わない。
+
+理由：
+DB-backed UserDetailsServiceへ安全かつ最小構成で移行し、現在必要のないユーザー管理機能やテーブル関連を追加しないため。
