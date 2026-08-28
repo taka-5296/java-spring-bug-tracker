@@ -30,7 +30,12 @@ DB = 使用しない
 
 ### DB結合テスト
 
-対象: `BugServiceIntegrationTest`
+対象:
+
+- `BugServiceIntegrationTest`
+- `UserRepositoryIntegrationTest`
+
+#### BugServiceIntegrationTest
 
 境界：
 
@@ -59,7 +64,36 @@ PostgreSQL = real
 - DB: `bug_tracker_test`
 - `ddl-auto=create-drop`
 
-### Controller HTTP境界テスト   
+#### UserRepositoryIntegrationTest
+
+境界：
+
+```text
+UserRepository = real
+UserEntity = real
+PostgreSQL = real
+```
+
+現在の代表テスト：
+
+- `findByUsername_should_return_user`
+
+確認内容：
+
+- UserEntityをusersテーブルへ保存できる
+- IDENTITYでIDが採番される
+- usernameから既知ユーザーを取得できる
+- role / enabledが保存値と一致する
+
+設定：
+
+- `@SpringBootTest`
+- `@ActiveProfiles("test")`
+- `@Transactional`
+- DB: `bug_tracker_test`
+- `ddl-auto=create-drop`
+
+### Controller HTTP境界テスト
 
 対象: `BugControllerTest`
 

@@ -21,7 +21,7 @@ Controller / Service / Repositoryを分離し、Bean Validation、統一エラ�
 - `page` / `size` によるページング
 - `title` の入力Validation
 - `status` / `priority` 未指定時の `OPEN` / `LOW` 補完
-- PostgreSQL / JPAによる永続化
+- PostgreSQL / JPAによるBug・User永続化
 - 統一エラーレスポンス
 - Service単体テスト、DB結合テスト、Controller HTTP境界テスト
 - GitHub Actionsによる自動テスト
@@ -73,14 +73,17 @@ docker start bug-tracker-postgres
 
 ### 2. 開発用schemaを作成する
 
-初回セットアップ時に `docs/db/bugs.sql` を `bug_tracker` へ適用します。
+初回セットアップ時に `bugs` と `users` のschemaを `bug_tracker` へ適用します。
 
 ```powershell
 Get-Content .\docs\db\bugs.sql |
 docker exec -i bug-tracker-postgres psql -U bug_user -d bug_tracker
+
+Get-Content .\docs\db\users.sql |
+docker exec -i bug-tracker-postgres psql -U bug_user -d bug_tracker
 ```
 
-devプロファイルでは `ddl-auto=validate` を使用し、JPA Entityと既存schemaの整合を確認します。
+devプロファイルでは ddl-auto=validate を使用し、JPA Entityと既存schemaの整合を確認します。
 
 ### 3. アプリを起動する
 

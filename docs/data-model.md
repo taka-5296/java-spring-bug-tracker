@@ -2,7 +2,7 @@
 
 ## 1. 現行モデル
 
-現在永続化するテーブルは `bugs` のみとする。
+現在永続化するテーブルは `bugs` と `users` とする。
 
 ```text
 bugs
@@ -14,6 +14,14 @@ status
 priority
 created_at
 updated_at
+
+users
+-----
+id PK
+username UNIQUE
+password_hash
+role
+enabled
 ```
 
 現時点で他テーブルとの外部キー関連はない。
@@ -56,7 +64,7 @@ updated_at
 ### dev
 
 - DB: `bug_tracker`
-- DDL: `docs/db/bugs.sql` を手動適用
+- DDL: `docs/db/bugs.sql` / `docs/db/users.sql` を手動適用
 - Hibernate: `ddl-auto=validate`
 - データは保持する
 
@@ -67,11 +75,9 @@ updated_at
 - テーブルはテスト起動時に作成し、終了時に破棄する
 - `docs/db/bugs.sql` は自動実行しない
 
-## 5. users（設計案・未実装）
+## 5. users
 
 `users` はSecurityのDB認証で使用する永続化モデルとする。
-
-この段階では設計のみを固定し、実際のテーブル作成とEntity / Repository実装は後続で行う。
 
 | column        | type              | null | default | 備考             |
 | ------------- | ----------------- | ---- | ------- | ---------------- |
@@ -95,12 +101,13 @@ CREATE TABLE users (
 
 ### JPA対応方針
 
-- UserEntity ↔ users
-- id は GenerationType.IDENTITY
-- role は文字列として USER / ADMIN を保存する
-- Spring Securityへ渡す際に ROLE_USER / ROLE_ADMIN として扱う
-- password_hash はJava側では passwordHash として扱う
+- `UserEntity` ↔ `users`
+- id は `GenerationType.IDENTITY`
+- role は `EnumType.STRING` で `USER` / `ADMIN` として保存する
+- `UserRepository.findByUsername(String username)` でusername検索を行う
+- `password_hash` はJava側では `passwordHash` として扱う
 - 平文passwordはDBへ保存しない
+- 現時点ではbugsとの外部キー関連は持たない
 
 ### 初期ユーザー
 
