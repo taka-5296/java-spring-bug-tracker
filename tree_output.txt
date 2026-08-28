@@ -1,0 +1,1226 @@
+フォルダー パスの一覧:  ボリューム Windows
+ボリューム シリアル番号は 000000B0 2839:1BE1 です
+C:.
+│  .gitattributes
+│  .gitignore
+│  classpath.md
+│  HELP.md
+│  mvnw
+│  mvnw.cmd
+│  pom.xml
+│  README.md
+│  tree_output.txt
+│  
+├─.github
+│  │  PULL_REQUEST_TEMPLATE.md
+│  │  
+│  ├─ISSUE_TEMPLATE
+│  │      ISSUE_TEMPLATE.md
+│  │      
+│  ├─java-upgrade
+│  │  │  .gitignore
+│  │  │  
+│  │  ├─20260314044311
+│  │  │  └─logs
+│  │  │          0.log
+│  │  │          
+│  │  ├─20260316024608
+│  │  │  └─logs
+│  │  │          0.log
+│  │  │          
+│  │  └─20260316024614
+│  │      │  plan.md
+│  │      │  
+│  │      └─logs
+│  │              0.log
+│  │              
+│  ├─modernize
+│  │  └─java-upgrade
+│  │      │  .gitignore
+│  │      │  
+│  │      └─hooks
+│  │          └─scripts
+│  │                  recordToolUse.ps1
+│  │                  recordToolUse.sh
+│  │                  
+│  └─workflows
+│          ci.yml
+│          
+├─.mvn
+│  └─wrapper
+│          maven-wrapper.properties
+│          
+├─.vscode
+│      settings.json
+│      
+├─docs
+│  │  api-spec.md
+│  │  data-model.md
+│  │  decisions.md
+│  │  operations.md
+│  │  requirements.md
+│  │  test-design.md
+│  │  
+│  ├─db
+│  │      bugs.sql
+│  │      users.sql
+│  │      
+│  └─logs
+│          daily-log.md
+│          
+├─scripts
+│      dev-down.ps1
+│      dev-up.ps1
+│      smoke.ps1
+│      
+├─src
+│  ├─main
+│  │  ├─java
+│  │  │  └─com
+│  │  │      └─example
+│  │  │          └─bug_tracker
+│  │  │              │  BugTrackerApplication.java
+│  │  │              │  HealthController.java
+│  │  │              │  
+│  │  │              ├─bug
+│  │  │              │  ├─api
+│  │  │              │  │      BugController.java
+│  │  │              │  │      
+│  │  │              │  ├─domain
+│  │  │              │  │      Bug.java
+│  │  │              │  │      BugPriority.java
+│  │  │              │  │      BugStatus.java
+│  │  │              │  │      
+│  │  │              │  ├─dto
+│  │  │              │  │      BugPageResponse.java
+│  │  │              │  │      BugResponse.java
+│  │  │              │  │      CreateBugRequest.java
+│  │  │              │  │      PageMetaResponse.java
+│  │  │              │  │      UpdateBugRequest.java
+│  │  │              │  │      
+│  │  │              │  ├─entity
+│  │  │              │  │      BugEntity.java
+│  │  │              │  │      
+│  │  │              │  ├─exception
+│  │  │              │  │      BugNotFoundException.java
+│  │  │              │  │      
+│  │  │              │  ├─repository
+│  │  │              │  │      BugRepository.java
+│  │  │              │  │      BugRepositoryCustom.java
+│  │  │              │  │      BugRepositoryImpl.java
+│  │  │              │  │      
+│  │  │              │  └─service
+│  │  │              │          BugService.java
+│  │  │              │          
+│  │  │              ├─common
+│  │  │              │  └─api
+│  │  │              │          GlobalExceptionHandler.java
+│  │  │              │          
+│  │  │              ├─config
+│  │  │              │      SecurityConfig.java
+│  │  │              │      
+│  │  │              └─user
+│  │  │                  ├─domain
+│  │  │                  │      UserRole.java
+│  │  │                  │      
+│  │  │                  ├─entity
+│  │  │                  │      UserEntity.java
+│  │  │                  │      
+│  │  │                  ├─repository
+│  │  │                  │      UserRepository.java
+│  │  │                  │      
+│  │  │                  └─service
+│  │  │                          DBUserDetailsService.java
+│  │  │                          
+│  │  └─resources
+│  │      │  application-dev.properties
+│  │      │  application.properties
+│  │      │  
+│  │      ├─static
+│  │      └─templates
+│  └─test
+│      ├─java
+│      │  └─com
+│      │      └─example
+│      │          └─bug_tracker
+│      │              │  BugTrackerApplicationTests.java
+│      │              │  
+│      │              └─bug
+│      │                  ├─api
+│      │                  │      BugControllerTest.java
+│      │                  │      
+│      │                  ├─service
+│      │                  │      BugServiceIntegrationTest.java
+│      │                  │      BugServiceTest.java
+│      │                  │      
+│      │                  └─support
+│      │                          BugTestFixture.java
+│      │                          
+│      └─resources
+│              application-test.properties
+│              
+├─target
+│  ├─classes
+│  │  │  application-dev.properties
+│  │  │  application.properties
+│  │  │  
+│  │  ├─com
+│  │  │  └─example
+│  │  │      └─bug_tracker
+│  │  │          │  BugTrackerApplication.class
+│  │  │          │  BugTrackerApplication__ApplicationContextInitializer.class
+│  │  │          │  BugTrackerApplication__BeanDefinitions.class
+│  │  │          │  BugTrackerApplication__BeanFactoryRegistrations.class
+│  │  │          │  HealthController.class
+│  │  │          │  HealthController__BeanDefinitions.class
+│  │  │          │  
+│  │  │          ├─bug
+│  │  │          │  ├─api
+│  │  │          │  │      BugController.class
+│  │  │          │  │      BugController__BeanDefinitions.class
+│  │  │          │  │      
+│  │  │          │  ├─domain
+│  │  │          │  │      Bug.class
+│  │  │          │  │      BugPriority.class
+│  │  │          │  │      BugStatus.class
+│  │  │          │  │      
+│  │  │          │  ├─dto
+│  │  │          │  │      BugPageResponse.class
+│  │  │          │  │      BugResponse.class
+│  │  │          │  │      CreateBugRequest.class
+│  │  │          │  │      PageMetaResponse.class
+│  │  │          │  │      UpdateBugRequest.class
+│  │  │          │  │      
+│  │  │          │  ├─entity
+│  │  │          │  │      BugEntity.class
+│  │  │          │  │      BugEntity__Accessor_emsmq0.class
+│  │  │          │  │      BugEntity__Instantiator_emsmq0.class
+│  │  │          │  │      
+│  │  │          │  ├─exception
+│  │  │          │  │      BugNotFoundException.class
+│  │  │          │  │      
+│  │  │          │  ├─repository
+│  │  │          │  │      BugRepository.class
+│  │  │          │  │      BugRepository.json
+│  │  │          │  │      BugRepositoryCustom.class
+│  │  │          │  │      BugRepositoryImpl$$SpringCGLIB$$0.class
+│  │  │          │  │      BugRepositoryImpl.class
+│  │  │          │  │      BugRepositoryImpl__AotRepository.class
+│  │  │          │  │      BugRepositoryImpl__BeanDefinitions.class
+│  │  │          │  │      BugRepositoryImpl__PersistenceInjection.class
+│  │  │          │  │      BugRepository__BeanDefinitions$1.class
+│  │  │          │  │      BugRepository__BeanDefinitions.class
+│  │  │          │  │      
+│  │  │          │  └─service
+│  │  │          │          BugService$$SpringCGLIB$$0.class
+│  │  │          │          BugService.class
+│  │  │          │          BugService__BeanDefinitions.class
+│  │  │          │          
+│  │  │          ├─common
+│  │  │          │  └─api
+│  │  │          │          GlobalExceptionHandler$ErrorResponse.class
+│  │  │          │          GlobalExceptionHandler.class
+│  │  │          │          GlobalExceptionHandler__BeanDefinitions.class
+│  │  │          │          
+│  │  │          ├─config
+│  │  │          │      SecurityConfig$$SpringCGLIB$$0.class
+│  │  │          │      SecurityConfig$$SpringCGLIB$$FastClass$$0.class
+│  │  │          │      SecurityConfig$$SpringCGLIB$$FastClass$$1.class
+│  │  │          │      SecurityConfig.class
+│  │  │          │      SecurityConfig__BeanDefinitions.class
+│  │  │          │      
+│  │  │          └─user
+│  │  │              ├─domain
+│  │  │              │      UserRole.class
+│  │  │              │      
+│  │  │              ├─entity
+│  │  │              │      UserEntity.class
+│  │  │              │      UserEntity__Accessor_swexyg.class
+│  │  │              │      UserEntity__Instantiator_swexyg.class
+│  │  │              │      
+│  │  │              ├─repository
+│  │  │              │      UserRepository.class
+│  │  │              │      UserRepository.json
+│  │  │              │      UserRepositoryImpl__AotRepository.class
+│  │  │              │      UserRepository__BeanDefinitions$1.class
+│  │  │              │      UserRepository__BeanDefinitions.class
+│  │  │              │      
+│  │  │              └─service
+│  │  │                      DBUserDetailsService.class
+│  │  │                      
+│  │  ├─META-INF
+│  │  │  └─native-image
+│  │  │      └─com.example
+│  │  │          └─bug-tracker
+│  │  │                  native-image.properties
+│  │  │                  reachability-metadata.json
+│  │  │                  
+│  │  └─org
+│  │      └─springframework
+│  │          ├─aop
+│  │          │  ├─aspectj
+│  │          │  │  └─annotation
+│  │          │  │          AnnotationAwareAspectJAutoProxyCreator__BeanDefinitions.class
+│  │          │  │          
+│  │          │  └─framework
+│  │          │          ProxyConfig__BeanDefinitions.class
+│  │          │          
+│  │          ├─boot
+│  │          │  ├─autoconfigure
+│  │          │  │  │  AutoConfigurationPackages__BeanDefinitions$BasePackages.class
+│  │          │  │  │  AutoConfigurationPackages__BeanDefinitions.class
+│  │          │  │  │  
+│  │          │  │  ├─aop
+│  │          │  │  │      AopAutoConfiguration__BeanDefinitions$AspectJAutoProxyingConfiguration$CglibAutoProxyConfiguration.class
+│  │          │  │  │      AopAutoConfiguration__BeanDefinitions$AspectJAutoProxyingConfiguration.class
+│  │          │  │  │      AopAutoConfiguration__BeanDefinitions.class
+│  │          │  │  │      
+│  │          │  │  ├─availability
+│  │          │  │  │      ApplicationAvailabilityAutoConfiguration__BeanDefinitions.class
+│  │          │  │  │      
+│  │          │  │  ├─context
+│  │          │  │  │      ConfigurationPropertiesAutoConfiguration__BeanDefinitions.class
+│  │          │  │  │      LifecycleAutoConfiguration__BeanDefinitions.class
+│  │          │  │  │      LifecycleProperties__BeanDefinitions.class
+│  │          │  │  │      PropertyPlaceholderAutoConfiguration__BeanDefinitions.class
+│  │          │  │  │      
+│  │          │  │  ├─info
+│  │          │  │  │      ProjectInfoAutoConfiguration__BeanDefinitions.class
+│  │          │  │  │      ProjectInfoProperties__BeanDefinitions.class
+│  │          │  │  │      
+│  │          │  │  ├─ssl
+│  │          │  │  │      SslAutoConfiguration__BeanDefinitions.class
+│  │          │  │  │      SslProperties__BeanDefinitions.class
+│  │          │  │  │      
+│  │          │  │  ├─task
+│  │          │  │  │      TaskExecutionAutoConfiguration__BeanDefinitions.class
+│  │          │  │  │      TaskExecutionProperties__BeanDefinitions.class
+│  │          │  │  │      TaskExecutorConfigurations__BeanDefinitions$AsyncConfigurerConfiguration.class
+│  │          │  │  │      TaskExecutorConfigurations__BeanDefinitions$BootstrapExecutorConfiguration.class
+│  │          │  │  │      TaskExecutorConfigurations__BeanDefinitions$SimpleAsyncTaskExecutorBuilderConfiguration.class
+│  │          │  │  │      TaskExecutorConfigurations__BeanDefinitions$TaskExecutorConfiguration.class
+│  │          │  │  │      TaskExecutorConfigurations__BeanDefinitions$ThreadPoolTaskExecutorBuilderConfiguration.class
+│  │          │  │  │      TaskExecutorConfigurations__BeanDefinitions.class
+│  │          │  │  │      TaskSchedulingAutoConfiguration__BeanDefinitions.class
+│  │          │  │  │      TaskSchedulingConfigurations__BeanDefinitions$SimpleAsyncTaskSchedulerBuilderConfiguration.class
+│  │          │  │  │      TaskSchedulingConfigurations__BeanDefinitions$ThreadPoolTaskSchedulerBuilderConfiguration.class
+│  │          │  │  │      TaskSchedulingConfigurations__BeanDefinitions.class
+│  │          │  │  │      TaskSchedulingProperties__BeanDefinitions.class
+│  │          │  │  │      
+│  │          │  │  └─web
+│  │          │  │          WebProperties__BeanDefinitions.class
+│  │          │  │          
+│  │          │  ├─context
+│  │          │  │  └─properties
+│  │          │  │          BoundConfigurationProperties__BeanDefinitions.class
+│  │          │  │          ConfigurationPropertiesBinder__BeanDefinitions$ConfigurationPropertiesBinderFactory.class
+│  │          │  │          ConfigurationPropertiesBinder__BeanDefinitions.class
+│  │          │  │          ConfigurationPropertiesBindingPostProcessor__BeanDefinitions.class
+│  │          │  │          
+│  │          │  ├─data
+│  │          │  │  ├─autoconfigure
+│  │          │  │  │  └─web
+│  │          │  │  │          DataWebAutoConfiguration__BeanDefinitions.class
+│  │          │  │  │          DataWebProperties__BeanDefinitions.class
+│  │          │  │  │          
+│  │          │  │  └─jpa
+│  │          │  │      └─autoconfigure
+│  │          │  │              DataJpaRepositoriesAutoConfiguration__BeanDefinitions.class
+│  │          │  │              
+│  │          │  ├─hibernate
+│  │          │  │  └─autoconfigure
+│  │          │  │          HibernateJpaAutoConfiguration__BeanDefinitions.class
+│  │          │  │          HibernateJpaConfiguration__BeanDefinitions.class
+│  │          │  │          HibernateProperties__BeanDefinitions.class
+│  │          │  │          
+│  │          │  ├─http
+│  │          │  │  └─converter
+│  │          │  │      └─autoconfigure
+│  │          │  │              HttpMessageConvertersAutoConfiguration__BeanDefinitions$StringHttpMessageConverterConfiguration.class
+│  │          │  │              HttpMessageConvertersAutoConfiguration__BeanDefinitions.class
+│  │          │  │              HttpMessageConvertersProperties__BeanDefinitions.class
+│  │          │  │              Jackson2HttpMessageConvertersConfiguration__BeanDefinitions.class
+│  │          │  │              JacksonHttpMessageConvertersConfiguration__BeanDefinitions$JacksonJsonHttpMessageConverterConfiguration.class
+│  │          │  │              JacksonHttpMessageConvertersConfiguration__BeanDefinitions.class
+│  │          │  │              
+│  │          │  ├─jackson
+│  │          │  │  │  JacksonMixinModuleEntries__BeanDefinitions.class
+│  │          │  │  │  
+│  │          │  │  └─autoconfigure
+│  │          │  │          JacksonAutoConfiguration__BeanDefinitions$JacksonJsonMapperBuilderCustomizerConfiguration.class
+│  │          │  │          JacksonAutoConfiguration__BeanDefinitions$JacksonMixinConfiguration.class
+│  │          │  │          JacksonAutoConfiguration__BeanDefinitions$JsonProblemDetailsConfiguration.class
+│  │          │  │          JacksonAutoConfiguration__BeanDefinitions.class
+│  │          │  │          JacksonProperties__BeanDefinitions.class
+│  │          │  │          
+│  │          │  ├─jdbc
+│  │          │  │  └─autoconfigure
+│  │          │  │          DataSourceAutoConfiguration__BeanDefinitions$PooledDataSourceConfiguration.class
+│  │          │  │          DataSourceAutoConfiguration__BeanDefinitions.class
+│  │          │  │          DataSourceConfiguration__BeanDefinitions$Hikari.class
+│  │          │  │          DataSourceConfiguration__BeanDefinitions.class
+│  │          │  │          DataSourceInitializationAutoConfiguration__BeanDefinitions.class
+│  │          │  │          DataSourcePoolMetadataProvidersConfiguration__BeanDefinitions$HikariPoolDataSourceMetadataProviderConfiguration.class
+│  │          │  │          DataSourcePoolMetadataProvidersConfiguration__BeanDefinitions.class
+│  │          │  │          DataSourceProperties__BeanDefinitions.class
+│  │          │  │          DataSourceTransactionManagerAutoConfiguration__BeanDefinitions$JdbcTransactionManagerConfiguration.class
+│  │          │  │          DataSourceTransactionManagerAutoConfiguration__BeanDefinitions.class
+│  │          │  │          JdbcClientAutoConfiguration__BeanDefinitions.class
+│  │          │  │          JdbcProperties__BeanDefinitions.class
+│  │          │  │          JdbcTemplateAutoConfiguration__BeanDefinitions.class
+│  │          │  │          JdbcTemplateConfiguration__BeanDefinitions.class
+│  │          │  │          NamedParameterJdbcTemplateConfiguration__BeanDefinitions.class
+│  │          │  │          
+│  │          │  ├─jpa
+│  │          │  │  └─autoconfigure
+│  │          │  │          JpaBaseConfiguration__BeanDefinitions$JpaWebConfiguration.class
+│  │          │  │          JpaBaseConfiguration__BeanDefinitions$PersistenceManagedTypesConfiguration.class
+│  │          │  │          JpaBaseConfiguration__BeanDefinitions.class
+│  │          │  │          JpaProperties__BeanDefinitions.class
+│  │          │  │          
+│  │          │  ├─persistence
+│  │          │  │  └─autoconfigure
+│  │          │  │          PersistenceExceptionTranslationAutoConfiguration__BeanDefinitions.class
+│  │          │  │          
+│  │          │  ├─security
+│  │          │  │  └─autoconfigure
+│  │          │  │      │  SecurityAutoConfiguration__BeanDefinitions.class
+│  │          │  │      │  SecurityProperties__BeanDefinitions.class
+│  │          │  │      │  
+│  │          │  │      └─web
+│  │          │  │          └─servlet
+│  │          │  │                  SecurityFilterAutoConfiguration__BeanDefinitions.class
+│  │          │  │                  SecurityFilterProperties__BeanDefinitions.class
+│  │          │  │                  ServletWebSecurityAutoConfiguration__BeanDefinitions$EnableWebSecurityConfiguration.class
+│  │          │  │                  ServletWebSecurityAutoConfiguration__BeanDefinitions$PathPatternRequestMatcherBuilderConfiguration.class
+│  │          │  │                  ServletWebSecurityAutoConfiguration__BeanDefinitions.class
+│  │          │  │                  
+│  │          │  ├─servlet
+│  │          │  │  └─autoconfigure
+│  │          │  │          HttpEncodingAutoConfiguration__BeanDefinitions.class
+│  │          │  │          MultipartAutoConfiguration__BeanDefinitions.class
+│  │          │  │          MultipartProperties__BeanDefinitions.class
+│  │          │  │          ServletEncodingProperties__BeanDefinitions.class
+│  │          │  │          
+│  │          │  ├─sql
+│  │          │  │  ├─autoconfigure
+│  │          │  │  │  └─init
+│  │          │  │  │          SqlInitializationProperties__BeanDefinitions.class
+│  │          │  │  │          
+│  │          │  │  └─init
+│  │          │  │      └─dependency
+│  │          │  │              DatabaseInitializationDependencyConfigurer__BeanDefinitions$DependsOnDatabaseInitializationPostProcessor.class
+│  │          │  │              DatabaseInitializationDependencyConfigurer__BeanDefinitions.class
+│  │          │  │              
+│  │          │  ├─tomcat
+│  │          │  │  └─autoconfigure
+│  │          │  │      │  TomcatServerProperties__BeanDefinitions.class
+│  │          │  │      │  TomcatWebServerConfiguration__BeanDefinitions$TomcatWebSocketConfiguration.class
+│  │          │  │      │  TomcatWebServerConfiguration__BeanDefinitions.class
+│  │          │  │      │  
+│  │          │  │      └─servlet
+│  │          │  │              TomcatServletWebServerAutoConfiguration__BeanDefinitions.class
+│  │          │  │              
+│  │          │  ├─transaction
+│  │          │  │  ├─autoconfigure
+│  │          │  │  │      TransactionAutoConfiguration__BeanDefinitions$EnableTransactionManagementConfiguration$CglibAutoProxyConfiguration.class
+│  │          │  │  │      TransactionAutoConfiguration__BeanDefinitions$EnableTransactionManagementConfiguration.class
+│  │          │  │  │      TransactionAutoConfiguration__BeanDefinitions$TransactionTemplateConfiguration.class
+│  │          │  │  │      TransactionAutoConfiguration__BeanDefinitions.class
+│  │          │  │  │      TransactionManagerCustomizationAutoConfiguration__BeanDefinitions.class
+│  │          │  │  │      TransactionProperties__BeanDefinitions.class
+│  │          │  │  │      
+│  │          │  │  └─jta
+│  │          │  │      └─autoconfigure
+│  │          │  │              JtaAutoConfiguration__BeanDefinitions.class
+│  │          │  │              
+│  │          │  ├─validation
+│  │          │  │  ├─autoconfigure
+│  │          │  │  │      ValidationAutoConfiguration__BeanDefinitions.class
+│  │          │  │  │      
+│  │          │  │  └─beanvalidation
+│  │          │  │          MethodValidationExcludeFilter__BeanDefinitions.class
+│  │          │  │          
+│  │          │  ├─web
+│  │          │  │  ├─error
+│  │          │  │  │      ErrorPageRegistrarBeanPostProcessor__BeanDefinitions.class
+│  │          │  │  │      
+│  │          │  │  └─server
+│  │          │  │      │  WebServerFactoryCustomizerBeanPostProcessor__BeanDefinitions.class
+│  │          │  │      │  
+│  │          │  │      └─autoconfigure
+│  │          │  │          │  ServerProperties__BeanDefinitions.class
+│  │          │  │          │  
+│  │          │  │          └─servlet
+│  │          │  │                  ServletWebServerConfiguration__BeanDefinitions.class
+│  │          │  │                  
+│  │          │  └─webmvc
+│  │          │      └─autoconfigure
+│  │          │          │  DispatcherServletAutoConfiguration__BeanDefinitions$DispatcherServletConfiguration.class
+│  │          │          │  DispatcherServletAutoConfiguration__BeanDefinitions$DispatcherServletRegistrationConfiguration.class
+│  │          │          │  DispatcherServletAutoConfiguration__BeanDefinitions.class
+│  │          │          │  WebMvcAutoConfiguration_EnableWebMvcConfiguration__Autowiring.class
+│  │          │          │  WebMvcAutoConfiguration__BeanDefinitions$EnableWebMvcConfiguration.class
+│  │          │          │  WebMvcAutoConfiguration__BeanDefinitions$WebMvcAutoConfigurationAdapter.class
+│  │          │          │  WebMvcAutoConfiguration__BeanDefinitions.class
+│  │          │          │  WebMvcProperties__BeanDefinitions.class
+│  │          │          │  
+│  │          │          └─error
+│  │          │                  ErrorMvcAutoConfiguration__BeanDefinitions$DefaultErrorViewResolverConfiguration.class
+│  │          │                  ErrorMvcAutoConfiguration__BeanDefinitions$WhitelabelErrorViewConfiguration.class
+│  │          │                  ErrorMvcAutoConfiguration__BeanDefinitions.class
+│  │          │                  
+│  │          ├─context
+│  │          │  └─event
+│  │          │          DefaultEventListenerFactory__BeanDefinitions.class
+│  │          │          EventListenerMethodProcessor__BeanDefinitions.class
+│  │          │          
+│  │          ├─data
+│  │          │  ├─jpa
+│  │          │  │  ├─mapping
+│  │          │  │  │      JpaMetamodelMappingContext__BeanDefinitions.class
+│  │          │  │  │      
+│  │          │  │  ├─repository
+│  │          │  │  │  └─support
+│  │          │  │  │          DefaultJpaContext__BeanDefinitions.class
+│  │          │  │  │          JpaEvaluationContextExtension__BeanDefinitions.class
+│  │          │  │  │          JpaRepositoryFactoryBean__Autowiring.class
+│  │          │  │  │          JpaRepositoryFactoryBean__Autowiring1.class
+│  │          │  │  │          
+│  │          │  │  └─util
+│  │          │  │          JpaMetamodelCacheCleanup__BeanDefinitions.class
+│  │          │  │          
+│  │          │  ├─repository
+│  │          │  │  └─core
+│  │          │  │      └─support
+│  │          │  │              PropertiesBasedNamedQueries__BeanDefinitions.class
+│  │          │  │              RepositoryComposition__BeanDefinitions$RepositoryFragments.class
+│  │          │  │              RepositoryComposition__BeanDefinitions.class
+│  │          │  │              
+│  │          │  └─web
+│  │          │      └─config
+│  │          │              ProjectingArgumentResolverRegistrar__BeanDefinitions.class
+│  │          │              SpringDataJackson3Configuration__Autowiring.class
+│  │          │              SpringDataJackson3Configuration__BeanDefinitions.class
+│  │          │              SpringDataWebConfiguration__BeanDefinitions.class
+│  │          │              
+│  │          ├─orm
+│  │          │  └─jpa
+│  │          │          SharedEntityManagerCreator__BeanDefinitions.class
+│  │          │          
+│  │          ├─security
+│  │          │  └─config
+│  │          │      └─annotation
+│  │          │          ├─authentication
+│  │          │          │  └─configuration
+│  │          │          │          AuthenticationConfiguration__Autowiring.class
+│  │          │          │          AuthenticationConfiguration__BeanDefinitions.class
+│  │          │          │          
+│  │          │          ├─configuration
+│  │          │          │      ObjectPostProcessorConfiguration__BeanDefinitions.class
+│  │          │          │      
+│  │          │          └─web
+│  │          │              └─configuration
+│  │          │                      HttpSecurityConfiguration__Autowiring.class
+│  │          │                      HttpSecurityConfiguration__BeanDefinitions.class
+│  │          │                      ObservationConfiguration__BeanDefinitions.class
+│  │          │                      WebMvcSecurityConfiguration__BeanDefinitions.class
+│  │          │                      WebSecurityConfiguration__Autowiring.class
+│  │          │                      WebSecurityConfiguration__BeanDefinitions$CompositeFilterChainProxy.class
+│  │          │                      WebSecurityConfiguration__BeanDefinitions.class
+│  │          │                      
+│  │          ├─transaction
+│  │          │  └─annotation
+│  │          │          AbstractTransactionManagementConfiguration__BeanDefinitions.class
+│  │          │          ProxyTransactionManagementConfiguration__Autowiring.class
+│  │          │          ProxyTransactionManagementConfiguration__BeanDefinitions.class
+│  │          │          
+│  │          └─web
+│  │              └─filter
+│  │                      ServletRequestPathFilter__BeanDefinitions.class
+│  │                      
+│  ├─generated-sources
+│  │  └─annotations
+│  ├─generated-test-sources
+│  │  └─test-annotations
+│  ├─maven-status
+│  │  └─maven-compiler-plugin
+│  │      ├─compile
+│  │      │  └─default-compile
+│  │      │          createdFiles.lst
+│  │      │          inputFiles.lst
+│  │      │          
+│  │      └─testCompile
+│  │          └─default-testCompile
+│  │                  createdFiles.lst
+│  │                  inputFiles.lst
+│  │                  
+│  ├─spring-aot
+│  │  └─main
+│  │      ├─classes
+│  │      │  ├─com
+│  │      │  │  └─example
+│  │      │  │      └─bug_tracker
+│  │      │  │          │  BugTrackerApplication__ApplicationContextInitializer.class
+│  │      │  │          │  BugTrackerApplication__BeanDefinitions.class
+│  │      │  │          │  BugTrackerApplication__BeanFactoryRegistrations.class
+│  │      │  │          │  HealthController__BeanDefinitions.class
+│  │      │  │          │  
+│  │      │  │          ├─bug
+│  │      │  │          │  ├─api
+│  │      │  │          │  │      BugController__BeanDefinitions.class
+│  │      │  │          │  │      
+│  │      │  │          │  ├─entity
+│  │      │  │          │  │      BugEntity__Accessor_emsmq0.class
+│  │      │  │          │  │      BugEntity__Instantiator_emsmq0.class
+│  │      │  │          │  │      
+│  │      │  │          │  ├─repository
+│  │      │  │          │  │      BugRepositoryImpl$$SpringCGLIB$$0.class
+│  │      │  │          │  │      BugRepositoryImpl__AotRepository.class
+│  │      │  │          │  │      BugRepositoryImpl__BeanDefinitions.class
+│  │      │  │          │  │      BugRepositoryImpl__PersistenceInjection.class
+│  │      │  │          │  │      BugRepository__BeanDefinitions$1.class
+│  │      │  │          │  │      BugRepository__BeanDefinitions.class
+│  │      │  │          │  │      
+│  │      │  │          │  └─service
+│  │      │  │          │          BugService$$SpringCGLIB$$0.class
+│  │      │  │          │          BugService__BeanDefinitions.class
+│  │      │  │          │          
+│  │      │  │          ├─common
+│  │      │  │          │  └─api
+│  │      │  │          │          GlobalExceptionHandler__BeanDefinitions.class
+│  │      │  │          │          
+│  │      │  │          ├─config
+│  │      │  │          │      SecurityConfig$$SpringCGLIB$$0.class
+│  │      │  │          │      SecurityConfig$$SpringCGLIB$$FastClass$$0.class
+│  │      │  │          │      SecurityConfig$$SpringCGLIB$$FastClass$$1.class
+│  │      │  │          │      SecurityConfig__BeanDefinitions.class
+│  │      │  │          │      
+│  │      │  │          └─user
+│  │      │  │              ├─entity
+│  │      │  │              │      UserEntity__Accessor_swexyg.class
+│  │      │  │              │      UserEntity__Instantiator_swexyg.class
+│  │      │  │              │      
+│  │      │  │              └─repository
+│  │      │  │                      UserRepositoryImpl__AotRepository.class
+│  │      │  │                      UserRepository__BeanDefinitions$1.class
+│  │      │  │                      UserRepository__BeanDefinitions.class
+│  │      │  │                      
+│  │      │  └─org
+│  │      │      └─springframework
+│  │      │          ├─aop
+│  │      │          │  ├─aspectj
+│  │      │          │  │  └─annotation
+│  │      │          │  │          AnnotationAwareAspectJAutoProxyCreator__BeanDefinitions.class
+│  │      │          │  │          
+│  │      │          │  └─framework
+│  │      │          │          ProxyConfig__BeanDefinitions.class
+│  │      │          │          
+│  │      │          ├─boot
+│  │      │          │  ├─autoconfigure
+│  │      │          │  │  │  AutoConfigurationPackages__BeanDefinitions$BasePackages.class
+│  │      │          │  │  │  AutoConfigurationPackages__BeanDefinitions.class
+│  │      │          │  │  │  
+│  │      │          │  │  ├─aop
+│  │      │          │  │  │      AopAutoConfiguration__BeanDefinitions$AspectJAutoProxyingConfiguration$CglibAutoProxyConfiguration.class
+│  │      │          │  │  │      AopAutoConfiguration__BeanDefinitions$AspectJAutoProxyingConfiguration.class
+│  │      │          │  │  │      AopAutoConfiguration__BeanDefinitions.class
+│  │      │          │  │  │      
+│  │      │          │  │  ├─availability
+│  │      │          │  │  │      ApplicationAvailabilityAutoConfiguration__BeanDefinitions.class
+│  │      │          │  │  │      
+│  │      │          │  │  ├─context
+│  │      │          │  │  │      ConfigurationPropertiesAutoConfiguration__BeanDefinitions.class
+│  │      │          │  │  │      LifecycleAutoConfiguration__BeanDefinitions.class
+│  │      │          │  │  │      LifecycleProperties__BeanDefinitions.class
+│  │      │          │  │  │      PropertyPlaceholderAutoConfiguration__BeanDefinitions.class
+│  │      │          │  │  │      
+│  │      │          │  │  ├─info
+│  │      │          │  │  │      ProjectInfoAutoConfiguration__BeanDefinitions.class
+│  │      │          │  │  │      ProjectInfoProperties__BeanDefinitions.class
+│  │      │          │  │  │      
+│  │      │          │  │  ├─ssl
+│  │      │          │  │  │      SslAutoConfiguration__BeanDefinitions.class
+│  │      │          │  │  │      SslProperties__BeanDefinitions.class
+│  │      │          │  │  │      
+│  │      │          │  │  ├─task
+│  │      │          │  │  │      TaskExecutionAutoConfiguration__BeanDefinitions.class
+│  │      │          │  │  │      TaskExecutionProperties__BeanDefinitions.class
+│  │      │          │  │  │      TaskExecutorConfigurations__BeanDefinitions$AsyncConfigurerConfiguration.class
+│  │      │          │  │  │      TaskExecutorConfigurations__BeanDefinitions$BootstrapExecutorConfiguration.class
+│  │      │          │  │  │      TaskExecutorConfigurations__BeanDefinitions$SimpleAsyncTaskExecutorBuilderConfiguration.class
+│  │      │          │  │  │      TaskExecutorConfigurations__BeanDefinitions$TaskExecutorConfiguration.class
+│  │      │          │  │  │      TaskExecutorConfigurations__BeanDefinitions$ThreadPoolTaskExecutorBuilderConfiguration.class
+│  │      │          │  │  │      TaskExecutorConfigurations__BeanDefinitions.class
+│  │      │          │  │  │      TaskSchedulingAutoConfiguration__BeanDefinitions.class
+│  │      │          │  │  │      TaskSchedulingConfigurations__BeanDefinitions$SimpleAsyncTaskSchedulerBuilderConfiguration.class
+│  │      │          │  │  │      TaskSchedulingConfigurations__BeanDefinitions$ThreadPoolTaskSchedulerBuilderConfiguration.class
+│  │      │          │  │  │      TaskSchedulingConfigurations__BeanDefinitions.class
+│  │      │          │  │  │      TaskSchedulingProperties__BeanDefinitions.class
+│  │      │          │  │  │      
+│  │      │          │  │  └─web
+│  │      │          │  │          WebProperties__BeanDefinitions.class
+│  │      │          │  │          
+│  │      │          │  ├─context
+│  │      │          │  │  └─properties
+│  │      │          │  │          BoundConfigurationProperties__BeanDefinitions.class
+│  │      │          │  │          ConfigurationPropertiesBinder__BeanDefinitions$ConfigurationPropertiesBinderFactory.class
+│  │      │          │  │          ConfigurationPropertiesBinder__BeanDefinitions.class
+│  │      │          │  │          ConfigurationPropertiesBindingPostProcessor__BeanDefinitions.class
+│  │      │          │  │          
+│  │      │          │  ├─data
+│  │      │          │  │  ├─autoconfigure
+│  │      │          │  │  │  └─web
+│  │      │          │  │  │          DataWebAutoConfiguration__BeanDefinitions.class
+│  │      │          │  │  │          DataWebProperties__BeanDefinitions.class
+│  │      │          │  │  │          
+│  │      │          │  │  └─jpa
+│  │      │          │  │      └─autoconfigure
+│  │      │          │  │              DataJpaRepositoriesAutoConfiguration__BeanDefinitions.class
+│  │      │          │  │              
+│  │      │          │  ├─hibernate
+│  │      │          │  │  └─autoconfigure
+│  │      │          │  │          HibernateJpaAutoConfiguration__BeanDefinitions.class
+│  │      │          │  │          HibernateJpaConfiguration__BeanDefinitions.class
+│  │      │          │  │          HibernateProperties__BeanDefinitions.class
+│  │      │          │  │          
+│  │      │          │  ├─http
+│  │      │          │  │  └─converter
+│  │      │          │  │      └─autoconfigure
+│  │      │          │  │              HttpMessageConvertersAutoConfiguration__BeanDefinitions$StringHttpMessageConverterConfiguration.class
+│  │      │          │  │              HttpMessageConvertersAutoConfiguration__BeanDefinitions.class
+│  │      │          │  │              HttpMessageConvertersProperties__BeanDefinitions.class
+│  │      │          │  │              Jackson2HttpMessageConvertersConfiguration__BeanDefinitions.class
+│  │      │          │  │              JacksonHttpMessageConvertersConfiguration__BeanDefinitions$JacksonJsonHttpMessageConverterConfiguration.class
+│  │      │          │  │              JacksonHttpMessageConvertersConfiguration__BeanDefinitions.class
+│  │      │          │  │              
+│  │      │          │  ├─jackson
+│  │      │          │  │  │  JacksonMixinModuleEntries__BeanDefinitions.class
+│  │      │          │  │  │  
+│  │      │          │  │  └─autoconfigure
+│  │      │          │  │          JacksonAutoConfiguration__BeanDefinitions$JacksonJsonMapperBuilderCustomizerConfiguration.class
+│  │      │          │  │          JacksonAutoConfiguration__BeanDefinitions$JacksonMixinConfiguration.class
+│  │      │          │  │          JacksonAutoConfiguration__BeanDefinitions$JsonProblemDetailsConfiguration.class
+│  │      │          │  │          JacksonAutoConfiguration__BeanDefinitions.class
+│  │      │          │  │          JacksonProperties__BeanDefinitions.class
+│  │      │          │  │          
+│  │      │          │  ├─jdbc
+│  │      │          │  │  └─autoconfigure
+│  │      │          │  │          DataSourceAutoConfiguration__BeanDefinitions$PooledDataSourceConfiguration.class
+│  │      │          │  │          DataSourceAutoConfiguration__BeanDefinitions.class
+│  │      │          │  │          DataSourceConfiguration__BeanDefinitions$Hikari.class
+│  │      │          │  │          DataSourceConfiguration__BeanDefinitions.class
+│  │      │          │  │          DataSourceInitializationAutoConfiguration__BeanDefinitions.class
+│  │      │          │  │          DataSourcePoolMetadataProvidersConfiguration__BeanDefinitions$HikariPoolDataSourceMetadataProviderConfiguration.class
+│  │      │          │  │          DataSourcePoolMetadataProvidersConfiguration__BeanDefinitions.class
+│  │      │          │  │          DataSourceProperties__BeanDefinitions.class
+│  │      │          │  │          DataSourceTransactionManagerAutoConfiguration__BeanDefinitions$JdbcTransactionManagerConfiguration.class
+│  │      │          │  │          DataSourceTransactionManagerAutoConfiguration__BeanDefinitions.class
+│  │      │          │  │          JdbcClientAutoConfiguration__BeanDefinitions.class
+│  │      │          │  │          JdbcProperties__BeanDefinitions.class
+│  │      │          │  │          JdbcTemplateAutoConfiguration__BeanDefinitions.class
+│  │      │          │  │          JdbcTemplateConfiguration__BeanDefinitions.class
+│  │      │          │  │          NamedParameterJdbcTemplateConfiguration__BeanDefinitions.class
+│  │      │          │  │          
+│  │      │          │  ├─jpa
+│  │      │          │  │  └─autoconfigure
+│  │      │          │  │          JpaBaseConfiguration__BeanDefinitions$JpaWebConfiguration.class
+│  │      │          │  │          JpaBaseConfiguration__BeanDefinitions$PersistenceManagedTypesConfiguration.class
+│  │      │          │  │          JpaBaseConfiguration__BeanDefinitions.class
+│  │      │          │  │          JpaProperties__BeanDefinitions.class
+│  │      │          │  │          
+│  │      │          │  ├─persistence
+│  │      │          │  │  └─autoconfigure
+│  │      │          │  │          PersistenceExceptionTranslationAutoConfiguration__BeanDefinitions.class
+│  │      │          │  │          
+│  │      │          │  ├─security
+│  │      │          │  │  └─autoconfigure
+│  │      │          │  │      │  SecurityAutoConfiguration__BeanDefinitions.class
+│  │      │          │  │      │  SecurityProperties__BeanDefinitions.class
+│  │      │          │  │      │  
+│  │      │          │  │      └─web
+│  │      │          │  │          └─servlet
+│  │      │          │  │                  SecurityFilterAutoConfiguration__BeanDefinitions.class
+│  │      │          │  │                  SecurityFilterProperties__BeanDefinitions.class
+│  │      │          │  │                  ServletWebSecurityAutoConfiguration__BeanDefinitions$EnableWebSecurityConfiguration.class
+│  │      │          │  │                  ServletWebSecurityAutoConfiguration__BeanDefinitions$PathPatternRequestMatcherBuilderConfiguration.class
+│  │      │          │  │                  ServletWebSecurityAutoConfiguration__BeanDefinitions.class
+│  │      │          │  │                  
+│  │      │          │  ├─servlet
+│  │      │          │  │  └─autoconfigure
+│  │      │          │  │          HttpEncodingAutoConfiguration__BeanDefinitions.class
+│  │      │          │  │          MultipartAutoConfiguration__BeanDefinitions.class
+│  │      │          │  │          MultipartProperties__BeanDefinitions.class
+│  │      │          │  │          ServletEncodingProperties__BeanDefinitions.class
+│  │      │          │  │          
+│  │      │          │  ├─sql
+│  │      │          │  │  ├─autoconfigure
+│  │      │          │  │  │  └─init
+│  │      │          │  │  │          SqlInitializationProperties__BeanDefinitions.class
+│  │      │          │  │  │          
+│  │      │          │  │  └─init
+│  │      │          │  │      └─dependency
+│  │      │          │  │              DatabaseInitializationDependencyConfigurer__BeanDefinitions$DependsOnDatabaseInitializationPostProcessor.class
+│  │      │          │  │              DatabaseInitializationDependencyConfigurer__BeanDefinitions.class
+│  │      │          │  │              
+│  │      │          │  ├─tomcat
+│  │      │          │  │  └─autoconfigure
+│  │      │          │  │      │  TomcatServerProperties__BeanDefinitions.class
+│  │      │          │  │      │  TomcatWebServerConfiguration__BeanDefinitions$TomcatWebSocketConfiguration.class
+│  │      │          │  │      │  TomcatWebServerConfiguration__BeanDefinitions.class
+│  │      │          │  │      │  
+│  │      │          │  │      └─servlet
+│  │      │          │  │              TomcatServletWebServerAutoConfiguration__BeanDefinitions.class
+│  │      │          │  │              
+│  │      │          │  ├─transaction
+│  │      │          │  │  ├─autoconfigure
+│  │      │          │  │  │      TransactionAutoConfiguration__BeanDefinitions$EnableTransactionManagementConfiguration$CglibAutoProxyConfiguration.class
+│  │      │          │  │  │      TransactionAutoConfiguration__BeanDefinitions$EnableTransactionManagementConfiguration.class
+│  │      │          │  │  │      TransactionAutoConfiguration__BeanDefinitions$TransactionTemplateConfiguration.class
+│  │      │          │  │  │      TransactionAutoConfiguration__BeanDefinitions.class
+│  │      │          │  │  │      TransactionManagerCustomizationAutoConfiguration__BeanDefinitions.class
+│  │      │          │  │  │      TransactionProperties__BeanDefinitions.class
+│  │      │          │  │  │      
+│  │      │          │  │  └─jta
+│  │      │          │  │      └─autoconfigure
+│  │      │          │  │              JtaAutoConfiguration__BeanDefinitions.class
+│  │      │          │  │              
+│  │      │          │  ├─validation
+│  │      │          │  │  ├─autoconfigure
+│  │      │          │  │  │      ValidationAutoConfiguration__BeanDefinitions.class
+│  │      │          │  │  │      
+│  │      │          │  │  └─beanvalidation
+│  │      │          │  │          MethodValidationExcludeFilter__BeanDefinitions.class
+│  │      │          │  │          
+│  │      │          │  ├─web
+│  │      │          │  │  ├─error
+│  │      │          │  │  │      ErrorPageRegistrarBeanPostProcessor__BeanDefinitions.class
+│  │      │          │  │  │      
+│  │      │          │  │  └─server
+│  │      │          │  │      │  WebServerFactoryCustomizerBeanPostProcessor__BeanDefinitions.class
+│  │      │          │  │      │  
+│  │      │          │  │      └─autoconfigure
+│  │      │          │  │          │  ServerProperties__BeanDefinitions.class
+│  │      │          │  │          │  
+│  │      │          │  │          └─servlet
+│  │      │          │  │                  ServletWebServerConfiguration__BeanDefinitions.class
+│  │      │          │  │                  
+│  │      │          │  └─webmvc
+│  │      │          │      └─autoconfigure
+│  │      │          │          │  DispatcherServletAutoConfiguration__BeanDefinitions$DispatcherServletConfiguration.class
+│  │      │          │          │  DispatcherServletAutoConfiguration__BeanDefinitions$DispatcherServletRegistrationConfiguration.class
+│  │      │          │          │  DispatcherServletAutoConfiguration__BeanDefinitions.class
+│  │      │          │          │  WebMvcAutoConfiguration_EnableWebMvcConfiguration__Autowiring.class
+│  │      │          │          │  WebMvcAutoConfiguration__BeanDefinitions$EnableWebMvcConfiguration.class
+│  │      │          │          │  WebMvcAutoConfiguration__BeanDefinitions$WebMvcAutoConfigurationAdapter.class
+│  │      │          │          │  WebMvcAutoConfiguration__BeanDefinitions.class
+│  │      │          │          │  WebMvcProperties__BeanDefinitions.class
+│  │      │          │          │  
+│  │      │          │          └─error
+│  │      │          │                  ErrorMvcAutoConfiguration__BeanDefinitions$DefaultErrorViewResolverConfiguration.class
+│  │      │          │                  ErrorMvcAutoConfiguration__BeanDefinitions$WhitelabelErrorViewConfiguration.class
+│  │      │          │                  ErrorMvcAutoConfiguration__BeanDefinitions.class
+│  │      │          │                  
+│  │      │          ├─context
+│  │      │          │  └─event
+│  │      │          │          DefaultEventListenerFactory__BeanDefinitions.class
+│  │      │          │          EventListenerMethodProcessor__BeanDefinitions.class
+│  │      │          │          
+│  │      │          ├─data
+│  │      │          │  ├─jpa
+│  │      │          │  │  ├─mapping
+│  │      │          │  │  │      JpaMetamodelMappingContext__BeanDefinitions.class
+│  │      │          │  │  │      
+│  │      │          │  │  ├─repository
+│  │      │          │  │  │  └─support
+│  │      │          │  │  │          DefaultJpaContext__BeanDefinitions.class
+│  │      │          │  │  │          JpaEvaluationContextExtension__BeanDefinitions.class
+│  │      │          │  │  │          JpaRepositoryFactoryBean__Autowiring.class
+│  │      │          │  │  │          JpaRepositoryFactoryBean__Autowiring1.class
+│  │      │          │  │  │          
+│  │      │          │  │  └─util
+│  │      │          │  │          JpaMetamodelCacheCleanup__BeanDefinitions.class
+│  │      │          │  │          
+│  │      │          │  ├─repository
+│  │      │          │  │  └─core
+│  │      │          │  │      └─support
+│  │      │          │  │              PropertiesBasedNamedQueries__BeanDefinitions.class
+│  │      │          │  │              RepositoryComposition__BeanDefinitions$RepositoryFragments.class
+│  │      │          │  │              RepositoryComposition__BeanDefinitions.class
+│  │      │          │  │              
+│  │      │          │  └─web
+│  │      │          │      └─config
+│  │      │          │              ProjectingArgumentResolverRegistrar__BeanDefinitions.class
+│  │      │          │              SpringDataJackson3Configuration__Autowiring.class
+│  │      │          │              SpringDataJackson3Configuration__BeanDefinitions.class
+│  │      │          │              SpringDataWebConfiguration__BeanDefinitions.class
+│  │      │          │              
+│  │      │          ├─orm
+│  │      │          │  └─jpa
+│  │      │          │          SharedEntityManagerCreator__BeanDefinitions.class
+│  │      │          │          
+│  │      │          ├─security
+│  │      │          │  └─config
+│  │      │          │      └─annotation
+│  │      │          │          ├─authentication
+│  │      │          │          │  └─configuration
+│  │      │          │          │          AuthenticationConfiguration__Autowiring.class
+│  │      │          │          │          AuthenticationConfiguration__BeanDefinitions.class
+│  │      │          │          │          
+│  │      │          │          ├─configuration
+│  │      │          │          │      ObjectPostProcessorConfiguration__BeanDefinitions.class
+│  │      │          │          │      
+│  │      │          │          └─web
+│  │      │          │              └─configuration
+│  │      │          │                      HttpSecurityConfiguration__Autowiring.class
+│  │      │          │                      HttpSecurityConfiguration__BeanDefinitions.class
+│  │      │          │                      ObservationConfiguration__BeanDefinitions.class
+│  │      │          │                      WebMvcSecurityConfiguration__BeanDefinitions.class
+│  │      │          │                      WebSecurityConfiguration__Autowiring.class
+│  │      │          │                      WebSecurityConfiguration__BeanDefinitions$CompositeFilterChainProxy.class
+│  │      │          │                      WebSecurityConfiguration__BeanDefinitions.class
+│  │      │          │                      
+│  │      │          ├─transaction
+│  │      │          │  └─annotation
+│  │      │          │          AbstractTransactionManagementConfiguration__BeanDefinitions.class
+│  │      │          │          ProxyTransactionManagementConfiguration__Autowiring.class
+│  │      │          │          ProxyTransactionManagementConfiguration__BeanDefinitions.class
+│  │      │          │          
+│  │      │          └─web
+│  │      │              └─filter
+│  │      │                      ServletRequestPathFilter__BeanDefinitions.class
+│  │      │                      
+│  │      ├─resources
+│  │      │  ├─com
+│  │      │  │  └─example
+│  │      │  │      └─bug_tracker
+│  │      │  │          ├─bug
+│  │      │  │          │  └─repository
+│  │      │  │          │          BugRepository.json
+│  │      │  │          │          
+│  │      │  │          └─user
+│  │      │  │              └─repository
+│  │      │  │                      UserRepository.json
+│  │      │  │                      
+│  │      │  └─META-INF
+│  │      │      └─native-image
+│  │      │          └─com.example
+│  │      │              └─bug-tracker
+│  │      │                      native-image.properties
+│  │      │                      reachability-metadata.json
+│  │      │                      
+│  │      └─sources
+│  │          ├─com
+│  │          │  └─example
+│  │          │      └─bug_tracker
+│  │          │          │  BugTrackerApplication__ApplicationContextInitializer.java
+│  │          │          │  BugTrackerApplication__BeanDefinitions.java
+│  │          │          │  BugTrackerApplication__BeanFactoryRegistrations.java
+│  │          │          │  HealthController__BeanDefinitions.java
+│  │          │          │  
+│  │          │          ├─bug
+│  │          │          │  ├─api
+│  │          │          │  │      BugController__BeanDefinitions.java
+│  │          │          │  │      
+│  │          │          │  ├─repository
+│  │          │          │  │      BugRepositoryImpl__AotRepository.java
+│  │          │          │  │      BugRepositoryImpl__BeanDefinitions.java
+│  │          │          │  │      BugRepositoryImpl__PersistenceInjection.java
+│  │          │          │  │      BugRepository__BeanDefinitions.java
+│  │          │          │  │      
+│  │          │          │  └─service
+│  │          │          │          BugService__BeanDefinitions.java
+│  │          │          │          
+│  │          │          ├─common
+│  │          │          │  └─api
+│  │          │          │          GlobalExceptionHandler__BeanDefinitions.java
+│  │          │          │          
+│  │          │          ├─config
+│  │          │          │      SecurityConfig__BeanDefinitions.java
+│  │          │          │      
+│  │          │          └─user
+│  │          │              └─repository
+│  │          │                      UserRepositoryImpl__AotRepository.java
+│  │          │                      UserRepository__BeanDefinitions.java
+│  │          │                      
+│  │          └─org
+│  │              └─springframework
+│  │                  ├─aop
+│  │                  │  ├─aspectj
+│  │                  │  │  └─annotation
+│  │                  │  │          AnnotationAwareAspectJAutoProxyCreator__BeanDefinitions.java
+│  │                  │  │          
+│  │                  │  └─framework
+│  │                  │          ProxyConfig__BeanDefinitions.java
+│  │                  │          
+│  │                  ├─boot
+│  │                  │  ├─autoconfigure
+│  │                  │  │  │  AutoConfigurationPackages__BeanDefinitions.java
+│  │                  │  │  │  
+│  │                  │  │  ├─aop
+│  │                  │  │  │      AopAutoConfiguration__BeanDefinitions.java
+│  │                  │  │  │      
+│  │                  │  │  ├─availability
+│  │                  │  │  │      ApplicationAvailabilityAutoConfiguration__BeanDefinitions.java
+│  │                  │  │  │      
+│  │                  │  │  ├─context
+│  │                  │  │  │      ConfigurationPropertiesAutoConfiguration__BeanDefinitions.java
+│  │                  │  │  │      LifecycleAutoConfiguration__BeanDefinitions.java
+│  │                  │  │  │      LifecycleProperties__BeanDefinitions.java
+│  │                  │  │  │      PropertyPlaceholderAutoConfiguration__BeanDefinitions.java
+│  │                  │  │  │      
+│  │                  │  │  ├─info
+│  │                  │  │  │      ProjectInfoAutoConfiguration__BeanDefinitions.java
+│  │                  │  │  │      ProjectInfoProperties__BeanDefinitions.java
+│  │                  │  │  │      
+│  │                  │  │  ├─ssl
+│  │                  │  │  │      SslAutoConfiguration__BeanDefinitions.java
+│  │                  │  │  │      SslProperties__BeanDefinitions.java
+│  │                  │  │  │      
+│  │                  │  │  ├─task
+│  │                  │  │  │      TaskExecutionAutoConfiguration__BeanDefinitions.java
+│  │                  │  │  │      TaskExecutionProperties__BeanDefinitions.java
+│  │                  │  │  │      TaskExecutorConfigurations__BeanDefinitions.java
+│  │                  │  │  │      TaskSchedulingAutoConfiguration__BeanDefinitions.java
+│  │                  │  │  │      TaskSchedulingConfigurations__BeanDefinitions.java
+│  │                  │  │  │      TaskSchedulingProperties__BeanDefinitions.java
+│  │                  │  │  │      
+│  │                  │  │  └─web
+│  │                  │  │          WebProperties__BeanDefinitions.java
+│  │                  │  │          
+│  │                  │  ├─context
+│  │                  │  │  └─properties
+│  │                  │  │          BoundConfigurationProperties__BeanDefinitions.java
+│  │                  │  │          ConfigurationPropertiesBinder__BeanDefinitions.java
+│  │                  │  │          ConfigurationPropertiesBindingPostProcessor__BeanDefinitions.java
+│  │                  │  │          
+│  │                  │  ├─data
+│  │                  │  │  ├─autoconfigure
+│  │                  │  │  │  └─web
+│  │                  │  │  │          DataWebAutoConfiguration__BeanDefinitions.java
+│  │                  │  │  │          DataWebProperties__BeanDefinitions.java
+│  │                  │  │  │          
+│  │                  │  │  └─jpa
+│  │                  │  │      └─autoconfigure
+│  │                  │  │              DataJpaRepositoriesAutoConfiguration__BeanDefinitions.java
+│  │                  │  │              
+│  │                  │  ├─hibernate
+│  │                  │  │  └─autoconfigure
+│  │                  │  │          HibernateJpaAutoConfiguration__BeanDefinitions.java
+│  │                  │  │          HibernateJpaConfiguration__BeanDefinitions.java
+│  │                  │  │          HibernateProperties__BeanDefinitions.java
+│  │                  │  │          
+│  │                  │  ├─http
+│  │                  │  │  └─converter
+│  │                  │  │      └─autoconfigure
+│  │                  │  │              HttpMessageConvertersAutoConfiguration__BeanDefinitions.java
+│  │                  │  │              HttpMessageConvertersProperties__BeanDefinitions.java
+│  │                  │  │              Jackson2HttpMessageConvertersConfiguration__BeanDefinitions.java
+│  │                  │  │              JacksonHttpMessageConvertersConfiguration__BeanDefinitions.java
+│  │                  │  │              
+│  │                  │  ├─jackson
+│  │                  │  │  │  JacksonMixinModuleEntries__BeanDefinitions.java
+│  │                  │  │  │  
+│  │                  │  │  └─autoconfigure
+│  │                  │  │          JacksonAutoConfiguration__BeanDefinitions.java
+│  │                  │  │          JacksonProperties__BeanDefinitions.java
+│  │                  │  │          
+│  │                  │  ├─jdbc
+│  │                  │  │  └─autoconfigure
+│  │                  │  │          DataSourceAutoConfiguration__BeanDefinitions.java
+│  │                  │  │          DataSourceConfiguration__BeanDefinitions.java
+│  │                  │  │          DataSourceInitializationAutoConfiguration__BeanDefinitions.java
+│  │                  │  │          DataSourcePoolMetadataProvidersConfiguration__BeanDefinitions.java
+│  │                  │  │          DataSourceProperties__BeanDefinitions.java
+│  │                  │  │          DataSourceTransactionManagerAutoConfiguration__BeanDefinitions.java
+│  │                  │  │          JdbcClientAutoConfiguration__BeanDefinitions.java
+│  │                  │  │          JdbcProperties__BeanDefinitions.java
+│  │                  │  │          JdbcTemplateAutoConfiguration__BeanDefinitions.java
+│  │                  │  │          JdbcTemplateConfiguration__BeanDefinitions.java
+│  │                  │  │          NamedParameterJdbcTemplateConfiguration__BeanDefinitions.java
+│  │                  │  │          
+│  │                  │  ├─jpa
+│  │                  │  │  └─autoconfigure
+│  │                  │  │          JpaBaseConfiguration__BeanDefinitions.java
+│  │                  │  │          JpaProperties__BeanDefinitions.java
+│  │                  │  │          
+│  │                  │  ├─persistence
+│  │                  │  │  └─autoconfigure
+│  │                  │  │          PersistenceExceptionTranslationAutoConfiguration__BeanDefinitions.java
+│  │                  │  │          
+│  │                  │  ├─security
+│  │                  │  │  └─autoconfigure
+│  │                  │  │      │  SecurityAutoConfiguration__BeanDefinitions.java
+│  │                  │  │      │  SecurityProperties__BeanDefinitions.java
+│  │                  │  │      │  
+│  │                  │  │      └─web
+│  │                  │  │          └─servlet
+│  │                  │  │                  SecurityFilterAutoConfiguration__BeanDefinitions.java
+│  │                  │  │                  SecurityFilterProperties__BeanDefinitions.java
+│  │                  │  │                  ServletWebSecurityAutoConfiguration__BeanDefinitions.java
+│  │                  │  │                  
+│  │                  │  ├─servlet
+│  │                  │  │  └─autoconfigure
+│  │                  │  │          HttpEncodingAutoConfiguration__BeanDefinitions.java
+│  │                  │  │          MultipartAutoConfiguration__BeanDefinitions.java
+│  │                  │  │          MultipartProperties__BeanDefinitions.java
+│  │                  │  │          ServletEncodingProperties__BeanDefinitions.java
+│  │                  │  │          
+│  │                  │  ├─sql
+│  │                  │  │  ├─autoconfigure
+│  │                  │  │  │  └─init
+│  │                  │  │  │          SqlInitializationProperties__BeanDefinitions.java
+│  │                  │  │  │          
+│  │                  │  │  └─init
+│  │                  │  │      └─dependency
+│  │                  │  │              DatabaseInitializationDependencyConfigurer__BeanDefinitions.java
+│  │                  │  │              
+│  │                  │  ├─tomcat
+│  │                  │  │  └─autoconfigure
+│  │                  │  │      │  TomcatServerProperties__BeanDefinitions.java
+│  │                  │  │      │  TomcatWebServerConfiguration__BeanDefinitions.java
+│  │                  │  │      │  
+│  │                  │  │      └─servlet
+│  │                  │  │              TomcatServletWebServerAutoConfiguration__BeanDefinitions.java
+│  │                  │  │              
+│  │                  │  ├─transaction
+│  │                  │  │  ├─autoconfigure
+│  │                  │  │  │      TransactionAutoConfiguration__BeanDefinitions.java
+│  │                  │  │  │      TransactionManagerCustomizationAutoConfiguration__BeanDefinitions.java
+│  │                  │  │  │      TransactionProperties__BeanDefinitions.java
+│  │                  │  │  │      
+│  │                  │  │  └─jta
+│  │                  │  │      └─autoconfigure
+│  │                  │  │              JtaAutoConfiguration__BeanDefinitions.java
+│  │                  │  │              
+│  │                  │  ├─validation
+│  │                  │  │  ├─autoconfigure
+│  │                  │  │  │      ValidationAutoConfiguration__BeanDefinitions.java
+│  │                  │  │  │      
+│  │                  │  │  └─beanvalidation
+│  │                  │  │          MethodValidationExcludeFilter__BeanDefinitions.java
+│  │                  │  │          
+│  │                  │  ├─web
+│  │                  │  │  ├─error
+│  │                  │  │  │      ErrorPageRegistrarBeanPostProcessor__BeanDefinitions.java
+│  │                  │  │  │      
+│  │                  │  │  └─server
+│  │                  │  │      │  WebServerFactoryCustomizerBeanPostProcessor__BeanDefinitions.java
+│  │                  │  │      │  
+│  │                  │  │      └─autoconfigure
+│  │                  │  │          │  ServerProperties__BeanDefinitions.java
+│  │                  │  │          │  
+│  │                  │  │          └─servlet
+│  │                  │  │                  ServletWebServerConfiguration__BeanDefinitions.java
+│  │                  │  │                  
+│  │                  │  └─webmvc
+│  │                  │      └─autoconfigure
+│  │                  │          │  DispatcherServletAutoConfiguration__BeanDefinitions.java
+│  │                  │          │  WebMvcAutoConfiguration_EnableWebMvcConfiguration__Autowiring.java
+│  │                  │          │  WebMvcAutoConfiguration__BeanDefinitions.java
+│  │                  │          │  WebMvcProperties__BeanDefinitions.java
+│  │                  │          │  
+│  │                  │          └─error
+│  │                  │                  ErrorMvcAutoConfiguration__BeanDefinitions.java
+│  │                  │                  
+│  │                  ├─context
+│  │                  │  └─event
+│  │                  │          DefaultEventListenerFactory__BeanDefinitions.java
+│  │                  │          EventListenerMethodProcessor__BeanDefinitions.java
+│  │                  │          
+│  │                  ├─data
+│  │                  │  ├─jpa
+│  │                  │  │  ├─mapping
+│  │                  │  │  │      JpaMetamodelMappingContext__BeanDefinitions.java
+│  │                  │  │  │      
+│  │                  │  │  ├─repository
+│  │                  │  │  │  └─support
+│  │                  │  │  │          DefaultJpaContext__BeanDefinitions.java
+│  │                  │  │  │          JpaEvaluationContextExtension__BeanDefinitions.java
+│  │                  │  │  │          JpaRepositoryFactoryBean__Autowiring.java
+│  │                  │  │  │          JpaRepositoryFactoryBean__Autowiring1.java
+│  │                  │  │  │          
+│  │                  │  │  └─util
+│  │                  │  │          JpaMetamodelCacheCleanup__BeanDefinitions.java
+│  │                  │  │          
+│  │                  │  ├─repository
+│  │                  │  │  └─core
+│  │                  │  │      └─support
+│  │                  │  │              PropertiesBasedNamedQueries__BeanDefinitions.java
+│  │                  │  │              RepositoryComposition__BeanDefinitions.java
+│  │                  │  │              
+│  │                  │  └─web
+│  │                  │      └─config
+│  │                  │              ProjectingArgumentResolverRegistrar__BeanDefinitions.java
+│  │                  │              SpringDataJackson3Configuration__Autowiring.java
+│  │                  │              SpringDataJackson3Configuration__BeanDefinitions.java
+│  │                  │              SpringDataWebConfiguration__BeanDefinitions.java
+│  │                  │              
+│  │                  ├─orm
+│  │                  │  └─jpa
+│  │                  │          SharedEntityManagerCreator__BeanDefinitions.java
+│  │                  │          
+│  │                  ├─security
+│  │                  │  └─config
+│  │                  │      └─annotation
+│  │                  │          ├─authentication
+│  │                  │          │  └─configuration
+│  │                  │          │          AuthenticationConfiguration__Autowiring.java
+│  │                  │          │          AuthenticationConfiguration__BeanDefinitions.java
+│  │                  │          │          
+│  │                  │          ├─configuration
+│  │                  │          │      ObjectPostProcessorConfiguration__BeanDefinitions.java
+│  │                  │          │      
+│  │                  │          └─web
+│  │                  │              └─configuration
+│  │                  │                      HttpSecurityConfiguration__Autowiring.java
+│  │                  │                      HttpSecurityConfiguration__BeanDefinitions.java
+│  │                  │                      ObservationConfiguration__BeanDefinitions.java
+│  │                  │                      WebMvcSecurityConfiguration__BeanDefinitions.java
+│  │                  │                      WebSecurityConfiguration__Autowiring.java
+│  │                  │                      WebSecurityConfiguration__BeanDefinitions.java
+│  │                  │                      
+│  │                  ├─transaction
+│  │                  │  └─annotation
+│  │                  │          AbstractTransactionManagementConfiguration__BeanDefinitions.java
+│  │                  │          ProxyTransactionManagementConfiguration__Autowiring.java
+│  │                  │          ProxyTransactionManagementConfiguration__BeanDefinitions.java
+│  │                  │          
+│  │                  └─web
+│  │                      └─filter
+│  │                              ServletRequestPathFilter__BeanDefinitions.java
+│  │                              
+│  ├─surefire-reports
+│  │      com.example.bug_tracker.bug.api.BugControllerTest.txt
+│  │      com.example.bug_tracker.bug.service.BugServiceIntegrationTest.txt
+│  │      com.example.bug_tracker.bug.service.BugServiceTest.txt
+│  │      com.example.bug_tracker.BugTrackerApplicationTests.txt
+│  │      TEST-com.example.bug_tracker.bug.api.BugControllerTest.xml
+│  │      TEST-com.example.bug_tracker.bug.service.BugServiceIntegrationTest.xml
+│  │      TEST-com.example.bug_tracker.bug.service.BugServiceTest.xml
+│  │      TEST-com.example.bug_tracker.BugTrackerApplicationTests.xml
+│  │      
+│  └─test-classes
+│      │  application-test.properties
+│      │  
+│      └─com
+│          └─example
+│              └─bug_tracker
+│                  │  BugTrackerApplicationTests.class
+│                  │  
+│                  └─bug
+│                      ├─api
+│                      │      BugControllerTest.class
+│                      │      
+│                      ├─service
+│                      │      BugServiceIntegrationTest.class
+│                      │      BugServiceTest.class
+│                      │      
+│                      └─support
+│                              BugTestFixture.class
+│                              
+└─templates
+        checklist-crud.md
+        demo-script-2min.md
+        estimate-crud-1feature.md
+        

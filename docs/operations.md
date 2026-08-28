@@ -31,7 +31,7 @@ spring.application.name=bug-tracker
 
 - DB: `bug_tracker`
 - `ddl-auto=validate`
-- schemaは `docs/db/bugs.sql` で管理
+- schemaは `docs/db/bugs.sql` / `docs/db/users.sql` で管理
 - データを保持する
 
 ### test
@@ -72,6 +72,9 @@ dev DBへschemaを適用する。
 
 ```powershell
 Get-Content .\docs\db\bugs.sql |
+docker exec -i bug-tracker-postgres psql -U bug_user -d bug_tracker
+
+Get-Content .\docs\db\users.sql |
 docker exec -i bug-tracker-postgres psql -U bug_user -d bug_tracker
 ```
 
