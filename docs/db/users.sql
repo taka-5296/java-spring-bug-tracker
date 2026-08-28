@@ -5,3 +5,9 @@ CREATE TABLE IF NOT EXISTS users (
   role VARCHAR(30) NOT NULL,
   enabled BOOLEAN NOT NULL DEFAULT TRUE
 );
+
+INSERT INTO users (username, password_hash, role, enabled)
+VALUES
+  ('user', '$2a$10$2Mv9M1Z2oYO1w85OZMuMceX9fm9nBx5/3GHRiS.MIvmYlJMQy0BLm', 'USER', TRUE),
+  ('admin', '$2a$10$IJvtgZ4orU3CaXjRjt6rkeqqTrKfRNgi4zv29qjnKQDTUZKwWX0C.', 'ADMIN', TRUE)
+ON CONFLICT (username) DO NOTHING;
