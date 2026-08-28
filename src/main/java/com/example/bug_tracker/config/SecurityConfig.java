@@ -2,19 +2,14 @@ package com.example.bug_tracker.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
 import org.springframework.http.HttpMethod;
+import org.springframework.security.web.SecurityFilterChain;
+
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.userdetails.User;
-// // UserDetails は認証済みユーザー情報の型
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-// // InMemoryUserDetailsManager はDB未導入段階で使える最小ユーザー管理
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-// // PasswordEncoder は平文パスワードをそのまま扱わないために使う
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 public class SecurityConfig {
@@ -36,22 +31,6 @@ public class SecurityConfig {
                         .anyRequest().authenticated());
 
         return http.build();
-    }
-
-    // 今はDBユーザー未実装なので、仮のメモリ内ユーザーで進める
-    @Bean
-    public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
-        UserDetails user = User.withUsername("user")
-                .password(passwordEncoder.encode("userpass"))
-                .roles("USER")
-                .build();
-
-        UserDetails admin = User.withUsername("admin")
-                .password(passwordEncoder.encode("adminpass"))
-                .roles("ADMIN")
-                .build();
-
-        return new InMemoryUserDetailsManager(user, admin);
     }
 
     // パスワードをハッシュ化する
