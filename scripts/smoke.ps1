@@ -161,19 +161,41 @@ try {
         throw "PUT response did not contain the expected status/priority."
     }
 
+    $searchBodyFile = Join-Path $TempDir "search-body.json"
     $searchStatus = & curl.exe -s `
         -b $adminSession.CookieFile `
-        -o (Join-Path $TempDir "search-body.json") `
+        -o $searchBodyFile `
         -w "%{http_code}" `
         "$BaseUrl/api/bugs?status=IN_PROGRESS&priority=HIGH&keyword=smoke&page=0&size=10"
     Assert-Status "Search/filter GET /api/bugs" $searchStatus "200"
 
+    $searchResult = Get-Content $searchBodyFile -Raw | ConvertFrom-Json
+    $searchIds = @($searchResult.items | ForEach-Object { $_.id })
+    if ($searchIds -notcontains $created.id) {
+        throw "Search result did not contain the smoke Bug."
+    }
+    Write-Host "[OK] Search result contains Bug id=$($created.id)"
+
+    $pageBodyFile = Join-Path $TempDir "page-body.json"
     $pageStatus = & curl.exe -s `
         -b $adminSession.CookieFile `
-        -o (Join-Path $TempDir "page-body.json") `
+        -o $pageBodyFile `
         -w "%{http_code}" `
         "$BaseUrl/api/bugs?page=0&size=1"
     Assert-Status "Paging GET /api/bugs" $pageStatus "200"
+
+    $pageResult = Get-Content $pageBodyFile -Raw | ConvertFrom-Json
+    if ($pageResult.meta.page -ne 0 -or $pageResult.meta.size -ne 1 -or @($pageResult.items).Count -gt 1) {
+        throw "Paging response did not match page=0&size=1."
+    }
+    Write-Host "[OK] Paging metadata -> page=0 size=1"
+
+    $adminNoCsrfStatus = & curl.exe -s `
+        -b $adminSession.CookieFile `
+        -o (Join-Path $TempDir "admin-no-csrf-body.txt") `
+        -w "%{http_code}" `
+        -X DELETE $bugUrl
+    Assert-Status "ADMIN DELETE without CSRF denied" $adminNoCsrfStatus "403"
 
     $userDeleteStatus = & curl.exe -s `
         -b $userSession.CookieFile `
