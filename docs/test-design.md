@@ -113,25 +113,42 @@ MockMvc = 使用
 - Response JSON
 - Validation失敗時の400 / `VALIDATION_ERROR`
 
+### Security結合テスト
+
+対象: `SecurityIntegrationTest`
+
+境界：
+
+```text
+MockMvc = real
+SecurityFilterChain = real
+DBUserDetailsService = real
+UserRepository = real
+PostgreSQL = real
+BugController = real
+BugService = Mockito mock
+```
+
+主に確認するもの：
+
+- /health の未認証アクセス
+- 保護APIの未認証リダイレクト
+- DBユーザーによるlogin成功
+- password不一致時の認証失敗
+- 未知usernameの認証失敗
+- USERによる通常Bug API利用
+- USERによるDELETE拒否
+- ADMINによるDELETE許可
+- CSRF token有無による更新系リクエストの差
+
 ## 3. 現時点で未実装のテスト
 
 - Controller → Service → Repository → PostgreSQLをHTTPから一貫して通すE2E相当テスト
 - GET / PUT / DELETEのHTTP境界テスト拡張
-- Securityの認証・認可テスト
 
 これらは必要性に応じて追加し、テスト数を目的化しない。
 
-## 4. Security実装時に追加する代表観点
-
-G07でSecurity契約確定後、最低限次を追加する。
-
-- `/health`: 未認証で成功
-- `/api/bugs/**`: 未認証時の契約どおりの結果
-- USER: 許可されたBug操作が成功
-- USER: ADMIN限定操作が403
-- ADMIN: ADMIN限定操作が成功
-
-## 5. 記述ルール
+## 4. 記述ルール
 
 - Arrange / Act / Assertを意識する
 - テスト名は `method_should_behavior` を基本とする
