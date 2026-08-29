@@ -9,7 +9,8 @@ Base URL: `http://localhost:8080`
 - 認証方式は Spring Security の form login + Session を採用する
 - `/health` は未認証でも利用可能
 - `/api/bugs/**` は認証対象
-- 未認証で `/api/bugs/**` へアクセスした場合は `302 Found` で `/login` へリダイレクトする
+- 未認証で `/api/bugs/**` へアクセスした場合は `302 Found` でログイン画面へリダイレクトする
+- `Location` は実行環境に応じて絶対URLまたは同一pathを指すURLとして返される場合がある
 - `ROLE_USER` は作成・参照・更新を利用可能
 - `ROLE_ADMIN` は作成・参照・更新・削除を利用可能
 - アプリケーションレベルのエラーは本書の「エラーレスポンス」に従う
@@ -99,7 +100,8 @@ GET /api/bugs?status=OPEN&priority=HIGH&keyword=login&page=0&size=10
 ## 6. 成功時のHTTPステータス
 
 - POST: `201 Created`
-  - `Location: /api/bugs/{id}` を返す
+  - `Location` は作成したBugの `/api/bugs/{id}` を指す
+  - ローカル実行例: `Location: http://localhost:8080/api/bugs/{id}`
 - GET: `200 OK`
 - PUT: `200 OK`
 - DELETE: `204 No Content`
@@ -129,10 +131,10 @@ GET /api/bugs?status=OPEN&priority=HIGH&keyword=login&page=0&size=10
 
 ### Security由来のレスポンス
 
-| 状況                                                   | HTTP / 挙動                                  |
-| ------------------------------------------------------ | -------------------------------------------- |
-| 未認証で `/api/bugs/**` へアクセス                     | `302 Found` + `Location: /login`             |
-| 認証済み `ROLE_USER` が `DELETE /api/bugs/{id}` を実行 | `403 Forbidden`                              |
+| 状況                                                   | HTTP / 挙動 |
+| ------------------------------------------------------ | ----------- |
+| 未認証で `/api/bugs/**` へアクセス                     | `302 Found`。`Location` はログイン画面 `/login` を指す |
+| 認証済み `ROLE_USER` が `DELETE /api/bugs/{id}` を実行 | `403 Forbidden` |
 | form loginで認証失敗                                   | ログイン画面へリダイレクトし、認証失敗を表示 |
 
 Security Filter由来の302 / 403は、アプリケーション例外の `ErrorResponse` と同一形式であることを契約しない。

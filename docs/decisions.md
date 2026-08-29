@@ -13,12 +13,11 @@ APIクライアント側へ必須補完を強制せず、業務上の初期状�
 
 ## D-002 現行永続化はbugsテーブルのみ
 
-**Status:** Accepted
+**Status:** Superseded by D-009
 
-Security実装前はBug CRUDへ集中し、usersのDB永続化は後続とする。
+Security実装前はBug CRUDへ集中し、usersのDB永続化を後続とする判断を採用した。
 
-理由：
-現在使わないuser関連schemaを先行実装して手戻りを増やさないため。
+現在はD-009によりusersのPostgreSQL永続化を実装済みであり、本判断は現行構成には適用しない。
 
 ## D-003 ID採番はIDENTITY
 
@@ -140,7 +139,7 @@ Securityの認証元として、`users` テーブルを使用する。
 usernameには一意制約を付ける。
 passwordはBCryptでhash化した値だけを保存し、平文passwordはDBへ保存しない。
 roleはDBでは `USER` / `ADMIN` として保持し、Spring Security上では `ROLE_USER` / `ROLE_ADMIN` として扱う。
-dev用の初期USER / ADMINは後続実装時にSQLで投入するが、SQLへ記載するpasswordもBCrypt済みhashのみとする。
+dev用の初期USER / ADMINは `docs/db/users.sql` で投入し、SQLにはBCrypt済みhashのみを保存する。
 testではdev用seedへ依存せず、テスト側で必要なユーザーを用意する。
 現段階ではusersとbugsの関連付けは行わない。
 
