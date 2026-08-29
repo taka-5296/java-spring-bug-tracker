@@ -22,8 +22,9 @@ Controller / Service / Repositoryを分離し、Bean Validation、統一エラ�
 - `title` の入力Validation
 - `status` / `priority` 未指定時の `OPEN` / `LOW` 補完
 - PostgreSQL / JPAによるBug・User永続化
+- Spring Securityによるフォームログイン、認証、USER / ADMINの権限制御
 - 統一エラーレスポンス
-- Service単体テスト、DB結合テスト、Controller HTTP境界テスト
+- Service単体テスト、DB結合テスト、Controller HTTP境界テスト、Security結合テスト
 - GitHub Actionsによる自動テスト
 
 APIの詳細なRequest / Response / HTTPステータス / エラー契約は [API仕様](docs/api-spec.md) を参照してください。
@@ -83,7 +84,7 @@ Get-Content .\docs\db\users.sql |
 docker exec -i bug-tracker-postgres psql -U bug_user -d bug_tracker
 ```
 
-devプロファイルでは ddl-auto=validate を使用し、JPA Entityと既存schemaの整合を確認します。
+devプロファイルでは `ddl-auto=validate` を使用し、JPA Entityと既存schemaの整合を確認します。
 
 ### 3. アプリを起動する
 
@@ -104,6 +105,22 @@ OK
 ```
 
 詳細なDB確認やトラブルシュートは [Runbook](docs/operations.md) を参照してください。
+
+## Securityの手動確認
+
+`/health` は未認証で利用できます。`/api/bugs/**` は認証が必要で、DELETEはADMINのみ許可します。
+
+ローカル開発用の初期ユーザーは `docs/db/users.sql` で投入します。
+
+| 身份 | username | password | role | 主な期待結果 |
+| --- | --- | --- | --- | --- |
+| 未ログイン | - | - | - | `/health` は200、`/api/bugs` は `/login` へ302 |
+| USER | `user` | `userpass` | USER | Bugの参照・作成・更新は許可、DELETEは403 |
+| ADMIN | `admin` | `adminpass` | ADMIN | Bug APIを利用でき、DELETEも許可 |
+
+これらはローカル開発・動作確認専用の固定アカウントです。本番用の認証情報として使用しません。DBには平文passwordではなくBCrypt hashを保存します。
+
+ログイン、Session、CSRF tokenを含む再現可能な確認手順は [RunbookのSecurity手動確認](docs/operations.md#5-security手動確認) を参照してください。
 
 ## テスト
 
@@ -129,6 +146,8 @@ docker exec -it bug-tracker-postgres `
 BUILD SUCCESS
 ```
 
+`SecurityIntegrationTest` では、公開経路、未認証リダイレクト、DBユーザーのログイン、誤password・未知usernameの拒否、USER / ADMINの認可、CSRFの代表ケースを確認します。
+
 テストの境界と保証内容は [テスト設計](docs/test-design.md)、設定・障害切り分けは [Runbook](docs/operations.md) を参照してください。
 
 ## CI
@@ -146,13 +165,13 @@ GitHub Actionsで、`push` / `pull_request` 時にMavenテストを自動実行�
 | [data-model.md](docs/data-model.md)     | DBモデル・JPA対応・schema方針        |
 | [decisions.md](docs/decisions.md)       | 設計判断と理由（Security方針を含む） |
 | [test-design.md](docs/test-design.md)   | テスト境界・保証観点                 |
-| [operations.md](docs/operations.md)     | 起動・DB・テスト・CI障害時のRunbook  |
+| [operations.md](docs/operations.md)     | 起動・DB・Security確認・テスト・CI障害時のRunbook |
 
 Securityの詳細は、要件を `requirements.md`、HTTP上の挙動を `api-spec.md`、採用理由を `decisions.md` で管理します。
 
 ## 現在の主な制約
 
-- Spring Securityは導入済み。Bug APIは認証必須で、DELETEはADMINのみ許可する。
+- Spring Securityは導入済み。Bug APIは認証必須で、DELETEはADMINのみ許可する
 - HTTPからController / Service / Repository / PostgreSQLをすべて実物で通すE2E相当テストは未実装
 - GET / PUT / DELETEのController HTTP境界テストは今後必要性に応じて拡張する
 - 一覧検索は `status` / `priority` / `keyword` を対象とし、複雑な検索条件や高度な検索最適化は対象外
