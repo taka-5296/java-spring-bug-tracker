@@ -163,7 +163,7 @@ curl.exe -i "http://localhost:8080/api/bugs"
 
 ```text
 HTTP/1.1 302
-Location: /login
+Location: http://localhost:8080/login
 ```
 
 未認証状態ではBug APIへ到達せず、フォームログインへリダイレクトされる。
