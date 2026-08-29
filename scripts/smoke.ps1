@@ -80,7 +80,16 @@ try {
     Write-Host "Bug Tracker smoke check: $BaseUrl"
 
     $healthBody = Join-Path $TempDir "health.txt"
-    $healthStatus = & curl.exe -s -o $healthBody -w "%{http_code}" "$BaseUrl/health"
+    $healthStatus = & curl.exe -s `
+        --connect-timeout 3 `
+        -o $healthBody `
+        -w "%{http_code}" `
+        "$BaseUrl/health"
+
+    if ($LASTEXITCODE -ne 0 -or $healthStatus -eq "000") {
+        throw "Bug Tracker is not reachable at $BaseUrl. Start the app with '.\mvnw.cmd spring-boot:run \"-Dspring-boot.run.profiles=dev\"' in another PowerShell, then run this script again."
+    }
+
     Assert-Status "Public health check" $healthStatus "200"
 
     if ((Get-Content $healthBody -Raw).Trim() -ne "OK") {
