@@ -84,11 +84,11 @@ docker exec -i bug-tracker-postgres psql -U bug_user -d bug_tracker
 
 ### 5.1 目的
 
-未ログイン、USER、ADMINの3身份について、DB認証、認可、CSRFをローカル環境で再現する。
+未ログイン、USER、ADMINの3つのアクセス状態について、DB認証、認可、CSRFをローカル環境で再現する。
 
 初期ユーザーは `docs/db/users.sql` で投入する。固定アカウントはローカル開発・動作確認専用であり、本番用途では使用しない。
 
-| 身份 | username | password | role |
+| 区分 | username | password | role |
 | --- | --- | --- | --- |
 | USER | `user` | `userpass` | USER |
 | ADMIN | `admin` | `adminpass` | ADMIN |
@@ -374,7 +374,7 @@ HTTP/1.1 204
 
 ### 5.10 Security確認結果
 
-以下がすべて成立すれば、3身份とDB認証のローカル再現確認は完了とする。
+以下がすべて成立すれば、未ログイン・USER・ADMINとDB認証のローカル再現確認は完了とする。
 
 - 未ログインで `/health` が200
 - 未ログインで `/api/bugs` が `/login` へ302
