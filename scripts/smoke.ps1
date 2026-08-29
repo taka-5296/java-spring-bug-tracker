@@ -87,7 +87,7 @@ try {
         "$BaseUrl/health"
 
     if ($LASTEXITCODE -ne 0 -or $healthStatus -eq "000") {
-        throw "Bug Tracker is not reachable at $BaseUrl. Start the app with '.\mvnw.cmd spring-boot:run \"-Dspring-boot.run.profiles=dev\"' in another PowerShell, then run this script again."
+        throw ('Bug Tracker is not reachable at {0}. Start the app in another PowerShell with: .\mvnw.cmd spring-boot:run "-Dspring-boot.run.profiles=dev". Then run this script again.' -f $BaseUrl)
     }
 
     Assert-Status "Public health check" $healthStatus "200"
