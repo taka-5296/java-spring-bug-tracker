@@ -31,7 +31,7 @@ Bugを登録・検索・参照・更新・削除できる小規模な不具合�
 - `status` / `priority` 未指定時のデフォルト補完
   - `status=OPEN`
   - `priority=LOW`
-- PostgreSQLへの永続化
+- PostgreSQLへのBug・User永続化
 - 統一エラーレスポンス
   - `VALIDATION_ERROR`
   - `INVALID_JSON`
@@ -41,6 +41,7 @@ Bugを登録・検索・参照・更新・削除できる小規模な不具合�
   - Service単体
   - Service / Repository / PostgreSQL結合
   - Controller HTTP境界
+  - Security結合
 - GitHub ActionsによるCI
 
 ### SHOULD
@@ -62,9 +63,12 @@ Bugを登録・検索・参照・更新・削除できる小規模な不具合�
 - `ROLE_ADMIN`
   - Bugの作成、一覧・個別参照、更新、削除を許可する
 - `DELETE /api/bugs/{id}` は `ROLE_ADMIN` のみに許可する
-- 未認証で保護対象へアクセスした場合は `302 Found` でログイン画面 `/login` へリダイレクトする
+- 未認証で保護対象へアクセスした場合は `302 Found` でログイン画面へリダイレクトする
 - form login の認証失敗時はログイン画面へ戻し、認証失敗であることを表示する
-- usersのDB永続化はSecurity実装の後続段階で行う
+- 認証情報はPostgreSQLの `users` テーブルから取得する
+- passwordはBCrypt hashとして保存し、平文passwordをDBへ保存しない
+- dev用のUSER / ADMINは `docs/db/users.sql` で投入する
+- testではdev用seedに依存せず、テストコード側で必要なユーザーを作成する
 
 ## 4. 非機能要件
 
@@ -79,8 +83,9 @@ Bugを登録・検索・参照・更新・削除できる小規模な不具合�
 
 - Maven Wrapperでビルド・テストできる
 - PostgreSQLはDockerで再現できる
-- READMEから起動・疎通確認・テスト実行へ到達できる
-- CIで同じテストを自動実行できる
+- READMEから起動・疎通確認・主要操作確認へ到達できる
+- RunbookからBug CRUD、検索、ページング、認証・認可、DB確認を再現できる
+- CIで同じ自動テストを実行できる
 
 ## 5. 対象外
 
