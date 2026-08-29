@@ -2,11 +2,27 @@
 
 ## 1. 目的
 
-ローカル環境での起動・Security確認・テスト・DB確認と、テスト / CI失敗時の初動切り分けを定義する。
+ローカル環境でBug Trackerを起動し、主要機能を操作・確認し、DB・テスト・CI・障害発生時の初動切り分けまで再現できる手順を定義する。
 
-通常の機能説明とAPI契約はREADME / `api-spec.md` を参照する。
+文書の役割は次のとおりとする。
 
-## 2. 設定ファイル
+- README：初回起動と確認の入口
+- `api-spec.md`：Request / Response / HTTPステータスなどのAPI契約
+- 本書：実際の起動、操作確認、DB確認、障害対応
+- `test-design.md`：自動テストの境界と保証内容
+
+本書ではAPI仕様を重複して定義せず、実行に必要な代表操作と期待結果を記載する。
+
+## 2. 前提と設定
+
+### 2.1 前提
+
+- Java 17
+- Docker Desktop
+- Windows PowerShell
+- リポジトリルートでコマンドを実行する
+
+### 2.2 設定ファイル
 
 ```text
 src/main/resources/
@@ -17,33 +33,18 @@ src/test/resources/
 └─ application-test.properties
 ```
 
-ファイル名はSpring Bootの規約どおり `application-{profile}.properties` とする。
+### 2.3 dev / testの使い分け
 
-### common
+| profile | DB | ddl-auto | 用途 |
+| --- | --- | --- | --- |
+| dev | `bug_tracker` | `validate` | ローカル起動・操作確認 |
+| test | `bug_tracker_test` | `create-drop` | 自動テスト |
 
-`application.properties`
+devでは `docs/db/bugs.sql` / `docs/db/users.sql` でschemaを管理し、データを保持する。testではSQL初期化を行わず、テスト起動時にschemaを作成・破棄する。
 
-```properties
-spring.application.name=bug-tracker
-```
+## 3. PostgreSQLの準備
 
-### dev
-
-- DB: `bug_tracker`
-- `ddl-auto=validate`
-- schemaは `docs/db/bugs.sql` / `docs/db/users.sql` で管理
-- データを保持する
-
-### test
-
-- DB: `bug_tracker_test`
-- `ddl-auto=create-drop`
-- SQL初期化は行わない
-- 自動テスト専用
-
-## 3. PostgreSQL
-
-### 初回コンテナ作成
+### 3.1 初回コンテナ作成
 
 ```powershell
 docker run --name bug-tracker-postgres `
@@ -54,21 +55,19 @@ docker run --name bug-tracker-postgres `
   -d postgres:16
 ```
 
-### 2回目以降
+### 3.2 2回目以降の起動
 
 ```powershell
 docker start bug-tracker-postgres
 ```
 
-### 起動確認
+起動確認：
 
 ```powershell
 docker ps --filter "name=bug-tracker-postgres"
 ```
 
-## 4. dev schema
-
-dev DBへschemaを適用する。
+### 3.3 dev schemaと初期ユーザーを適用
 
 ```powershell
 Get-Content .\docs\db\bugs.sql |
@@ -78,38 +77,234 @@ Get-Content .\docs\db\users.sql |
 docker exec -i bug-tracker-postgres psql -U bug_user -d bug_tracker
 ```
 
-`application-dev.properties` の `ddl-auto=validate` により、Entityと既存schemaの不整合を起動時に検出する。
+`ddl-auto=validate` により、Entityと既存schemaの不整合はアプリ起動時に検出する。
 
-## 5. Security手動確認
+## 4. アプリケーションの起動と停止
 
-### 5.1 目的
+### 4.1 起動
 
-未ログイン、USER、ADMINの3つのアクセス状態について、DB認証、認可、CSRFをローカル環境で再現する。
+```powershell
+.\mvnw.cmd spring-boot:run "-Dspring-boot.run.profiles=dev"
+```
 
-初期ユーザーは `docs/db/users.sql` で投入する。固定アカウントはローカル開発・動作確認専用であり、本番用途では使用しない。
+起動ログにエラーがなく、8080番ポートで待受状態になることを確認する。
 
-| 区分 | username | password | role |
+### 4.2 公開経路の疎通確認
+
+別のPowerShellで実行する。
+
+```powershell
+curl.exe -i "http://localhost:8080/health"
+```
+
+期待結果：
+
+```text
+HTTP/1.1 200
+...
+
+OK
+```
+
+### 4.3 停止
+
+アプリを起動しているPowerShellで `Ctrl + C` を押す。
+
+PostgreSQLも停止する場合：
+
+```powershell
+docker stop bug-tracker-postgres
+```
+
+## 5. 基本操作
+
+現段階ではBug CRUD専用の画面は未実装である。主要操作はAPIまたは `scripts/smoke.ps1` で確認する。
+
+### 5.1 利用できる操作
+
+| 操作 | Method | Path | USER | ADMIN | 主な成功結果 |
+| --- | --- | --- | --- | --- | --- |
+| Bug作成 | POST | `/api/bugs` | 可 | 可 | 201 |
+| Bug一覧 | GET | `/api/bugs` | 可 | 可 | 200 |
+| Bug個別取得 | GET | `/api/bugs/{id}` | 可 | 可 | 200 |
+| Bug更新 | PUT | `/api/bugs/{id}` | 可 | 可 | 200 |
+| Bug削除 | DELETE | `/api/bugs/{id}` | 不可 | 可 | 204 |
+
+Request / Responseの正確な項目定義は `api-spec.md` を参照する。
+
+### 5.2 一括スモーク確認
+
+アプリ起動中に次を実行する。
+
+```powershell
+.\scripts\smoke.ps1
+```
+
+スクリプトはローカル開発用USER / ADMINでSessionとCSRF tokenを処理し、次を順に確認する。
+
+1. `/health` が未認証で200
+2. 未認証 `/api/bugs` がログイン画面へ302
+3. DBのUSER / ADMINでログイン
+4. USERでBug一覧取得が200
+5. ADMINでBug作成が201
+6. 作成したBugの個別取得が200
+7. Bug更新が200
+8. `status` / `priority` / `keyword` 検索が200
+9. `page` / `size` ページングが200
+10. USERによるDELETEが403
+11. ADMINによるDELETEが204
+12. 削除後のGETが404
+
+最後に次が表示されれば一括確認は成功とする。
+
+```text
+[SUCCESS] Smoke check completed.
+```
+
+Cookie、Session、CSRF tokenの取得処理は `scripts/smoke.ps1` に集約し、Runbookへ長大なcurl手順を重複させない。
+
+### 5.3 Bug作成
+
+代表Request：
+
+```json
+{
+  "title": "login error",
+  "description": "login fails after submit",
+  "status": "OPEN",
+  "priority": "HIGH"
+}
+```
+
+操作：
+
+```text
+POST /api/bugs
+```
+
+期待結果：
+
+```text
+201 Created
+Location: {baseUrl}/api/bugs/{id}
+```
+
+### 5.4 一覧・個別取得
+
+一覧：
+
+```text
+GET /api/bugs
+```
+
+個別：
+
+```text
+GET /api/bugs/{id}
+```
+
+期待結果はいずれも正常時200。存在しないIDの個別取得は404。
+
+### 5.5 Bug更新
+
+代表Request：
+
+```json
+{
+  "title": "login error fixed",
+  "description": "verified after update",
+  "status": "DONE",
+  "priority": "MEDIUM"
+}
+```
+
+操作：
+
+```text
+PUT /api/bugs/{id}
+```
+
+期待結果：
+
+```text
+200 OK
+```
+
+### 5.6 検索
+
+例：
+
+```text
+GET /api/bugs?status=OPEN&priority=HIGH&keyword=login&page=0&size=10
+```
+
+`status` / `priority` / `keyword` を複数指定した場合はAND条件で検索する。
+
+### 5.7 ページング
+
+例：
+
+```text
+GET /api/bugs?page=0&size=5
+```
+
+一覧レスポンスは `items` と `meta` を返す。詳細は `api-spec.md` を参照する。
+
+### 5.8 Bug削除
+
+```text
+DELETE /api/bugs/{id}
+```
+
+- USER：403 Forbidden
+- ADMIN：204 No Content
+- 削除後に同じIDをGET：404 Not Found
+
+## 6. 認証・認可の確認
+
+### 6.1 ローカル開発用アカウント
+
+`docs/db/users.sql` で次を投入する。
+
+| username | password | role | 利用範囲 |
 | --- | --- | --- | --- |
-| USER | `user` | `userpass` | USER |
-| ADMIN | `admin` | `adminpass` | ADMIN |
+| `user` | `userpass` | USER | 作成・参照・更新 |
+| `admin` | `adminpass` | ADMIN | 作成・参照・更新・削除 |
+
+これらはローカル開発・動作確認専用であり、本番用途では使用しない。
 
 DBには平文passwordではなくBCrypt hashを保存する。
 
-### 5.2 前提確認
-
-PostgreSQLを起動し、schemaを適用する。
+### 6.2 未認証アクセス
 
 ```powershell
-docker start bug-tracker-postgres
-
-Get-Content .\docs\db\bugs.sql |
-docker exec -i bug-tracker-postgres psql -U bug_user -d bug_tracker
-
-Get-Content .\docs\db\users.sql |
-docker exec -i bug-tracker-postgres psql -U bug_user -d bug_tracker
+curl.exe -i "http://localhost:8080/api/bugs"
 ```
 
-DB上の認証ユーザーを確認する。
+期待結果：
+
+```text
+HTTP/1.1 302
+Location: http://localhost:8080/login
+```
+
+### 6.3 USER / ADMIN / CSRF
+
+Session認証とCSRFを含む代表確認は `scripts/smoke.ps1` で実行する。
+
+確認基準：
+
+- DBのUSER / ADMINでログインできる
+- USERは作成・参照・更新を利用できる
+- USERは有効なCSRF tokenがあってもDELETEを実行できず403になる
+- ADMINは有効なCSRF token付きでDELETEを実行できる
+- CSRF tokenがない更新系リクエストは403になる
+
+認証・認可のHTTP契約は `api-spec.md`、自動テストの保証範囲は `test-design.md` を参照する。
+
+## 7. DB確認
+
+### 7.1 users
 
 ```powershell
 docker exec -it bug-tracker-postgres `
@@ -128,282 +323,21 @@ user     | USER  | t       | $2a$
 
 `password_hash` に平文passwordが保存されていないことを確認する。
 
-### 5.3 アプリ起動
-
-別のPowerShellでdevプロファイルを指定して起動する。
+### 7.2 bugs
 
 ```powershell
-.\mvnw.cmd spring-boot:run "-Dspring-boot.run.profiles=dev"
+docker exec -it bug-tracker-postgres `
+  psql -U bug_user -d bug_tracker `
+  -c "SELECT id, title, status, priority, created_at, updated_at FROM bugs ORDER BY id DESC LIMIT 10;"
 ```
 
-起動ログにエラーがなく、8080番ポートで待受状態になることを確認する。
+API操作後のデータがPostgreSQLへ永続化されているか確認する際に使用する。
 
-### 5.4 未ログインで公開経路を確認
+## 8. test DBと自動テスト
 
-```powershell
-curl.exe -i "http://localhost:8080/health"
-```
+### 8.1 test DB作成
 
-期待結果：
-
-```text
-HTTP/1.1 200
-...
-
-OK
-```
-
-### 5.5 未ログインで保護APIを確認
-
-```powershell
-curl.exe -i "http://localhost:8080/api/bugs"
-```
-
-期待結果：
-
-```text
-HTTP/1.1 302
-Location: http://localhost:8080/login
-```
-
-未認証状態ではBug APIへ到達せず、フォームログインへリダイレクトされる。
-
-### 5.6 USERでDBログインする
-
-まずログインページを取得し、Session cookieとCSRF tokenを保存する。
-
-```powershell
-curl.exe -s `
-  -c .\user-cookies.txt `
-  "http://localhost:8080/login" `
-  -o .\user-login.html
-
-$userLoginHtml = Get-Content .\user-login.html -Raw
-
-if ($userLoginHtml -match 'name="_csrf"[^>]*value="([^"]+)"') {
-    $userCsrf = $Matches[1]
-} else {
-    throw "CSRF token was not found in login page."
-}
-```
-
-DBユーザー `user` でログインする。
-
-```powershell
-curl.exe -i `
-  -b .\user-cookies.txt `
-  -c .\user-cookies.txt `
-  -X POST "http://localhost:8080/login" `
-  -H "Content-Type: application/x-www-form-urlencoded" `
-  --data-urlencode "username=user" `
-  --data-urlencode "password=userpass" `
-  --data-urlencode "_csrf=$userCsrf"
-```
-
-期待結果は302であり、認証済みSessionが `user-cookies.txt` に保存される。
-
-認証済みUSERでBug一覧を取得する。
-
-```powershell
-curl.exe -i `
-  -b .\user-cookies.txt `
-  "http://localhost:8080/api/bugs"
-```
-
-期待結果：
-
-```text
-HTTP/1.1 200
-```
-
-これにより、DBから取得したUSERで保護APIを利用できることを確認する。
-
-### 5.7 USERのDELETE拒否を確認
-
-ログイン後のCSRF tokenを再取得する。
-
-```powershell
-curl.exe -s `
-  -b .\user-cookies.txt `
-  -c .\user-cookies.txt `
-  "http://localhost:8080/login" `
-  -o .\user-login-authenticated.html
-
-$userLoginHtml = Get-Content .\user-login-authenticated.html -Raw
-
-if ($userLoginHtml -match 'name="_csrf"[^>]*value="([^"]+)"') {
-    $userCsrf = $Matches[1]
-} else {
-    throw "CSRF token was not found after USER login."
-}
-```
-
-有効なCSRF tokenを付けてDELETEする。
-
-```powershell
-curl.exe -i `
-  -b .\user-cookies.txt `
-  -X DELETE "http://localhost:8080/api/bugs/1" `
-  -H "X-CSRF-TOKEN: $userCsrf"
-```
-
-期待結果：
-
-```text
-HTTP/1.1 403
-```
-
-CSRF tokenは有効でも、USERにはDELETE権限がないため認可で拒否される。
-
-### 5.8 ADMINでDBログインする
-
-ADMIN用のSession cookieとログイン用CSRF tokenを取得する。
-
-```powershell
-curl.exe -s `
-  -c .\admin-cookies.txt `
-  "http://localhost:8080/login" `
-  -o .\admin-login.html
-
-$adminLoginHtml = Get-Content .\admin-login.html -Raw
-
-if ($adminLoginHtml -match 'name="_csrf"[^>]*value="([^"]+)"') {
-    $adminCsrf = $Matches[1]
-} else {
-    throw "CSRF token was not found in login page."
-}
-```
-
-DBユーザー `admin` でログインする。
-
-```powershell
-curl.exe -i `
-  -b .\admin-cookies.txt `
-  -c .\admin-cookies.txt `
-  -X POST "http://localhost:8080/login" `
-  -H "Content-Type: application/x-www-form-urlencoded" `
-  --data-urlencode "username=admin" `
-  --data-urlencode "password=adminpass" `
-  --data-urlencode "_csrf=$adminCsrf"
-```
-
-期待結果は302であり、認証済みSessionが `admin-cookies.txt` に保存される。
-
-ログイン後のCSRF tokenを再取得する。
-
-```powershell
-curl.exe -s `
-  -b .\admin-cookies.txt `
-  -c .\admin-cookies.txt `
-  "http://localhost:8080/login" `
-  -o .\admin-login-authenticated.html
-
-$adminLoginHtml = Get-Content .\admin-login-authenticated.html -Raw
-
-if ($adminLoginHtml -match 'name="_csrf"[^>]*value="([^"]+)"') {
-    $adminCsrf = $Matches[1]
-} else {
-    throw "CSRF token was not found after ADMIN login."
-}
-```
-
-### 5.9 ADMINでBugを作成してDELETEする
-
-削除確認専用のBugを作成する。
-
-```powershell
-$adminCreateBody = '{"title":"security verification bug","description":"created by Runbook","status":"OPEN","priority":"LOW"}'
-
-curl.exe -s `
-  -D .\admin-create-headers.txt `
-  -o .\admin-create-body.json `
-  -b .\admin-cookies.txt `
-  -X POST "http://localhost:8080/api/bugs" `
-  -H "Content-Type: application/json" `
-  -H "X-CSRF-TOKEN: $adminCsrf" `
-  --data-raw $adminCreateBody
-
-Get-Content .\admin-create-headers.txt
-```
-
-期待結果：
-
-```text
-HTTP/1.1 201
-Location: http://localhost:8080/api/bugs/{id}
-```
-
-作成されたBugのURLを取得する。
-
-```powershell
-$locationMatch = Select-String `
-  -Path .\admin-create-headers.txt `
-  -Pattern '^Location:\s*(.+)$'
-
-if (-not $locationMatch) {
-    throw "Location header was not found."
-}
-
-$bugLocation = $locationMatch.Matches[0].Groups[1].Value.Trim()
-
-if ($bugLocation -match '^https?://') {
-    $bugUrl = $bugLocation
-} else {
-    $bugUrl = "http://localhost:8080$bugLocation"
-}
-
-$bugUrl
-```
-
-ADMINで同じBugをDELETEする。
-
-```powershell
-curl.exe -i `
-  -b .\admin-cookies.txt `
-  -X DELETE $bugUrl `
-  -H "X-CSRF-TOKEN: $adminCsrf"
-```
-
-期待結果：
-
-```text
-HTTP/1.1 204
-```
-
-これにより、ADMINではDELETEが認可されることを確認する。
-
-### 5.10 Security確認結果
-
-以下がすべて成立すれば、未ログイン・USER・ADMINとDB認証のローカル再現確認は完了とする。
-
-- 未ログインで `/health` が200
-- 未ログインで `/api/bugs` が `/login` へ302
-- `user` / `userpass` でDBログインできる
-- USERで `/api/bugs` を利用できる
-- USER + 有効CSRF tokenでもDELETEは403
-- `admin` / `adminpass` でDBログインできる
-- ADMIN + 有効CSRF tokenでBug作成が201
-- ADMIN + 有効CSRF tokenでDELETEが204
-- usersテーブルのpasswordがBCrypt hashで保存されている
-
-確認後、作成した一時ファイルを削除する。
-
-```powershell
-Remove-Item `
-  .\user-cookies.txt, `
-  .\user-login.html, `
-  .\user-login-authenticated.html, `
-  .\admin-cookies.txt, `
-  .\admin-login.html, `
-  .\admin-login-authenticated.html, `
-  .\admin-create-headers.txt, `
-  .\admin-create-body.json `
-  -ErrorAction SilentlyContinue
-```
-
-## 6. test DB
-
-テストDBは初回のみ作成する。
+初回のみ実行する。
 
 ```powershell
 docker exec -it bug-tracker-postgres `
@@ -419,9 +353,7 @@ docker exec -it bug-tracker-postgres `
   -c "\l"
 ```
 
-`bug_tracker_test` 内のテーブルはHibernateの `create-drop` で作成・破棄する。
-
-## 7. ローカルテスト
+### 8.2 テスト実行
 
 通常：
 
@@ -435,27 +367,32 @@ docker exec -it bug-tracker-postgres `
 .\mvnw.cmd clean test
 ```
 
-ログ保存：
+ログをファイルへ保存する場合：
 
 ```powershell
 .\mvnw.cmd clean test 2>&1 |
 Tee-Object -FilePath .\mvn-test-log-current.txt
 ```
 
-## 8. テスト失敗時の調査順
+期待結果：
 
-1. `Tests run / Failures / Errors` を確認
-2. 失敗したテストクラス・メソッドを確認
-3. 最初の例外メッセージを確認
-4. `Caused by:` を最も深い原因まで追う
-5. DB接続URL、active profile、ApplicationContext設定を確認
-6. 自分のpackage名やBean名を手掛かりに修正対象を絞る
+```text
+BUILD SUCCESS
+```
 
-Spring内部のstack traceを最初から全行読む必要はない。
+## 9. 障害切り分け
 
-## 9. DB接続失敗の切り分け
+### 9.1 アプリが起動しない
 
 確認順：
+
+1. PostgreSQLコンテナがUpか
+2. `bug_tracker` が存在するか
+3. `bugs` / `users` schemaを適用済みか
+4. `application-dev.properties` のDB接続情報が一致しているか
+5. 起動ログの最初の `Caused by:` を確認する
+
+### 9.2 DB接続失敗
 
 ```powershell
 docker ps --filter "name=bug-tracker-postgres"
@@ -473,9 +410,35 @@ docker exec -it bug-tracker-postgres psql -U bug_user -d postgres -c "\l"
 
 - コンテナがUpか
 - DB名が一致しているか
-- `bug_tracker_test` が存在するか
 - username / password / portが一致しているか
-- test profileが有効か
+- dev / testを取り違えていないか
+
+### 9.3 認証できない
+
+確認順：
+
+1. `users` テーブルに対象usernameが存在するか
+2. `enabled=true` か
+3. roleが `USER` または `ADMIN` か
+4. `password_hash` がBCrypt hashか
+5. devプロファイルで `bug_tracker` に接続しているか
+
+### 9.4 更新系リクエストが403になる
+
+POST / PUT / DELETEでは、認証済みSessionに加えて有効なCSRF tokenが必要である。
+
+権限不足とCSRF不足を区別するため、まず `scripts/smoke.ps1` または `SecurityIntegrationTest` の結果と比較する。
+
+### 9.5 テスト失敗
+
+1. `Tests run / Failures / Errors` を確認
+2. 失敗したテストクラス・メソッドを確認
+3. 最初の例外メッセージを確認
+4. `Caused by:` を最も深い原因まで追う
+5. DB接続URL、active profile、ApplicationContext設定を確認
+6. package名やBean名を手掛かりに修正対象を絞る
+
+Spring内部のstack traceを最初から全行読む必要はない。
 
 ## 10. CI失敗時
 
@@ -494,15 +457,17 @@ docker exec -it bug-tracker-postgres psql -U bug_user -d postgres -c "\l"
 - user/password
 - port
 - `SPRING_PROFILES_ACTIVE=test`
-- workflowのservice設定
+- `.github/workflows/ci.yml` のPostgreSQL service設定
 
 ローカルが失敗している状態でCIだけを先に修正しない。
 
-## 11. ログレベル
+## 11. ログ
 
-- INFO: 正常な主要処理・想定内エラー
-- WARN: 継続可能だが注意すべき状態
-- ERROR: 想定外障害。stack traceを残す
+- INFO：正常な主要処理・想定内エラー
+- WARN：継続可能だが注意すべき状態
+- ERROR：想定外障害。stack traceを残す
+
+request body全文、password、Session IDなどの認証情報を不用意にログへ出力しない。
 
 500レスポンスでは内部例外の詳細をクライアントへそのまま公開しない。
 
