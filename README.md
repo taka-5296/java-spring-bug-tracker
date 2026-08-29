@@ -112,7 +112,7 @@ OK
 
 ローカル開発用の初期ユーザーは `docs/db/users.sql` で投入します。
 
-| 身份 | username | password | role | 主な期待結果 |
+| 区分 | username | password | role | 主な期待結果 |
 | --- | --- | --- | --- | --- |
 | 未ログイン | - | - | - | `/health` は200、`/api/bugs` は `/login` へ302 |
 | USER | `user` | `userpass` | USER | Bugの参照・作成・更新は許可、DELETEは403 |
