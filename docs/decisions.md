@@ -179,5 +179,6 @@ frontendとbackendを別originで実行する場合のCORS、Cookie送信、CSRF
 必要性が確認されない限りJWT / OAuthへ変更しない。
 
 理由：
-既存のSpring Boot REST API、Security、DB責務を維持しながらbrowser向けfrontendを追加し、同じ業務ロジックや認証責務をfrontend側へ二重実装しないため。
-また、TypeScript / React / Next.jsの学習対象を実際のBug Tracker画面へ結び付けつつ、不要なbackend再構築や認証方式変更を避けるため。
+既存のSpring Boot REST API、Security、DB責務を維持したままfrontendを独立させ、画面とbackend APIの境界を明確にするため。
+TypeScriptによるAPIデータの型付けとReactによる状態・イベント管理を利用し、検索・ページング・CRUD・認証状態などの対話的な画面を、server-side templateへ密結合させずに実装する。
+Next.jsはroutingとReact実行基盤として必要な範囲に限定し、Spring Boot側の業務ロジックや認証責務は置き換えない。
