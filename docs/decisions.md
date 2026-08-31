@@ -90,8 +90,8 @@ DBは次のように分離する。
 - 認証済み `ROLE_USER` がADMIN限定操作を行った場合は `403 Forbidden` とする
 
 理由：
-本アプリケーションは後続で最小Thymeleaf画面を持つ予定であり、ブラウザ利用時に未認証ユーザーをログイン画面へ誘導する単純な認証フローを採用するため。
-REST APIクライアントに対して401を返す方式よりもブラウザ向け挙動を優先することを、この段階の設計判断として明示する。
+Spring Security標準のSession認証を利用し、認証状態をサーバ側で管理する最小構成で認証・認可を実現するため。
+JWT等のtoken発行・更新基盤を追加せず、現在必要なUSER / ADMINの権限制御とCSRF保護をSpring Securityの標準機能で扱う。
 
 ## D-008 docs構成を簡素化する
 
@@ -137,7 +137,7 @@ Securityの認証元として、`users` テーブルを使用する。
 - enabled
 
 usernameには一意制約を付ける。
-passwordはBCryptでhash化した値だけを保存し、平文passwordはDBへ保存しない。
+passwordはBCryptでhash化した値だけを保存し、平文passwordをDBへ保存しない。
 roleはDBでは `USER` / `ADMIN` として保持し、Spring Security上では `ROLE_USER` / `ROLE_ADMIN` として扱う。
 dev用の初期USER / ADMINは `docs/db/users.sql` で投入し、SQLにはBCrypt済みhashのみを保存する。
 testではdev用seedへ依存せず、テスト側で必要なユーザーを用意する。
@@ -145,3 +145,39 @@ testではdev用seedへ依存せず、テスト側で必要なユーザーを用
 
 理由：
 DB-backed UserDetailsServiceへ安全かつ最小構成で移行し、現在必要のないユーザー管理機能やテーブル関連を追加しないため。
+
+## D-010 frontendはTypeScript / React / Next.jsを使用し、Spring Bootをbackendの正とする
+
+**Status:** Accepted
+
+最終的なbrowser向けfrontendにはTypeScript / React / Next.jsを使用する。
+
+責務は次のように分離する。
+
+- frontend
+  - 画面表示
+  - routing
+  - form入力
+  - Bug一覧・検索・ページング・CRUDの操作UI
+  - Validation / Errorの表示
+  - Login状態とUSER / ADMINに応じた表示制御
+  - Spring Boot REST APIとのHTTP通信
+- Spring Boot
+  - REST API
+  - 業務ロジック
+  - Bean Validation
+  - 認証・認可
+  - DBアクセス
+  - PostgreSQL永続化
+
+Next.jsからPostgreSQLへ直接接続しない。
+Spring Bootに存在する業務APIをNext.jsのRoute HandlerやServer Actionへ重複実装しない。
+frontend側の表示制御だけを認可の最終防御とせず、権限制御の正はSpring Securityとする。
+
+認証方式は現行のform login + Session / Cookie / CSRFを維持する。
+frontendとbackendを別originで実行する場合のCORS、Cookie送信、CSRF token連携などの詳細な接続方式は、frontend実装前に設計して固定する。
+必要性が確認されない限りJWT / OAuthへ変更しない。
+
+理由：
+既存のSpring Boot REST API、Security、DB責務を維持しながらbrowser向けfrontendを追加し、同じ業務ロジックや認証責務をfrontend側へ二重実装しないため。
+また、TypeScript / React / Next.jsの学習対象を実際のBug Tracker画面へ結び付けつつ、不要なbackend再構築や認証方式変更を避けるため。
